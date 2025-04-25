@@ -1,7 +1,4 @@
-<section
-    class="w-full flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-lr from-[#a9d6ff] to-[#edf2f7] text-black lg:w-1/2 lg:px-4"
-    style="background: url({{ asset('img/latar-belakang.svg') }})"
->
+<section class="w-full flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-lr from-[#a9d6ff] to-[#edf2f7] text-black lg:w-1/2 lg:px-4" style="">
     <h3 class="cursor-default font-bold text-xl text-[#1a4167] lg:text-3xl">
         Selamat Datang
     </h3>
@@ -19,10 +16,10 @@
         @endif
         <div class="mt-5 space-y-5">
             <x-input
-                name="nama_lengkap"
-                label="Nama Lengkap"
+                name="nama_pengguna"
+                label="Nama Pengguna"
                 icon="fa-solid fa-id-card"
-                placeholder="Masukkan Nama Lengkap Anda"
+                placeholder="Masukkan Nama Pengguna Anda"
                 required
             />
             <x-input

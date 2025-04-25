@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
-class Admin
+class Perusahaan
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Session::has('tipe_pengguna') || Session::get('tipe_pengguna') !== 'ADMIN') return redirect()->route('masuk')->withErrors(['errors' => 'Anda tidak memiliki izin untuk mengakses halaman ini.']);
+        if (!Session::has('tipe_pengguna') || Session::get('tipe_pengguna') !== 'PERUSAHAAN') return redirect()->route('masuk')->withErrors(['errors' => 'Anda tidak memiliki izin untuk mengakses halaman ini.']);
         return $next($request);
     }
 }

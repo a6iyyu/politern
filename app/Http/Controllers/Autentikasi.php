@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pengguna;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,31 +11,57 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 
 class Autentikasi extends Controller
 {
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         try {
             $request->validate([
-                'nama_lengkap' => 'required|string|max:255',
-                'kata_sandi' => 'required|string|max:255',
+                'nama_pengguna' => 'required|string|max:50',
+                'kata_sandi' => 'required|string|max:50',
             ], [
-                'nama_lengkap.required' => 'Harap mengisikan nama lengkap Anda!',
+                'nama_pengguna.required' => 'Harap mengisikan nama pengguna Anda!',
+                'nama_pengguna.string' => 'Nama pengguna harus berupa kalimat!',
+                'nama_pengguna.max' => 'Nama pengguna tidak boleh lebih dari 50 karakter!',
                 'kata_sandi.required' => 'Isi kata sandi terlebih dahulu!',
+                'kata_sandi.string' => 'Kata sandi harus berupa kalimat!',
+                'kata_sandi.max' => 'Kata sandi tidak boleh lebih dari 50 karakter!',
             ]);
 
-            $user = DB::table('users')->where('nama_lengkap', $request->nama_lengkap)->first();
+            $pengguna = Pengguna::where('nama_pengguna', $request->nama_pengguna)->first();
 
-            if ($user && Hash::check($request->kata_sandi, $user->kata_sandi)) {
-                Auth::loginUsingId($user->id_user, true);
-                $request->session()->regenerate();
-                return redirect()->intended(route('beranda'));
-            };
+            if (!$pengguna || !Hash::check($request->kata_sandi, $pengguna->kata_sandi)) {
+                Log::warning('Upaya masuk gagal dilakukan: ', ['nama_pengguna' => $request->nama_pengguna]);
+                return back()->withErrors(['errors' => 'Nama pengguna atau kata sandi salah.'])->withInput($request->except('kata_sandi'));
+            }
 
-            Log::warning('Upaya masuk gagal dilakukan:', ['nama_lengkap' => $request->nama_lengkap]);
-            return back()->withErrors(['errors' => 'Nama pengguna atau kata sandi salah.'])->withInput($request->except('kata_sandi'));
+            Session::put('id_pengguna', $pengguna->id_pengguna);
+            Session::put('nama_pengguna', $pengguna->nama_pengguna);
+            Session::put('tipe_pengguna', $pengguna->tipe_pengguna);
+
+            switch ($pengguna->tipe_pengguna) {
+                case 'ADMIN':
+                    $admin = $pengguna->admin;
+                    Session::put('id_admin', $admin->id_admin);
+                    Session::put('nama_admin', $admin->nama_admin);
+                    return redirect()->route('admin.dasbor');
+                case 'MAHASISWA':
+                    $mahasiswa = $pengguna->mahasiswa;
+                    Session::put('id_mahasiswa', $mahasiswa->id_mahasiswa);
+                    Session::put('nim', $mahasiswa->nim);
+                    Session::put('nama_lengkap', $mahasiswa->nama_lengkap);
+                    return redirect()->route('mahasiswa.dasbor');
+                case 'PERUSAHAAN':
+                    $perusahaan = $pengguna->perusahaan;
+                    Session::put('id_perusahaan', $perusahaan->id_perusahaan);
+                    Session::put('nama_perusahaan', $perusahaan->nama_perusahaan);
+                    return redirect()->route('perusahaan.dasbor');
+                default:
+                    return back()->withErrors(['errors' => 'Tipe pengguna tidak valid.'])->withInput($request->except('kata_sandi'));
+            }
         } catch (ValidationException $validation) {
             return back()->withErrors($validation->errors())->withInput($request->except('kata_sandi'));
         } catch (Exception $exception) {
