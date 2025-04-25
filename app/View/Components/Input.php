@@ -8,19 +8,19 @@ use Illuminate\Contracts\View\View;
 
 class Input extends Component
 {
-    public string $name, $label, $icon;
-    public ?string $info, $type, $value;
     public ?bool $required;
+    public string $icon, $label, $name;
+    public ?string $info, $placeholder, $type, $value;
 
-    public function __construct(string $name, string $label, ?string $info, ?string $type, string $icon, ?string $value, ?bool $required)
-    {
-        $this->name = $name;
-        $this->label = $label;
-        $this->info = $info;
-        $this->type = $type;
+    public function __construct(string $icon = '', ?string $info = null, string $label, string $name, ?string $placeholder = null, ?bool $required = false, ?string $type = 'text', ?string $value = null) {
         $this->icon = $icon;
-        $this->value = $value;
+        $this->info = $info;
+        $this->label = $label;
+        $this->name = $name;
+        $this->placeholder = $placeholder;
         $this->required = $required;
+        $this->type = $type;
+        $this->value = $value;
     }
 
     public function render(): View|Closure|string

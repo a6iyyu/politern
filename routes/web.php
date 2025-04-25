@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin;
 use App\Http\Controllers\Autentikasi;
 use App\Http\Controllers\Dasbor;
 use Illuminate\Support\Facades\Auth;
@@ -18,9 +17,9 @@ Route::middleware('auth')->group(function () {
             'mahasiswa' => route('mahasiswa'),
             default => route('keluar'),
         };
-    })->name('beranda');
+    });
 
-    Route::get('/dasbor', [Dasbor::class, 'index'])->name('mahasiswa');
+    Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa');
 
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin');

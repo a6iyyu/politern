@@ -1,6 +1,6 @@
 <section
-    class="w-full flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-lr from-[#a9d6ff] to-[#edf2f7] text-black lg:w-1/2 lg:px-4"
-    style="background: url({{ asset('img/latar-belakang.svg') }})"
+    class="flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-lr from-[#a9d6ff] to-[#edf2f7] text-black lg:w-1/2 lg:px-4"
+    style="background: url({{ asset('img/shared/latar-belakang.svg') }})"
 >
     <h3 class="cursor-default font-bold text-xl text-[#1a4167] lg:text-3xl">
         Selamat Datang

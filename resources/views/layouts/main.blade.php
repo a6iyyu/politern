@@ -13,15 +13,15 @@
     <meta name="description" content="@yield('deskripsi')" />
     <meta property="og:title" content="@yield('judul') | Politern" />
     <meta property="og:description" content="@yield('deskripsi')" />
-    <meta property="og:image" content="{{ asset('') }}" />
+    <meta property="og:image" content="{{ asset('img/shared/polinema.png') }}" />
     <meta name="twitter:title" content="@yield('judul') | Politern" />
     <meta name="twitter:description" content="@yield('deskripsi')" />
-    <meta name="twitter:image" content="{{ asset('') }}" />
+    <meta name="twitter:image" content="{{ asset('img/shared/polinema.png') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('judul') | Politern</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
     <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css" />
-    <link rel="icon" href="{{ asset('') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('img/shared/polinema.png') }}" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet" />
@@ -31,10 +31,11 @@
 
 <body class="overflow-x-hidden min-h-screen h-full bg-[#fff8eb]">
     @auth
-        @include('shared.navigation.hamburger-menu')
+        @include('shared.navigation.header')
     @endauth
     @yield('konten')
     @stack('skrip')
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </body>
 
 </html>
