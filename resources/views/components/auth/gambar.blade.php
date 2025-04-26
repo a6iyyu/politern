@@ -2,21 +2,21 @@
     <span class="absolute inset-0 z-10 bg-gradient-to-b from-[#1a4167]/20 to-[#1a4167]/30 transition-opacity duration-300"></span>
     <div class="carousel-container h-full">
         <img
-            src="{{ asset('img/shared/login-1.webp') }}"
+            src="{{ asset('shared/login-1.webp') }}"
             alt="Selamat Datang"
             class="carousel-image absolute w-full h-full object-cover bg-white opacity-0"
             loading="lazy"
             data-index="0"
         />
         <img
-            src="{{ asset('img/shared/login-2.jpg') }}"
+            src="{{ asset('shared/login-2.jpg') }}"
             alt="Selamat Datang"
             class="carousel-image absolute w-full h-full object-cover bg-white opacity-0"
             loading="lazy"
             data-index="1"
         />
         <img
-            src="{{ asset('img/shared/login-3.jpeg') }}"
+            src="{{ asset('shared/login-3.jpeg') }}"
             alt="Selamat Datang"
             class="carousel-image absolute w-full h-full object-cover bg-white opacity-0"
             loading="lazy"
@@ -26,7 +26,7 @@
     <figure class="absolute z-20 bottom-8 left-8 text-white space-y-2">
         <img
             id="carousel-img"
-            src="{{ asset('img/shared/polinema.png') }}" alt="Logo Polinema"
+            src="{{ asset('shared/polinema.png') }}" alt="Logo Polinema"
             class="w-16 mb-4 transform hover:scale-105 transition-transform duration-300"
             loading="lazy"
         />

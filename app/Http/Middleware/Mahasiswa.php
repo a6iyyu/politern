@@ -11,7 +11,7 @@ class Mahasiswa
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Session::has('tipe_pengguna') || Session::get('tipe_pengguna') !== 'MAHASISWA') return redirect()->route('masuk')->withErrors(['errors' => 'Anda tidak memiliki izin untuk mengakses halaman ini.']);
+        if (!Session::has('tipe_pengguna') || Session::get('tipe_pengguna') !== 'MAHASISWA') abort(403, 'Anda tidak memiliki izin untuk mengakses halaman ini.');
         return $next($request);
     }
 }

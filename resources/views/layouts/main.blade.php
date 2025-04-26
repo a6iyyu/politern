@@ -5,7 +5,6 @@
 >
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=7" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,8 +18,6 @@
     <meta name="twitter:image" content="{{ asset('') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('judul') | Politern</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
-    <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css" />
     <link rel="icon" href="{{ asset('') }}" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />

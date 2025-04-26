@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Exception;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -17,10 +16,10 @@ class Dasbor extends Controller
         if (!in_array($user->tipe, ['admin', 'mahasiswa', 'perusahaan'])) abort(403, 'Anda tidak memiliki akses.');
 
         return match ($user->tipe) {
-            'admin' => view('pages.admin.dasbor'),
-            'mahasiswa' => view('pages.student.dasbor'),
-            'perusahaan' => view('pages.company.dasbor'),
-            default => abort(403),
+            'admin'         => view('pages.admin.dasbor'),
+            'mahasiswa'     => view('pages.student.dasbor'),
+            'perusahaan'    => view('pages.company.dasbor'),
+            default         => abort(403),
         };
     }
 }

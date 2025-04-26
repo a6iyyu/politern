@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Pengguna;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -38,26 +36,25 @@ class Autentikasi extends Controller
                 return back()->withErrors(['errors' => 'Nama pengguna atau kata sandi salah.'])->withInput($request->except('kata_sandi'));
             }
 
-            Session::put('id_pengguna', $pengguna->id_pengguna);
-            Session::put('nama_pengguna', $pengguna->nama_pengguna);
-            Session::put('tipe_pengguna', $pengguna->tipe_pengguna);
+            Auth::login($pengguna);
+            Session::put([
+                'id_pengguna' => $pengguna->id_pengguna,
+                'nama_pengguna' => $pengguna->nama_pengguna,
+                'tipe_pengguna' => $pengguna->tipe_pengguna,
+            ]);
 
             switch ($pengguna->tipe_pengguna) {
                 case 'ADMIN':
                     $admin = $pengguna->admin;
-                    Session::put('id_admin', $admin->id_admin);
-                    Session::put('nama_admin', $admin->nama_admin);
+                    Session::put(['id_admin' => $admin->id_admin, 'nama_admin' => $admin->nama_admin]);
                     return redirect()->route('admin.dasbor');
                 case 'MAHASISWA':
                     $mahasiswa = $pengguna->mahasiswa;
-                    Session::put('id_mahasiswa', $mahasiswa->id_mahasiswa);
-                    Session::put('nim', $mahasiswa->nim);
-                    Session::put('nama_lengkap', $mahasiswa->nama_lengkap);
+                    Session::put(['id_mahasiswa' => $mahasiswa->id_mahasiswa, 'nim' => $mahasiswa->nim, 'nama_lengkap' => $mahasiswa->nama_lengkap]);
                     return redirect()->route('mahasiswa.dasbor');
                 case 'PERUSAHAAN':
                     $perusahaan = $pengguna->perusahaan;
-                    Session::put('id_perusahaan', $perusahaan->id_perusahaan);
-                    Session::put('nama_perusahaan', $perusahaan->nama_perusahaan);
+                    Session::put(['id_perusahaan' => $perusahaan->id_perusahaan, 'nama_perusahaan' => $perusahaan->nama_perusahaan]);
                     return redirect()->route('perusahaan.dasbor');
                 default:
                     return back()->withErrors(['errors' => 'Tipe pengguna tidak valid.'])->withInput($request->except('kata_sandi'));
