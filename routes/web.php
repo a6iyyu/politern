@@ -18,15 +18,15 @@ Route::middleware('auth')->group(function () {
         return Redirect::route("{$tipe}.dasbor");
     })->name('beranda');
 
-    Route::middleware('admin')->prefix('admin')->group(function () {
+    Route::middleware(['authorize:ADMIN'])->prefix('admin')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
     });
 
-    Route::middleware('mahasiswa')->prefix('mahasiswa')->group(function () {
+    Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa.dasbor');
     });
 
-    Route::middleware('perusahaan')->prefix('perusahaan')->group(function () {
+    Route::middleware(['authorize:PERUSAHAAN'])->prefix('perusahaan')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('perusahaan.dasbor');
     });
 

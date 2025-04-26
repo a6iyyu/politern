@@ -73,3 +73,5 @@ dist
 .pnp.*
 .webpack/
 .svelte-kit
+/resources/js/
+/public/vendor/

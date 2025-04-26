@@ -33,17 +33,15 @@ class Kernel extends HttpKernel
     ];
 
     protected $middlewareAliases = [
-        'admin' => \App\Http\Middleware\Admin::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
+        'authorize' => \App\Http\Middleware\AuthorizeUser::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'mahasiswa' => \App\Http\Middleware\Mahasiswa::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-        'perusahaan' => \App\Http\Middleware\Perusahaan::class,
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'signed' => \App\Http\Middleware\ValidateSignature::class,
