@@ -2,6 +2,14 @@
 
 set -e
 
+if [ ! -f ".env" ]; then
+    cp .env.example .env
+else
+    echo "File \".env\" sudah ada. Lewati."
+fi
+
+php artisan key:generate
+
 if [ ! -d "vendor" ]; then
     composer install --ignore-platform-reqs --optimize-autoloader
 else
@@ -23,3 +31,4 @@ else
 fi
 
 npm update --save
+npm run app

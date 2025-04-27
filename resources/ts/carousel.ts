@@ -3,7 +3,7 @@ import { gsap } from "gsap";
 const Carousel = () => {
     const images: NodeListOf<HTMLElement> = document.querySelectorAll(".carousel-image");
     const indicators: NodeListOf<HTMLElement> = document.querySelectorAll(".carousel-indicator");
-    let current_index: number = 0;
+    let current_index: number;
     let interval: NodeJS.Timeout | number;
 
     if (images.length === 0) return;
@@ -50,5 +50,5 @@ const Carousel = () => {
 
 document.addEventListener("DOMContentLoaded", () => {
     const carousel = Carousel();
-    window.addEventListener("pagehide", () => carousel!.destroy());
+    window.addEventListener("pagehide", () => carousel?.destroy());
 });
