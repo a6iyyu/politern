@@ -13,14 +13,14 @@ class Admin extends Seeder
         DB::table('admin')->delete();
         DB::table('admin')->insert([
             [
-                'id_admin' => 1,
-                'id_pengguna' => 1,
-                'nama_admin' => 'Administrator',
-                'nip' => '19870531201101',
+                'id_admin'      => 1,
+                'id_pengguna'   => 1,
+                'nip'           => '19870531201101',
+                'nama'          => 'Administrator',
                 'nomor_telepon' => '081234567890',
-                'email' => 'admin@polinema.ac.id',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'jabatan'       => 'Staf IT',
+                'created_at'    => Carbon::now(),
+                'updated_at'    => Carbon::now(),
             ],
         ]);
     }

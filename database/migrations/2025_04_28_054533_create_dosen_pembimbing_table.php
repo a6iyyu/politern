@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -8,13 +7,14 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('admin', function (Blueprint $table) {
-            $table->id('id_admin');
+        Schema::create('dosen_pembimbing', function (Blueprint $table) {
+            $table->id('id_dosen_pembimbing');
             $table->unsignedBigInteger('id_pengguna');
-            $table->string('nip')->unique('nip');
+            $table->string('nip', 18);
             $table->string('nama');
-            $table->string('nomor_telepon')->unique('nomor_telepon');
-            $table->string('jabatan');
+            $table->string('bidang_keahlian');
+            $table->integer('jumlah_bimbingan');
+            $table->string('nomor_telepon');
             $table->timestamps();
 
             $table->foreign('id_pengguna')->references('id_pengguna')->on('pengguna');
@@ -23,6 +23,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('admin');
+        Schema::dropIfExists('dosen_pembimbing');
     }
 };

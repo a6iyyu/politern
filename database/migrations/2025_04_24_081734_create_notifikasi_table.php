@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -8,13 +7,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('admin', function (Blueprint $table) {
-            $table->id('id_admin');
+        Schema::create('notifikasi', function (Blueprint $table) {
+            $table->id('id_notifikasi');
             $table->unsignedBigInteger('id_pengguna');
-            $table->string('nip')->unique('nip');
-            $table->string('nama');
-            $table->string('nomor_telepon')->unique('nomor_telepon');
-            $table->string('jabatan');
+            $table->string('judul')->unique('judul');
+            $table->text('pesan');
             $table->timestamps();
 
             $table->foreign('id_pengguna')->references('id_pengguna')->on('pengguna');
@@ -23,6 +20,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('admin');
+        Schema::dropIfExists('notifikasi');
     }
 };
