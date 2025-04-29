@@ -9,12 +9,12 @@
 @endsection
 
 @section('konten')
-    <main class="bg-white rounded-xl p-10 w-4/5 border border-slate-300/50 md:w-3/5 lg:w-3/8">
+    <main class="bg-white rounded-xl my-20 p-10 w-4/5 border border-slate-300/50 md:w-3/5 lg:w-[45%]">
         <span class="absolute flex space-x-4 top-4 left-6">
             <img src="{{ asset('shared/polinema.png') }}" alt="Polinema" class="h-14 w-14" />
             <img src="" alt="" /> {{-- This will be an image of Politern logo. --}}
         </span>
-        <h4 class="cursor-default text-xl text-center font-semibold tracking-wide">Selamat Datang</h4>
+        <h4 class="cursor-default text-xl text-center font-semibold tracking-wide">Selamat Datang 👋🏻</h4>
         <h5 class="mt-2 mb-7 cursor-default text-slate-600 text-center tracking-wide">Silakan masuk dengan akun Anda.</h5>
         <form action="{{ route('login') }}" method="POST">
             @csrf
@@ -43,10 +43,12 @@
                 />
             </div>
             <div class="mt-5 flex items-center justify-between text-sm">
-                <a href="{{ route('daftar') }}" class="text-[#5955b2] lg:hover:underline transition-all duration-300 lg:hover:text-[#4f4bad]">
-                    Belum Punya Akun?
-                </a>
-                <a href="{{ route('lupa-kata-sandi') }}" class="text-[#5955b2] lg:hover:underline transition-all duration-300 lg:hover:text-[#4f4bad]">
+                <span class="flex items-center gap-2 text-[#a5a5a5]">
+                    <input type="checkbox" name="" id="" />
+                    <label for="">Ingat Saya?</label>
+                </span>
+                <a href="{{ route('lupa-kata-sandi') }}"
+                    class="text-[#5955b2] lg:hover:underline transition-all duration-300 lg:hover:text-[#4f4bad]">
                     Lupa Kata Sandi?
                 </a>
             </div>
@@ -55,5 +57,20 @@
                 &ensp;Masuk
             </button>
         </form>
+        <div class="mt-7 text-sm w-full text-center">
+            <a href="{{ route('daftar') }}" class="text-[#5955b2] lg:hover:underline transition-all duration-300 lg:hover:text-[#4f4bad]">
+                Belum Punya Akun?
+            </a>
+        </div>
+        <div class="flex mt-10 flex-col items-start justify-between space-y-3 text-sm text-[#5955b2] sm:flex-row sm:items-center">
+            <span>
+                <i class="fa-solid fa-globe mr-2"></i>
+                <a href="https://polinema.ac.id" class="font-semibold">polinema.ac.id</a>
+            </span>
+            <span class="flex items-center">
+                <i class="fa-solid fa-phone mr-2"></i>
+                <h4 class="font-semibold">0341 - 404424/404425</h4>
+            </span>
+        </div>
     </main>
 @endsection

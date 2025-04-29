@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin;
 use App\Http\Controllers\Autentikasi;
 use App\Http\Controllers\Dasbor;
 use Illuminate\Support\Facades\Redirect;
@@ -29,7 +28,6 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa.dasbor');
         Route::get('/lowongan', fn() => view('pages.student.lowongan'))->name('mahasiswa.lowongan');
-        Route::get('/akademik', fn() => view('pages.student.akademik'))->name('mahasiswa.akademik');
         Route::get('/kelola-lamaran', fn() => view('pages.student.kelola-lamaran'))->name('mahasiswa.kelola-lamaran');
         Route::get('/log-aktivitas', fn() => view('pages.student.log-aktivitas'))->name('mahasiswa.log-aktivitas');
     });

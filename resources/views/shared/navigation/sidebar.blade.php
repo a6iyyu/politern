@@ -12,10 +12,6 @@
                 <img src="{{ Request::is('mahasiswa/lowongan*') ? asset('icons/lowongan-biru.svg') : asset('icons/lowongan-putih.svg') }}" alt="Lowongan" class="h-5 w-5" />
                 <h4 class="ml-7 text-sm tracking-wider">Lowongan</h4>
             </a>
-            <a href="{{ route('mahasiswa.akademik') }}" class="flex items-center font-semibold pl-5 pr-7 py-3 {{ Request::is('mahasiswa/akademik*') ? 'bg-white rounded-lg text-[#5955b2]' : 'text-white/50' }}">
-                <img src="{{ Request::is('mahasiswa/akademik*') ? asset('icons/akademik-biru.svg') : asset('icons/akademik-putih.svg') }}" alt="Akademik" class="h-5 w-5" />
-                <h4 class="ml-7 text-sm tracking-wider">Akademik</h4>
-            </a>
             <a href="{{ route('mahasiswa.kelola-lamaran') }}" class="flex items-center font-semibold pl-5 pr-7 py-3 {{ Request::is('mahasiswa/kelola-lamaran*') ? 'bg-white rounded-lg text-[#5955b2]' : 'text-white/50' }}">
                 <img src="{{ Request::is('mahasiswa/kelola-lamaran*') ? asset('icons/kelola-lamaran-biru.svg') : asset('icons/kelola-lamaran-putih.svg') }}" alt="Kelola Lamaran" class="h-5 w-5" />
                 <h4 class="ml-7 text-sm tracking-wider">Kelola Lamaran</h4>

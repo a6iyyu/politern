@@ -28,8 +28,5 @@
         @if ($type === 'password')
             <i class="fa-solid fa-eye cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 pr-4 text-gray-500"></i>
         @endif
-        @if ($name === 'konfirmasi_kata_sandi')
-            <i class="fa-solid fa-eye cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 pr-4 text-gray-500" id="eye-konf"></i>
-        @endif
     </div>  
 </fieldset> 
