@@ -18,7 +18,7 @@
             name="{{ $name }}"
             type="{{ $type ?? 'text' }}"
             id="{{ $name }}"
-            class="appearance-none w-full rounded-lg border-1 pl-12 text-sm pr-4 py-2.75 border-[#8d8d8d]/500 transition-all duration-200 lg:focus:outline-none lg:focus:border-[#5955b2]"
+            class="appearance-none w-full rounded-lg border-1 pl-12 text-sm pr-4 py-2.75 border-[#8d8d8d]/50 transition-all duration-200 lg:focus:outline-none lg:focus:border-[#5955b2]"
             value="{{ $value }}"
             @if ($type === 'number') oninput="this.value = this.value.replace(/[^0-9]/g, '')" onwheel="this.blur()" @endif
             @if ($type === 'text') oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" @endif
@@ -28,5 +28,8 @@
         @if ($type === 'password')
             <i class="fa-solid fa-eye cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 pr-4 text-gray-500"></i>
         @endif
-    </div>
-</fieldset>
+        @if ($name === 'konfirmasi_kata_sandi')
+            <i class="fa-solid fa-eye cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 pr-4 text-gray-500" id="eye-konf"></i>
+        @endif
+    </div>  
+</fieldset> 
