@@ -13,12 +13,11 @@ class Dasbor extends Controller
     {
         $user = Auth::user();
         if (!$user) return redirect()->route('masuk');
-        if (!in_array($user->tipe_pengguna, ['ADMIN', 'MAHASISWA', 'PERUSAHAAN'])) abort(403, 'Anda tidak memiliki akses.');
+        if (!in_array($user->tipe, ['ADMIN', 'MAHASISWA'])) abort(403, 'Anda tidak memiliki akses.');
 
-        return match ($user->tipe_pengguna) {
+        return match ($user->tipe) {
             'ADMIN'         => view('pages.admin.dasbor'),
             'MAHASISWA'     => view('pages.student.dasbor'),
-            'PERUSAHAAN'    => view('pages.company.dasbor'),
             default         => abort(403),
         };
     }

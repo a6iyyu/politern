@@ -1,6 +1,12 @@
+/**
+ * @description
+ * Entry point for Laravel frontend application JavaScript.
+ * You can also use this file to import your custom JavaScript files.
+ */
+
 import Alpine from "alpinejs";
 import "./bootstrap";
-import "./carousel";
+import "./form";
 
 declare global {
     interface Window {

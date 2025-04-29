@@ -8,13 +8,17 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 Route::middleware('guest')->group(function () {
+    Route::get('/daftar', fn() => view('pages.auth.daftar'))->name('daftar')->withoutMiddleware('auth');
+    Route::get('/lupa-kata-sandi', fn() => view('pages.auth.lupa-kata-sandi'))->name('lupa-kata-sandi')->withoutMiddleware('auth');
     Route::get('/masuk', fn() => view('pages.auth.masuk'))->name('masuk')->withoutMiddleware('auth');
-    Route::post('/masuk', [Autentikasi::class, 'login'])->name('login')->withoutMiddleware('auth');
+    Route::post('/daftar', [Autentikasi::class, 'daftar'])->name('register')->withoutMiddleware('auth');
+    Route::post('/masuk', [Autentikasi::class, 'masuk'])->name('login')->withoutMiddleware('auth');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
-        $tipe = strtolower(Session::get('tipe_pengguna', 'keluar'));
+        $tipe = strtolower(Session::get('tipe'));
+        if (!in_array($tipe, ['admin', 'mahasiswa'])) return Redirect::route('keluar');
         return Redirect::route("{$tipe}.dasbor");
     })->name('beranda');
 
@@ -24,11 +28,11 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa.dasbor');
+        Route::get('/lowongan', fn() => view('pages.student.lowongan'))->name('mahasiswa.lowongan');
+        Route::get('/akademik', fn() => view('pages.student.akademik'))->name('mahasiswa.akademik');
+        Route::get('/kelola-lamaran', fn() => view('pages.student.kelola-lamaran'))->name('mahasiswa.kelola-lamaran');
+        Route::get('/log-aktivitas', fn() => view('pages.student.log-aktivitas'))->name('mahasiswa.log-aktivitas');
     });
 
-    Route::middleware(['authorize:PERUSAHAAN'])->prefix('perusahaan')->group(function () {
-        Route::get('/', [Dasbor::class, 'index'])->name('perusahaan.dasbor');
-    });
-
-    Route::get('/keluar', [Autentikasi::class, 'logout'])->name('keluar');
+    Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');
 });

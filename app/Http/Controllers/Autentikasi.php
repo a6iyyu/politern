@@ -14,7 +14,16 @@ use Illuminate\Validation\ValidationException;
 
 class Autentikasi extends Controller
 {
-    public function login(Request $request): RedirectResponse
+    public function daftar()
+    {
+        try {
+            // Fais Restu
+        } catch (Exception $exception) {
+            // Fais Restu
+        }
+    }
+
+    public function masuk(Request $request): RedirectResponse
     {
         try {
             $request->validate([
@@ -38,12 +47,12 @@ class Autentikasi extends Controller
 
             Auth::login($pengguna);
             Session::put([
-                'id_pengguna' => $pengguna->id_pengguna,
+                'id_pengguna'   => $pengguna->id_pengguna,
                 'nama_pengguna' => $pengguna->nama_pengguna,
-                'tipe_pengguna' => $pengguna->tipe_pengguna,
+                'tipe'          => $pengguna->tipe,
             ]);
 
-            switch ($pengguna->tipe_pengguna) {
+            switch ($pengguna->tipe) {
                 case 'ADMIN':
                     $admin = $pengguna->admin;
                     Session::put(['id_admin' => $admin->id_admin, 'nama_admin' => $admin->nama_admin]);
@@ -52,10 +61,6 @@ class Autentikasi extends Controller
                     $mahasiswa = $pengguna->mahasiswa;
                     Session::put(['id_mahasiswa' => $mahasiswa->id_mahasiswa, 'nim' => $mahasiswa->nim, 'nama_lengkap' => $mahasiswa->nama_lengkap]);
                     return redirect()->route('mahasiswa.dasbor');
-                case 'PERUSAHAAN':
-                    $perusahaan = $pengguna->perusahaan;
-                    Session::put(['id_perusahaan' => $perusahaan->id_perusahaan, 'nama_perusahaan' => $perusahaan->nama_perusahaan]);
-                    return redirect()->route('perusahaan.dasbor');
                 default:
                     return back()->withErrors(['errors' => 'Tipe pengguna tidak valid.'])->withInput($request->except('kata_sandi'));
             }
@@ -67,7 +72,7 @@ class Autentikasi extends Controller
         }
     }
 
-    public function logout(Request $request): RedirectResponse
+    public function keluar(Request $request): RedirectResponse
     {
         Auth::logout();
         $request->session()->invalidate();

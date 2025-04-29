@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticable;
 
-class Pengguna extends Authenticatable
+class Pengguna extends Authenticable
 {
     protected $table = 'pengguna';
     protected $primaryKey = 'id_pengguna';
@@ -20,10 +19,5 @@ class Pengguna extends Authenticatable
     public function mahasiswa(): HasOne
     {
         return $this->hasOne(Mahasiswa::class, 'id_pengguna', 'id_pengguna');
-    }
-
-    public function perusahaan(): HasOne
-    {
-        return $this->hasOne(Perusahaan::class, 'id_pengguna', 'id_pengguna');
     }
 }

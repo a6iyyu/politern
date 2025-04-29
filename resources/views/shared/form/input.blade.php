@@ -1,5 +1,5 @@
 <fieldset class="flex w-full flex-col justify-between @if (empty($info)) space-y-4 @endif">
-    <label for="{{ $name }}" class="font-medium">
+    <label for="{{ $name }}" class="font-medium text-sm">
         {{ $label }}
         @if (!empty($required))
             <span class="text-red-500">*</span>
@@ -18,12 +18,15 @@
             name="{{ $name }}"
             type="{{ $type ?? 'text' }}"
             id="{{ $name }}"
-            class="appearance-none w-full rounded-lg border-2 pl-12 pr-4 py-2.75 transition-all duration-200 focus:outline-none focus:border-[#1a4167] focus:ring-2 focus:ring-[#1a4167]/20 @error($name) border-red-500 @enderror"
+            class="appearance-none w-full rounded-lg border-1 pl-12 text-sm pr-4 py-2.75 border-[#8d8d8d]/500 transition-all duration-200 lg:focus:outline-none lg:focus:border-[#5955b2]"
             value="{{ $value }}"
             @if ($type === 'number') oninput="this.value = this.value.replace(/[^0-9]/g, '')" onwheel="this.blur()" @endif
             @if ($type === 'text') oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" @endif
             @if (!empty($required)) required @endif
             {{ $attributes ?? '' }}
         />
+        @if ($type === 'password')
+            <i class="fa-solid fa-eye cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 pr-4 text-gray-500"></i>
+        @endif
     </div>
 </fieldset>
