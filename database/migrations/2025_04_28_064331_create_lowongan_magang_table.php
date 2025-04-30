@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->text('deskripsi');
             $table->enum('kategori', ['JARAK JAUH', 'GABUNGAN', 'DI LOKASI']);
             $table->string('lokasi');
-            $table->string('bicolumn: dang_keahlian');
+            $table->string('bidang_keahlian');
             $table->integer('kuota');
             $table->date('tanggal_mulai_magang');
             $table->date('tanggal_selesai_magang');

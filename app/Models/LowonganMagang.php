@@ -9,6 +9,7 @@ class LowonganMagang extends Model
 {
     protected $table = 'lowongan_magang';
     protected $primaryKey = 'id_lowongan';
+    protected $casts = ['bidang_keahlian' => 'array'];
 
     public function perusahaan(): BelongsTo
     {

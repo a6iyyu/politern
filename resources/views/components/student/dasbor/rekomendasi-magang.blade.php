@@ -1,0 +1,1 @@
+<h4 class="cursor-default mt-10 text-2xl font-semibold text-[#5955b2]">Rekomendasi Magang</h4>

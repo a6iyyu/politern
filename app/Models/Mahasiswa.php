@@ -14,4 +14,9 @@ class Mahasiswa extends Model
     {
         return $this->belongsTo(Pengguna::class, 'id_pengguna', 'id_pengguna');
     }
+
+    public function program_studi(): BelongsTo
+    {
+        return $this->belongsTo(ProgramStudi::class, 'id_prodi', 'id_prodi');
+    }
 }

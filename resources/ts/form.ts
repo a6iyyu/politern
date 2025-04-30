@@ -5,6 +5,10 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     const eyes = document.querySelectorAll(".fa-eye, .fa-eye-slash") as NodeListOf<HTMLElement>;
+    const form = document.querySelector("form") as HTMLFormElement;
+    const submit = document.querySelector("button[type='submit']") as HTMLButtonElement;
+
+    if (!eyes || !form || !submit) return;
 
     eyes.forEach((eye) => {
         eye.classList.add("fa-eye");
@@ -18,8 +22,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!input) return;
 
             input.type = input.type === "password" ? "text" : "password";
-            eye.classList.toggle("fa-eye", !(input.type === "password"));
+            eye.classList.toggle("fa-eye", input.type === "text");
             eye.classList.toggle("fa-eye-slash", input.type === "password");
         });
+    });
+
+    form.addEventListener("submit", () => {
+        if (!form.checkValidity()) return;
+        submit.innerText = "Memuat..."
     });
 });
