@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LowonganMagang;
 use App\Models\Mahasiswa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class Dasbor extends Controller
@@ -24,10 +26,14 @@ class Dasbor extends Controller
         $nama_pengguna = $pengguna->nama_pengguna;
         $nama_prodi = $prodi->nama;
         $semester = ucfirst(strtolower($mahasiswa->semester));
+        $lowongan = LowonganMagang::with('perusahaan')
+            ->orderBy('tanggal_posting', 'desc')
+            ->get();
 
+        Log::info($lowongan);
         return match ($pengguna->tipe) {
             'ADMIN'         => view('pages.admin.dasbor'),
-            'MAHASISWA'     => view('pages.student.dasbor', compact('ipk', 'jenjang', 'nama_pengguna', 'nama_prodi', 'semester')),
+            'MAHASISWA'     => view('pages.student.dasbor', compact('ipk', 'jenjang', 'nama_pengguna', 'nama_prodi', 'semester', 'lowongan')),
             default         => abort(403),
         };
     }

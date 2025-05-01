@@ -25,7 +25,7 @@
     - Ubah logic di provider jika ingin support tipe lain seperti 'ADMIN'
 --}}
 
-<figure class="cursor-pointer hidden items-center gap-4 font-semibold lg:flex">
+<figure class="cursor-pointer hidden items-center gap-4 font-medium text-[#585858] lg:flex">
     <figcaption class="flex flex-col text-right text-sm tracking-wider">
         {{ $nama_lengkap }}
         <br />

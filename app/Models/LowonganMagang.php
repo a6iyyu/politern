@@ -9,11 +9,10 @@ class LowonganMagang extends Model
 {
     protected $table = 'lowongan_magang';
     protected $primaryKey = 'id_lowongan';
-    protected $casts = ['bidang_keahlian' => 'array'];
 
     public function perusahaan(): BelongsTo
     {
-        return $this->belongsTo(Perusahaan::class, 'id_perushaan_mitra', 'id_perushaan_mitra');
+        return $this->belongsTo(Perusahaan::class, 'id_perusahaan_mitra', 'id_perusahaan_mitra');
     }
 
     public function periode_magang(): BelongsTo
