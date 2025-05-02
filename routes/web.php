@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/lowongan', fn() => view('pages.student.lowongan'))->name('mahasiswa.lowongan');
         Route::get('/kelola-lamaran', fn() => view('pages.student.kelola-lamaran'))->name('mahasiswa.kelola-lamaran');
         Route::get('/log-aktivitas', fn() => view('pages.student.log-aktivitas'))->name('mahasiswa.log-aktivitas');
+        Route::get('/search-result', [Dasbor::class, 'index'])->name('search.result');
     });
 
     Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');
