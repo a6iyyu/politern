@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('judul')
-    Dasbor
+    Verifikasi Data
 @endsection
 
 @section('deskripsi')

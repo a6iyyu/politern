@@ -10,7 +10,6 @@ class Perusahaan extends Seeder
 {
     public function run(): void
     {
-        DB::table('perusahaan_mitra')->delete();
         DB::table('perusahaan_mitra')->insert([
             [
                 'id_perusahaan_mitra'   => 1,

@@ -8,5 +8,7 @@
 @endsection
 
 @section('konten')
-    <main class=""></main>
+    <main class="flex flex-col p-10 lg:pl-76">
+        @include('components.student.kelola-lamaran.tabel-histori')
+    </main>
 @endsection

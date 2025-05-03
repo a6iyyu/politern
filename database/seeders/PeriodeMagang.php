@@ -10,7 +10,6 @@ class PeriodeMagang extends Seeder
 {
     public function run(): void
     {
-        DB::table('periode_magang')->delete();
         DB::table('periode_magang')->insert([
             [
                 'id_periode'       => 1,

@@ -1,35 +1,32 @@
-<div class="bg-white rounded-2xl shadow py-5 px-7 mb-5 flex flex-col gap-2 border border-gray-100 hover:bg-[#F4F4FE]">
-    <div class="flex justify-between items-start">
-        <div>
-            <h3 class="text-[#5955B2] text-base mb-1 font-semibold cursor-default">
-                {{ $title }}
-            </h3>
-            <h3 class="text-[#585858] text-sm mb-1 font-regular cursor-default">
-                {{ $company }}
-            </h3>
-            <p class="text-[#585858] text-sm mt-3 cursor-default">
-                {{ $location }}
-            </p>
-
-            <div class="flex flex-wrap gap-2 mt-3">
-                <span class="bg-[#FBECF1] text-xs text-[#585858] px-3 py-1 rounded-xl cursor-default">
-                    {{ $kategori }}
-                </span>
-                <span class="bg-[#FBECF1] text-xs text-[#585858] px-3 py-1 rounded-xl cursor-default">
-                    {{ $bidang }}
-                </span>
-            </div>
-        </div>
-
-        <span class="bg-[#70E459] text-white text-[14px] px-3 py-1 rounded-[10px] self-start cursor-default">
+<figure class="rounded-xl px-7 py-5 border border-[#dadada]">
+    <div class="cursor-default flex justify-between">
+        <figcaption class="space-y-1">
+            <h4 class="text-[#5955b2] font-semibold">
+                {{ $name }}
+            </h4>
+            <h5 class="text-[#585858] text-sm font-medium">
+                {{ $industry }}
+            </h5>
+        </figcaption>
+        <h5 class="cursor-default h-fit bg-[#70e459] text-white text-sm px-4 py-2 rounded-lg">
             {{ $status }}
-        </span>
+        </h5>
     </div>
-
-    <div class="flex items-center justify-between mt-3">
-        <img src="{{ asset('icons/save.svg') }}" alt="Save Icon" class="w-5 h-5 cursor-pointer">
-        <button class="bg-[#FF77C3] text-white text-sm px-4 py-2 rounded-[12px] font-medium cursor-pointer">
-            Lamar Sekarang
-        </button>
-    </div>
-</div>
+    <h5 class="cursor-default mt-3 text-sm text-[#585858]">
+        {{ $location }}
+    </h5>
+    <span class="flex flex-wrap gap-2 mt-5">
+        <h5 class="cursor-pointer bg-[#fbecf1] text-xs text-[#585858] px-5 py-2 rounded-full border border-[#f9d4e2] transition-all duration-300 ease-in-out lg:hover:bg-[#f9d4e2]">
+            {{ $type }}
+        </h5>
+        <h5 class="cursor-pointer bg-[#fbecf1] text-xs text-[#585858] px-4 py-2 rounded-full border border-[#f9d4e2] transition-all duration-300 ease-in-out lg:hover:bg-[#f9d4e2]">
+            {{ $category }}
+        </h5>
+    </span>
+    <span class="mt-6 flex items-center justify-between">
+        <img src="{{ asset('icons/simpan-biru.svg') }}" alt="Simpan" id="save" />
+        <a href="" class="bg-[#ff77c3] text-white text-sm px-4 py-2 rounded-lg font-medium cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[#ff60b8]">
+            Lihat Detail
+        </a>
+    </span>
+</figure>

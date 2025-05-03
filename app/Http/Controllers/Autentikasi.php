@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class Autentikasi extends Controller
 {
-    public function daftar()
+    public function daftar(): void
     {
         try {
             // Fais Restu
@@ -23,6 +23,15 @@ class Autentikasi extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     * @throws ValidationException
+     * @throws Exception
+     *
+     * Fungsi ini bertujuan untuk melakukan proses masuk ke dalam sistem
+     * berdasarkan data yang telah dimasukkan oleh pengguna.
+     */
     public function masuk(Request $request): RedirectResponse
     {
         try {
@@ -72,6 +81,12 @@ class Autentikasi extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     *
+     * Fungsi ini bertujuan untuk melakukan proses keluar dari akun pengguna.
+     */
     public function keluar(Request $request): RedirectResponse
     {
         Auth::logout();

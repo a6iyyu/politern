@@ -8,7 +8,5 @@
 @endsection
 
 @section('konten')
-    <main class="flex flex-col p-10 lg:pl-76">
-        @include('components.student.log-aktivitas.selamat-datang')
-    </main>
+    <main class="flex flex-col p-10 lg:pl-76"></main>
 @endsection

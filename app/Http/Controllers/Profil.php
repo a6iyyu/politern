@@ -3,14 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mahasiswa;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class Profil extends Controller
 {
-    public function identitas(): RedirectResponse|View
+    /**
+     * @return Factory|RedirectResponse|View
+     *
+     * Fungsi ini bertujuan untuk menampilkan identitas pengguna.
+     */
+    public function identitas(): Factory|RedirectResponse|View
     {
         $pengguna = Auth::user();
         if (!$pengguna) return redirect()->route('masuk');

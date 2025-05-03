@@ -2,18 +2,15 @@
 
 namespace App\Livewire;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class Search extends Component
 {
     public $search = '';
 
-    public function updatedSearch()
-    {
-        $this->redirect(route('search.result', ['query' => $this->search]));
-    }
-
-    public function render()
+    public function render(): Factory|View
     {
         return view('livewire.search');
     }

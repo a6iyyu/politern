@@ -10,7 +10,6 @@ class Admin extends Seeder
 {
     public function run(): void
     {
-        DB::table('admin')->delete();
         DB::table('admin')->insert([
             [
                 'id_admin'      => 1,

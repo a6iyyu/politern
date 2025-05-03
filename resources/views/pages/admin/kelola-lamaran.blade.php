@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('judul')
-    Dasbor
+    Kelola Lamaran
 @endsection
 
 @section('deskripsi')

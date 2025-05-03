@@ -10,7 +10,6 @@ class Pengguna extends Seeder
 {
     public function run(): void
     {
-        DB::table('pengguna')->delete();
         DB::table('pengguna')->insert([
             [
                 'id_pengguna'   => 1,

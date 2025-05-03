@@ -10,7 +10,6 @@ class Mahasiswa extends Seeder
 {
     public function run(): void
     {
-        DB::table('mahasiswa')->delete();
         DB::table('mahasiswa')->insert([
             [
                 'id_mahasiswa'  => 1,

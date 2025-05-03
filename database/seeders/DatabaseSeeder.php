@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         DB::table('admin')->delete();
         DB::table('program_studi')->delete();
         DB::table('pengguna')->delete();
+
         $this->call([
             Pengguna::class,
             Prodi::class,

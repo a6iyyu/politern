@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin;
 use App\Http\Controllers\Autentikasi;
 use App\Http\Controllers\Dasbor;
 use Illuminate\Support\Facades\Redirect;
@@ -23,6 +24,9 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:ADMIN'])->prefix('admin')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
+        Route::get('/kelola-lamaran', [Admin::class, 'kelola_lamaran'])->name('admin.kelola-lamaran');
+        Route::get('/verifikasi-data', [Admin::class, 'verifikasi_data'])->name('admin.verifikasi-data');
+        Route::get('/log-aktivitas', [Admin::class, 'log_aktivitas'])->name('admin.log-aktivitas');
     });
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
@@ -30,7 +34,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/lowongan', fn() => view('pages.student.lowongan'))->name('mahasiswa.lowongan');
         Route::get('/kelola-lamaran', fn() => view('pages.student.kelola-lamaran'))->name('mahasiswa.kelola-lamaran');
         Route::get('/log-aktivitas', fn() => view('pages.student.log-aktivitas'))->name('mahasiswa.log-aktivitas');
-        Route::get('/search-result', [Dasbor::class, 'index'])->name('search.result');
+        Route::get('/cari-lowongan', [Dasbor::class, 'index'])->name('mahasiswa.cari-lowongan');
     });
 
     Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');

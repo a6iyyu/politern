@@ -8,3 +8,5 @@ import "./bootstrap";
 import "./form";
 import "./hamburger-menu";
 import "./profile-photo";
+import "./save-intern";
+import "./search";

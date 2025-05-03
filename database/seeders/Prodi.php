@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -10,7 +9,6 @@ class Prodi extends Seeder
 {
     public function run(): void
     {
-        DB::table('program_studi')->delete();
         DB::table('program_studi')->insert([
             [
                 'id_prodi'      => 1,
