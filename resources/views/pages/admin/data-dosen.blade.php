@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('judul')
-    Verifikasi Data
+    Data Dosen
 @endsection
 
 @section('deskripsi')

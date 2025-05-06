@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('judul')
-    Kelola Lamaran
+    Pengajuan Magang
 @endsection
 
 @section('deskripsi')

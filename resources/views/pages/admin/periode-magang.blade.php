@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('judul')
-    Log Aktivitas
+    Periode Magang
 @endsection
 
 @section('deskripsi')

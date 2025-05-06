@@ -24,9 +24,13 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:ADMIN'])->prefix('admin')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
-        Route::get('/kelola-lamaran', [Admin::class, 'kelola_lamaran'])->name('admin.kelola-lamaran');
-        Route::get('/verifikasi-data', [Admin::class, 'verifikasi_data'])->name('admin.verifikasi-data');
-        Route::get('/log-aktivitas', [Admin::class, 'log_aktivitas'])->name('admin.log-aktivitas');
+        Route::get('/data-mahasiswa', fn() => view('pages.admin.data-mahasiswa'))->name('admin.data-mahasiswa');
+        Route::get('/data-dosen', fn() => view('pages.admin.data-dosen'))->name('admin.data-dosen');
+        Route::get('/program-studi', fn() => view('pages.admin.program-studi'))->name('admin.program-studi');
+        Route::get('/data-perusahaan', fn() => view('pages.admin.data-perusahaan'))->name('admin.data-perusahaan');
+        Route::get('/periode-magang', fn() => view('pages.admin.periode-magang'))->name('admin.periode-magang');
+        Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
+        Route::get('/pengajuan-magang', fn() => view('pages.admin.pengajuan-magang'))->name('admin.pengajuan-magang');
     });
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
