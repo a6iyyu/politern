@@ -34,3 +34,31 @@
             Cari
         </button>
     </div>
+    <div class="w-full mx-auto my-2">
+    <select 
+        id="jenis-pekerjaan" 
+        class="w-full py-3 px-4 text-sm border border-gray-300 bg-[#f9f8fe] rounded-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-400"
+            onchange="this.classList.remove('text-gray-400')"
+        >
+        <option value="">Pilih Jenis Pekerjaan</option>
+        <option value="fulltime">Full Time</option>
+        <option value="parttime">Part Time</option>
+        <option value="freelance">Freelance</option>
+        <option value="magang">Magang</option>
+        <option value="remote">Remote</option>
+    </select>
+    </div>
+    <div class="relative w-auto">
+        <select 
+            id="jenis-gaji" 
+           class="w-full py-3 px-4 text-sm border border-gray-300 bg-[#f9f8fe] rounded-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-400"
+            onchange="this.classList.remove('text-gray-400')"
+        >
+            <option value="">Gaji min. Rp</option>
+            <option value="fulltime">Full Time</option>
+            <option value="parttime">Part Time</option>
+            <option value="freelance">Freelance</option>
+            <option value="magang">Magang</option>
+            <option value="remote">Remote</option>
+        </select>
+        </div>
