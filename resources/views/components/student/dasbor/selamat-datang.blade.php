@@ -1,4 +1,3 @@
-<x-header title="Dasbor" />
 <h5 class="cursor-default mt-1 font-medium text-[#585858]">
     Selamat Datang, {{ ucfirst($nama_pengguna) }}!
 </h5>

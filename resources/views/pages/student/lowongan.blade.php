@@ -8,8 +8,8 @@
 @endsection
 
 @section('konten')
-    <main class="flex flex-col p-10 lg:pl-76">
-        <x-header title="Lowongan Magang" />
+    <x-header title="Lowongan Magang" />
+    <main class="flex flex-col pb-10 px-10 transition-all duration-300">
         @include('components.student.lowongan.filter')
     </main>
 @endsection

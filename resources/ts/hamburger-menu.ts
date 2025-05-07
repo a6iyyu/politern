@@ -1,31 +1,69 @@
 /**
- * @description
- * This file contains frontend logic related to the hamburger menu.
+ * @fileoverview
+ * File ini menangani logika frontend untuk menu hamburger:
+ * - Mengatur padding header dan main berdasarkan status sidebar.
+ * - Menampilkan dan menyembunyikan sidebar serta overlay.
+ * - Merespons perubahan ukuran layar.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
     const hamburger = document.querySelector("i[id='hamburger-menu']") as HTMLElement;
+    const header = document.querySelector("header") as HTMLElement;
     const sidebar = document.querySelector("aside") as HTMLElement;
-
-    if (!hamburger || !sidebar) return;
+    const main = document.querySelector("main") as HTMLElement;
+    const overlay = document.getElementById("overlay") as HTMLElement;
+    const desktop = () => window.matchMedia("(min-width: 1024px)").matches;
     let visible = false;
 
+    if (!hamburger || !header || !sidebar || !main || !overlay) return;
+
+    const padding = () => {
+        if (!desktop()) {
+            header.classList.remove("pl-84");
+            main.classList.remove("pl-84");
+            header.classList.add("pl-10");
+            main.classList.add("pl-10");
+            return;
+        }
+
+        const add = visible ? "pl-84" : "pl-10";
+        const remove = visible ? "pl-10" : "pl-84";
+
+        header.classList.remove(remove);
+        main.classList.remove(remove);
+        header.classList.add(add);
+        main.classList.add(add);
+    };
+
     const show = () => {
-        sidebar.classList.remove("hidden");
-        setTimeout(() => (sidebar.classList.add("translate-x-0"), sidebar.classList.remove("-translate-x-full")), 10);
+        sidebar.classList.remove("hidden", "-translate-x-full");
+        sidebar.classList.add("translate-x-0");
+        overlay.classList.remove("hidden");
         visible = true;
+        padding();
     };
-
+    
     const hide = () => {
-        sidebar.classList.add("-translate-x-full");
         sidebar.classList.remove("translate-x-0");
-        setTimeout(() => !visible && sidebar.classList.add("hidden"), 300);
+        sidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
         visible = false;
-    };
+        padding();
+        setTimeout(() => !visible && sidebar.classList.add("hidden"), 300);
+    };    
 
-    hamburger.addEventListener("click", () => visible ? hide() : show());
+    if (desktop()) show();
+    else padding();
 
-    document.addEventListener("click", (e) => {
-        if (visible && sidebar && !sidebar.contains(e.target as Node) && !hamburger.contains(e.target as Node)) hide();
+    hamburger.addEventListener("click", () => (visible ? hide() : show()));
+    overlay.addEventListener("click", () => hide());
+
+    window.addEventListener("resize", () => {
+        if (visible) {
+            header.classList.remove("pl-84", "pl-10");
+            main.classList.remove("pl-84", "pl-10");
+        } else {
+            padding();
+        }
     });
 });

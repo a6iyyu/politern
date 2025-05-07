@@ -8,5 +8,9 @@
 @endsection
 
 @section('konten')
-    <main class="flex flex-col p-10 lg:pl-76"></main>
+    <x-header title="Data Mahasiswa" />
+    <main class="flex flex-col pb-10 px-10 transition-all duration-300">
+        @include('components.admin.data-mahasiswa.informasi')
+        @include('components.admin.data-mahasiswa.tabel')
+    </main>
 @endsection

@@ -1,6 +1,10 @@
 /**
- * @description
- * This file contains frontend logic related to the form.
+ * @fileoverview
+ * File ini berisi logika frontend yang berkaitan dengan form.
+ * 
+ * Fungsionalitas yang disediakan:
+ * - Menangani klik ikon mata untuk menampilkan atau menyembunyikan input password.
+ * - Mengubah teks tombol submit menjadi "Memuat..." saat form dikirim jika valid.
  */
 
 document.addEventListener("DOMContentLoaded", () => {

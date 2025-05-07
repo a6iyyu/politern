@@ -8,5 +8,6 @@
 @endsection
 
 @section('konten')
-    <main class="flex flex-col p-10 lg:pl-76"></main>
+    <x-header title="Data Perusahaan" />
+    <main class="flex flex-col pb-10 px-10 transition-all duration-300"></main>
 @endsection

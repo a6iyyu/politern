@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticable;
 
 class Pengguna extends Authenticable
 {
+    use HasFactory;
+
     protected $table = 'pengguna';
     protected $primaryKey = 'id_pengguna';
-    protected $fillable = ['nama_pengguna', 'kata_sandi'];
+    protected $fillable = ['nama_pengguna', 'email', 'kata_sandi', 'tipe'];
 
     public function admin(): HasOne
     {

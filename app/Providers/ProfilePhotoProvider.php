@@ -2,21 +2,40 @@
 
 namespace App\Providers;
 
+use App\Models\Admin;
 use App\Models\Mahasiswa;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\View as Views;
 
 class ProfilePhotoProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        View::composer('shared.ui.profile-photo', function ($views) {
+        View::composer('shared.ui.profile-photo', function ($views): RedirectResponse|Views {
             $pengguna = Auth::user();
-            $mahasiswa = ($pengguna && $pengguna->tipe === 'MAHASISWA') ? Mahasiswa::where('id_pengguna', $pengguna->id_pengguna)->first() : null;
-            $nama_lengkap = $mahasiswa->nama_lengkap ?? '';
-            $nim = $mahasiswa->nim ?? '';
-            $views->with(compact('nama_lengkap', 'nim'));
+            if (!$pengguna) return Redirect::route('masuk');
+
+            $nama = '';
+            $nim = '';
+            $nip = '';
+
+            if ($pengguna->tipe === 'MAHASISWA') {
+                $mahasiswa = Mahasiswa::where('id_pengguna', $pengguna->id_pengguna)->first();
+                $nama = $mahasiswa->nama_lengkap ?? '';
+                $nim = $mahasiswa->nim ?? '';
+            }
+
+            if ($pengguna->tipe === 'ADMIN') {
+                $admin = Admin::where('id_pengguna', $pengguna->id_pengguna)->first();
+                $nama = $admin->nama ?? '';
+                $nip = $admin->nip ?? '';
+            }
+
+            return $views->with(compact('nama', 'nim', 'nip'));
         });
     }
 }
