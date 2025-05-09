@@ -9,7 +9,7 @@
 
 @section('konten')
     <x-header title="Log Aktivitas" />
-    <main class="flex flex-col pb-10 px-10 transition-all duration-300">
+    <main class="flex flex-col pb-10 px-10 pl-84 transition-all duration-300">
         @include('components.student.log-aktivitas.selamat-datang')
     </main>
 @endsection

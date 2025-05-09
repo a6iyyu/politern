@@ -26,7 +26,7 @@
 --}}
 
 <figure class="cursor-pointer flex items-center gap-4 font-medium text-[#585858]">
-    <figcaption class="flex flex-col text-right text-sm tracking-wider">
+    <figcaption class="hidden flex-col text-right text-sm tracking-wider sm:flex">
         {{ $nama }}
         <br />
         {{ Auth::check() && Auth::user()->tipe === 'MAHASISWA' ? $nim : $nip }}

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\LowonganMagang;
@@ -37,12 +39,13 @@ class Dasbor extends Controller
                 return view('pages.admin.dasbor', compact('jabatan', 'nama', 'nip'));
             })(),
             'MAHASISWA' => (function () use ($pengguna): View {
+                $lowongan = LowonganMagang::with('perusahaan')->orderBy('tanggal_posting', 'desc')->get();
                 $mahasiswa = Mahasiswa::with('program_studi')->where('id_pengguna', $pengguna->id_pengguna)->first();
                 if (!$mahasiswa || !$mahasiswa->program_studi) abort(404, 'Data mahasiswa tidak ditemukan.');
+
                 $prodi = $mahasiswa->program_studi;
                 $ipk = $mahasiswa->ipk;
                 $jenjang = $prodi->jenjang;
-                $lowongan = LowonganMagang::with('perusahaan')->orderBy('tanggal_posting', 'desc')->get();
                 $nama_pengguna = $pengguna->nama_pengguna;
                 $nama_prodi = $prodi->nama;
                 $semester = ucfirst(strtolower($mahasiswa->semester));

@@ -1,4 +1,4 @@
-<aside class="fixed pb-12 z-30 hidden -translate-x-full left-0 top-0 h-full w-76 flex-col space-y-4 border-r-2 border-[#6d6adc] p-6 shadow-2xl bg-[#5955b2] transition-all duration-300 ease-in-out">
+<aside class="fixed pb-12 z-50 translate-x-0 left-0 top-0 h-full w-76 flex-col space-y-4 border-r-2 border-[#6d6adc] p-6 shadow-2xl bg-[#5955b2] transition-all duration-300 ease-in-out">
     <section class="grid place-items-center"></section>
     <nav class="mb-4 mt-2 flex overflow-y-scroll h-full flex-1 flex-col gap-4">
         @if (Auth::check() && Auth::user()->tipe === 'ADMIN')

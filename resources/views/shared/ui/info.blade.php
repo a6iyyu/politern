@@ -1,4 +1,4 @@
-<figure class="border cursor-pointer border-[#dadada] p-6 rounded-xl transition-all duration-300 ease-in-out lg:hover:bg-[#f9f9f9]">
+<figure class="max-w-1/2 w-full border cursor-pointer border-[#dadada] pb-6 pt-4 px-6 rounded-xl transition-all duration-300 ease-in-out lg:max-w-1/3 lg:hover:bg-[#f9f9f9]">
     <section class="flex items-center justify-between gap-6 text-sm">
         <h5 class="font-medium text-sm text-[#4f4f4f]">{{ $title }}</h5>
         <span

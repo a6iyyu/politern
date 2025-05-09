@@ -6,7 +6,7 @@
             icon="fa-solid fa-user-group"
             info="+12% dari tahun lalu"
             title="Total Mahasiswa Magang"
-            :total="256"
+            total="256"
         />
         <x-info
             background="#fdecec"
@@ -14,7 +14,7 @@
             icon="fa-solid fa-user-xmark"
             info="22.6% dari total mahasiswa"
             title="Mahasiswa Belum Magang"
-            :total="189"
+            total="189"
         />
         <x-info
             background="#fef5e6"
@@ -22,7 +22,7 @@
             icon="fa-solid fa-bars-progress"
             info="58.9% dari total mahasiswa"
             title="Mahasiswa Sedang Magang"
-            :total="73"
+            total="73"
         />
         <x-info
             background="#e7f8f2"
@@ -30,7 +30,7 @@
             icon="fa-solid fa-user-check"
             info="18.5% dari total mahasiswa"
             title="Mahasiswa Sudah Magang"
-            :total="73"
+            total="73"
         />
     </div>
 </section>

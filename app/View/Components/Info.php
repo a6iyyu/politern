@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\View\Components;
 
 use Closure;
@@ -8,10 +10,9 @@ use Illuminate\View\Component;
 
 class Info extends Component
 {
-    public int $total;
-    public string $background, $color, $icon, $info, $title;
+    public string $background, $color, $icon, $info, $title, $total;
 
-    public function __construct(int $total, string $background, string $color, string $icon, string $info, string $title)
+    public function __construct(string $background, string $color, string $icon, string $info, string $title, string $total)
     {
         $this->background = $background;
         $this->color = $color;

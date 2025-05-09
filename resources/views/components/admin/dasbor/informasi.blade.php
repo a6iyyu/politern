@@ -6,7 +6,7 @@
             icon="fa-solid fa-user-group"
             info="+12% dari tahun lalu"
             title="Total Mahasiswa Magang"
-            :total="256"
+            total="256"
         />
         <x-info
             background="#e7f8f2"
@@ -14,7 +14,7 @@
             icon="fa-solid fa-user-graduate"
             info="73% dari total mahasiswa"
             title="Mahasiswa Aktif Magang"
-            :total="189"
+            total="189"
         />
         <x-info
             background="#fef5e6"
@@ -22,7 +22,7 @@
             icon="fa-solid fa-building"
             info="Bertambah 5 perusahaan bulan ini"
             title="Perusahaan Mitra"
-            :total="42"
+            total="42"
         />
         <x-info
             background="#fdecec"
@@ -30,7 +30,7 @@
             icon="fa-solid fa-briefcase"
             info="18 lowongan baru minggu ini"
             title="Lowongan Tersedia"
-            :total="68"
+            total="68"
         />
     </div>
 </section>
