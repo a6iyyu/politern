@@ -9,6 +9,9 @@ use Carbon\Carbon;
 use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @method void emit(string $event, mixed ...$params)
+ */
 class FilterLowongan extends Component
 {
     public string $lokasi = '', $namaPerusahaan = '', $tipe = '', $waktuPosting = '';

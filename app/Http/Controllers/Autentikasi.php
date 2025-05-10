@@ -38,15 +38,15 @@ class Autentikasi extends Controller
     {
         try {
             $request->validate([
-                'nama_pengguna' => 'required|string|max:50',
-                'kata_sandi' => 'required|string|max:50',
+                'nama_pengguna' => 'required|string|max:150',
+                'kata_sandi' => 'required|string|max:150',
             ], [
                 'nama_pengguna.required' => 'Harap mengisikan nama pengguna Anda!',
                 'nama_pengguna.string' => 'Nama pengguna harus berupa kalimat!',
-                'nama_pengguna.max' => 'Nama pengguna tidak boleh lebih dari 50 karakter!',
+                'nama_pengguna.max' => 'Nama pengguna tidak boleh lebih dari 150 karakter!',
                 'kata_sandi.required' => 'Isi kata sandi terlebih dahulu!',
                 'kata_sandi.string' => 'Kata sandi harus berupa kalimat!',
-                'kata_sandi.max' => 'Kata sandi tidak boleh lebih dari 50 karakter!',
+                'kata_sandi.max' => 'Kata sandi tidak boleh lebih dari 150 karakter!',
             ]);
 
             $pengguna = Pengguna::where('nama_pengguna', $request->nama_pengguna)->first();
@@ -66,12 +66,12 @@ class Autentikasi extends Controller
             switch ($pengguna->tipe) {
                 case 'ADMIN':
                     $admin = $pengguna->admin;
-                    Session::put(['id_admin' => $admin->id_admin, 'nama_admin' => $admin->nama_admin]);
-                    return redirect()->route('admin.dasbor');
+                    Session::put(['id_admin' => $admin->id_admin, 'nip' => $admin->nip, 'nama_admin' => $admin->nama]);
+                    return to_route('admin.dasbor');
                 case 'MAHASISWA':
                     $mahasiswa = $pengguna->mahasiswa;
                     Session::put(['id_mahasiswa' => $mahasiswa->id_mahasiswa, 'nim' => $mahasiswa->nim, 'nama_lengkap' => $mahasiswa->nama_lengkap]);
-                    return redirect()->route('mahasiswa.dasbor');
+                    return to_route('mahasiswa.dasbor');
                 default:
                     return back()->withErrors(['errors' => 'Tipe pengguna tidak valid.'])->withInput($request->except('kata_sandi'));
             }
@@ -94,6 +94,6 @@ class Autentikasi extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('masuk');
+        return to_route('masuk');
     }
 }

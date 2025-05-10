@@ -20,7 +20,7 @@ class Profil extends Controller
     public function identitas(): Factory|RedirectResponse|View
     {
         $pengguna = Auth::user();
-        if (!$pengguna) return redirect()->route('masuk');
+        if (!$pengguna) return to_route('masuk');
         if (!in_array($pengguna->tipe, ['ADMIN', 'MAHASISWA'])) abort(403, 'Anda tidak memiliki akses.');
 
         $mahasiswa = Mahasiswa::where('id_pengguna', $pengguna->id_pengguna)->first();

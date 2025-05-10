@@ -13,7 +13,7 @@ class AuthorizeUser
 {
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        if (!Session::has('tipe') || strtoupper(Session::get('tipe')) !== strtoupper($role)) return redirect()->route('masuk')->withErrors(['errors' => 'Anda tidak memiliki izin untuk mengakses halaman ini.']);
+        if (!Session::has('tipe') || strtoupper(Session::get('tipe')) !== strtoupper($role)) return to_route('masuk')->withErrors(['errors' => 'Anda tidak memiliki izin untuk mengakses halaman ini.']);
         return $next($request);
     }
 }

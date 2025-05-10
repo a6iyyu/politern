@@ -6,16 +6,19 @@ namespace Tests\Unit;
 
 use App\Models\Pengguna;
 use Faker\Factory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * @test
      * @return void
      */
-    public function can_create_user(): void
+    public function can_create_and_delete_user(): void
     {
         $user = Pengguna::create([
             'nama_pengguna'     => Factory::create()->userName(),
@@ -24,9 +27,12 @@ class UserTest extends TestCase
             'tipe'              => Factory::create()->randomElement(['ADMIN', 'MAHASISWA']),
         ]);
 
+        $this->assertInstanceOf(Pengguna::class, $user);
         $this->assertTrue($user->exists());
-    }
+        echo "[UNIT] Pengguna dengan nama $user->nama_pengguna berhasil dibuat." . PHP_EOL;
 
-    public function can_delete_user()
-    {}
+        $user->delete();
+        $this->assertFalse($user->exists());
+        echo "[UNIT] Pengguna dengan nama $user->nama_pengguna berhasil dihapus." . PHP_EOL;
+    }
 }

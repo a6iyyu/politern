@@ -9,6 +9,7 @@ class Admin extends Model
 {
     protected $table = 'admin';
     protected $primaryKey = 'id_admin';
+    protected $fillable = ['id_pengguna', 'nama', 'nip', 'nomor_telepon', 'jabatan'];
 
     public function pengguna(): BelongsTo
     {

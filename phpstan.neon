@@ -1,0 +1,15 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - routes
+
+    level: 5
+
+    excludePaths:
+        - vendor/*
+        - tests/*
+
+    reportUnmatchedIgnoredErrors: false
