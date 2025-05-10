@@ -8,10 +8,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 Route::middleware('guest')->group(function () {
-    Route::get('/daftar', fn() => view('pages.auth.daftar'))->name('daftar')->withoutMiddleware('auth');
     Route::get('/lupa-kata-sandi', fn() => view('pages.auth.lupa-kata-sandi'))->name('lupa-kata-sandi')->withoutMiddleware('auth');
     Route::get('/masuk', fn() => view('pages.auth.masuk'))->name('masuk')->withoutMiddleware('auth');
-    Route::post('/daftar', [Autentikasi::class, 'daftar'])->name('register')->withoutMiddleware('auth');
     Route::post('/masuk', [Autentikasi::class, 'masuk'])->name('login')->withoutMiddleware('auth');
 });
 
@@ -26,7 +24,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
         Route::get('/data-mahasiswa', fn() => view('pages.admin.data-mahasiswa'))->name('admin.data-mahasiswa');
         Route::get('/data-dosen', fn() => view('pages.admin.data-dosen'))->name('admin.data-dosen');
-        Route::get('/program-studi', fn() => view('pages.admin.program-studi'))->name('admin.program-studi');
         Route::get('/data-perusahaan', fn() => view('pages.admin.data-perusahaan'))->name('admin.data-perusahaan');
         Route::get('/periode-magang', fn() => view('pages.admin.periode-magang'))->name('admin.periode-magang');
         Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');

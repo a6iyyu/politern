@@ -20,7 +20,7 @@
             icon="fa-solid fa-user-group"
             info="Disetujui sejak 2 minggu yang lalu"
             title="Status Magang"
-            total="AKTIF"
+            :total="$status"
         />
         <x-info
             background="#e7f8f2"

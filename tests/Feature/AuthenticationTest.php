@@ -18,7 +18,6 @@ class AuthenticationTest extends TestCase
      * @test
      * @return void
      */
-
     public function admin_can_login_and_redirects_correctly(): void
     {
         $admin = (new Factory())->create([

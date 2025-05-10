@@ -16,7 +16,7 @@ use Illuminate\Validation\ValidationException;
 
 class Autentikasi extends Controller
 {
-    public function daftar(): void
+    public function lupa_kata_sandi(): void
     {
         try {
             // Fais Restu
@@ -38,15 +38,15 @@ class Autentikasi extends Controller
     {
         try {
             $request->validate([
-                'nama_pengguna' => 'required|string|max:150',
-                'kata_sandi' => 'required|string|max:150',
+                'nama_pengguna'          => 'required|string|max:150',
+                'kata_sandi'             => 'required|string|max:150',
             ], [
                 'nama_pengguna.required' => 'Harap mengisikan nama pengguna Anda!',
-                'nama_pengguna.string' => 'Nama pengguna harus berupa kalimat!',
-                'nama_pengguna.max' => 'Nama pengguna tidak boleh lebih dari 150 karakter!',
-                'kata_sandi.required' => 'Isi kata sandi terlebih dahulu!',
-                'kata_sandi.string' => 'Kata sandi harus berupa kalimat!',
-                'kata_sandi.max' => 'Kata sandi tidak boleh lebih dari 150 karakter!',
+                'nama_pengguna.string'   => 'Nama pengguna harus berupa kalimat!',
+                'nama_pengguna.max'      => 'Nama pengguna tidak boleh lebih dari 150 karakter!',
+                'kata_sandi.required'    => 'Isi kata sandi terlebih dahulu!',
+                'kata_sandi.string'      => 'Kata sandi harus berupa kalimat!',
+                'kata_sandi.max'         => 'Kata sandi tidak boleh lebih dari 150 karakter!',
             ]);
 
             $pengguna = Pengguna::where('nama_pengguna', $request->nama_pengguna)->first();
