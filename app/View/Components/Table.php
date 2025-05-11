@@ -10,9 +10,12 @@ use Illuminate\View\Component;
 
 class Table extends Component
 {
-    public function __construct()
+    public array $headers, $rows;
+
+    public function __construct(array $headers, array $rows)
     {
-        /** Ayleen */
+        $this->headers = $headers;
+        $this->rows = $rows;
     }
 
     public function render(): View|Closure|string

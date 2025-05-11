@@ -1,5 +1,5 @@
 <section>
-    <h4 class="cursor-default mt-10 mb-5 text-2xl font-semibold text-[#5955b2]">
+    <h4 class="cursor-default mt-10 mb-5 text-xl font-semibold text-[#5955b2]">
         Rekomendasi Magang
     </h4>
     <article class="max-h-[70vh] overflow-y-auto pr-2">

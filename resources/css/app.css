@@ -29,3 +29,17 @@
         margin: 0;
     }
 }
+
+/* Wana-wana */
+:root {
+    --primary: #5955B2;
+    --secondary: #FF77C3;
+    --background: #FBFBFB;
+    --tersier-hijau: #10B981;
+    --tersier-merah: #EF4545;
+    --tersier-kuning: #F59E0B;
+    --tersier-biru: #2C6CD3;
+    --text-primary: #4f4f4f;
+    --text-secondary: #757575;
+    --stroke: #DADADA;
+}
