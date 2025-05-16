@@ -1,6 +1,19 @@
 @import "tailwindcss";
 @source "../views";
 
+:root {
+    --primary: #5955b2;
+    --secondary: #ff77c3;
+    --background: #fbfbfb;
+    --tersier-hijau: #10b981;
+    --tersier-merah: #ef4545;
+    --tersier-kuning: #f59e0b;
+    --tersier-biru: #2c6cd3;
+    --text-primary: #4f4f4f;
+    --text-secondary: #757575;
+    --stroke: #dadada;
+}
+
 @media screen and (max-width: 3120px) {
     ::-webkit-scrollbar {
         display: none !important;
@@ -28,18 +41,4 @@
         -webkit-appearance: none;
         margin: 0;
     }
-}
-
-/* Wana-wana */
-:root {
-    --primary: #5955B2;
-    --secondary: #FF77C3;
-    --background: #FBFBFB;
-    --tersier-hijau: #10B981;
-    --tersier-merah: #EF4545;
-    --tersier-kuning: #F59E0B;
-    --tersier-biru: #2C6CD3;
-    --text-primary: #4f4f4f;
-    --text-secondary: #757575;
-    --stroke: #DADADA;
 }

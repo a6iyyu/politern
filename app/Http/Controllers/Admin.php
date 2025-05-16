@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
@@ -19,15 +20,6 @@ use Illuminate\View\View;
  */
 class Admin extends Controller
 {
-    public function index(): void
-    {
-        try {
-            // To be announced...            
-        } catch (Exception $exception) {
-            Log::error('Terjadi kesalahan: ', ['errors' => $exception->getMessage()]);
-        }
-    }
-
     public function kelola_lamaran(): Factory|View
     {
         try {
