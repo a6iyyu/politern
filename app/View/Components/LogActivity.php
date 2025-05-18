@@ -10,13 +10,22 @@ use Illuminate\View\Component;
 
 class LogActivity extends Component
 {
-    public function __construct()
+    public string $judul, $tanggal, $deskripsi, $gambar, $status, $detailUrl, $editUrl, $hapusUrl;
+
+    public function __construct(string $judul, string $tanggal, string $deskripsi, string $gambar, string $status, string $detailUrl = "#", string $editUrl = "#", string $hapusUrl = "#")
     {
-        /** Ayleen */
+        $this->judul = $judul;
+        $this->tanggal = $tanggal;
+        $this->deskripsi = $deskripsi;
+        $this->gambar = $gambar;
+        $this->status = $status;
+        $this->detailUrl = $detailUrl;
+        $this->editUrl = $editUrl;
+        $this->hapusUrl = $hapusUrl;
     }
 
     public function render(): View|Closure|string
     {
-        return view('shared.ui.log-activity');
+        return view('shared.ui.log-activity-card');
     }
 }

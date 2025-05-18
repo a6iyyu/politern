@@ -1,4 +1,4 @@
-<figure class="rounded-xl px-7 py-5 border border-[#dadada]">
+<figure class="bg-white rounded-xl px-7 py-5 border border-[#dadada]">
     <span class="cursor-default flex justify-between">
         <figcaption class="space-y-1">
             <h4 class="text-[#5955b2] font-semibold">
