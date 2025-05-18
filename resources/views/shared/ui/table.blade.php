@@ -1,41 +1,34 @@
-<div class="w-full mt-6">
-    <div class="overflow-x-auto rounded-md border border-gray-200">
-        <table class="min-w-full text-xs text-left text-gray-700">
-            <thead class="bg-[var(--primary)] text-white">
-                <tr>
-                    @foreach ($headers as $header)
-                        <th scope="col" class="px-6 py-4 font-normal">{{ $header }}</th>
+<section class="relative w-full overflow-x-auto rounded-lg shadow">
+    <table class="w-full min-w-max table-auto border-collapse cursor-default">
+        <thead class="bg-[var(--primary)] text-white">
+            <tr>
+                @foreach ($headers as $header)
+                    <th class="w-1/{{ count($headers) }} px-6 py-4 text-center font-bold tracking-wider uppercase">
+                        <div class="flex items-center justify-center space-x-2 text-xs whitespace-nowrap">
+                            <h5>{{ $header }}</h5>
+                            @if (in_array(strtolower($header), array_map('strtolower', $sortable)))
+                                <i class="fa-solid fa-sort hover:text-green-dark cursor-pointer"></i>
+                            @endif
+                        </div>
+                    </th>
+                @endforeach
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($rows as $row)
+                <tr class="border-b text-sm transition-all duration-200">
+                    @foreach ($row as $index => $cell)
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            <section class="flex cursor-default items-center justify-center space-x-3 text-[10pt]">
+                                {!! $cell !!}
+                            </section>
+                        </td>
                     @endforeach
                 </tr>
-            </thead>
-            <tbody class="bg-white">
-                @foreach ($rows as $row)
-                    <tr class="border-b border-[var(--stroke)]">
-                        @foreach ($row as $key => $value)
-                            <td class="px-6 py-3">
-                                @if ($key === 'status')
-                                    @php
-                                        $colorMap = [
-                                            'Diterima' => 'bg-[var(--tersier-hijau)] text-white border-[var(--tersier-hijau)]',
-                                            'Menunggu' => 'bg-white text-[var(--tersier-kuning)] border-[var(--tersier-kuning)]',
-                                            'Ditolak' => 'bg-white text-[var(--tersier-merah)] border-[var(--tersier-merah)]',
-                                        ];
-                                    @endphp
-                                    <span class="inline-block w-[100px] text-center px-3 py-2 text-xs font-medium rounded border {{ $colorMap[$value] ?? '' }}">
-                                        {{ $value }}
-                                    </span>
-                                @elseif ($key === 'aksi')
-                                    <a href="{{ $value }}" class="inline-block w-[100px] text-center px-3 py-2 cursor-pointer bg-[var(--tersier-biru)] text-white text-xs font-medium rounded hover:bg-blue-700 transition">
-                                        Detail
-                                    </a>
-                                @else
-                                    {{ $value }}
-                                @endif
-                            </td>
-                        @endforeach
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
+            @endforeach
+        </tbody>
+    </table>
+</section>
+@if (isset($data) && ! $data->isEmpty())
+    {{ $data }}
+@endif

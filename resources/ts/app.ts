@@ -10,6 +10,7 @@
  * - profile-photo.ts: Logika interaksi foto profil.
  * - save-intern.ts: Logika penyimpanan data magang.
  * - search.ts: Logika pencarian data.
+ * - sorting.ts: Logika pengurutan data pada komponen tabel.
  */
 
 import "./bootstrap";
@@ -19,3 +20,4 @@ import "./hamburger-menu";
 import "./profile-photo";
 import "./save-intern";
 import "./search";
+import "./sorting";

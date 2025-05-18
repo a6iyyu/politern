@@ -1,4 +1,7 @@
-<section class="mt-4 w-full overflow-x-auto">
+<h5 class="cursor-default mt-1 font-semibold text-xl text-[#585858]">
+    Selamat Datang, {{ ucfirst($nama) ?? "N/A" }}!
+</h5>
+<section class="mt-7 w-full overflow-x-auto">
     <div class="flex gap-4 min-w-max">
         <x-info
             background="#ebf2fe"
