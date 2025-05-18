@@ -1,4 +1,4 @@
-<div class="bg-white rounded-lg overflow-hidden shadow-sm mb-6">
+<div class="bg-white rounded-lg overflow-hidden shadow-sm mb-6 border border-[var(--stroke)]">
     <div class="bg-[var(--primary)] py-3 px-6 text-white">
         <h3 class="text-sm">{{ $judul }}</h3>
     </div>

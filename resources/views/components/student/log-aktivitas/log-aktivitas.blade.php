@@ -1,5 +1,5 @@
 <section>
-    <article class="max-h-[70vh] overflow-y-auto mt-10 pr-2">
+    <article class="max-h-[70vh] overflow-y-auto mt-10">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <x-log-activity 
                 judul="Minggu ke-1 : Pengenalan Perusahaan & Orientasi"

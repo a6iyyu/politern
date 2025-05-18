@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/periode-magang', fn() => view('pages.admin.periode-magang'))->name('admin.periode-magang');
         Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
         Route::get('/pengajuan-magang', fn() => view('pages.admin.pengajuan-magang'))->name('admin.pengajuan-magang');
+        Route::get('/aktivitas-magang', fn() => view('pages.admin.aktivitas-magang'))->name('admin.aktivitas-magang');
     });
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {

@@ -1,9 +1,9 @@
 <section>
-    <h4 class="cursor-default mt-10 mb-5 text-xl font-semibold text-[#5955b2]">
+    <h4 class="cursor-default mt-10 mb-5 text-lg font-semibold text-[var(--primary)]">
         Rekomendasi Magang
     </h4>
     <article class="max-h-[70vh] overflow-y-auto pr-2">
-        <div class="flex flex-col gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @foreach ($lowongan as $item)
                 <x-card
                     :category="$item->bidang_keahlian ?? 'N/A'"

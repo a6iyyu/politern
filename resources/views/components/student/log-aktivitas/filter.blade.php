@@ -32,7 +32,7 @@
 
     <div class="ml-auto mt-auto justify-end">
         <a href="#"
-            class="flex items-center gap-2 px-4 py-3 text-sm text-white bg-[var(--tersier-hijau)] rounded-md hover:bg-[var(--tersier-hijau)] text-center">
+            class="flex items-center gap-2 px-4 py-2 text-sm text-white bg-[var(--tersier-hijau)] rounded-md hover:bg-[var(--tersier-hijau)] text-center">
             <i class="fa-solid fa-plus text-white"></i>
             Tambah Log Aktivitas
         </a>
