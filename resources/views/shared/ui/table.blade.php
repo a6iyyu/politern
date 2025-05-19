@@ -1,9 +1,9 @@
-<section class="relative w-full overflow-x-auto rounded-lg shadow">
+<section class="relative w-full overflow-x-auto rounded-lg">
     <table class="w-full min-w-max table-auto border-collapse cursor-default">
         <thead class="bg-[var(--primary)] text-white">
             <tr>
                 @foreach ($headers as $header)
-                    <th class="w-1/{{ count($headers) }} px-6 py-4 text-center font-bold tracking-wider uppercase">
+                    <th class="w-1/{{ count($headers) }} px-6 py-4 text-right font-medium tracking-wider uppercase">
                         <div class="flex items-center justify-center space-x-2 text-xs whitespace-nowrap">
                             <h5>{{ $header }}</h5>
                             @if (in_array(strtolower($header), array_map('strtolower', $sortable)))
@@ -16,9 +16,9 @@
         </thead>
         <tbody>
             @foreach ($rows as $row)
-                <tr class="border-b text-sm transition-all duration-200">
+                <tr class="border-b border-[var(--stroke)] text-sm text-[var(--text-primary)] transition-all duration-200">
                     @foreach ($row as $index => $cell)
-                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                        <td class="px-6 py-4 whitespace-nowrap">
                             <section class="flex cursor-default items-center justify-center space-x-3 text-[10pt]">
                                 {!! $cell !!}
                             </section>
