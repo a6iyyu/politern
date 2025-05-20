@@ -59,7 +59,7 @@ class Dasbor extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @return void
      *
      * Fungsi ini bertujuan untuk menampilkan halaman rekomendasi magang

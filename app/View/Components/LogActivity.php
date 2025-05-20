@@ -10,18 +10,15 @@ use Illuminate\View\Component;
 
 class LogActivity extends Component
 {
-    public string $judul, $tanggal, $deskripsi, $gambar, $status, $detailUrl, $editUrl, $hapusUrl;
+    public string $judul, $tanggal, $deskripsi, $gambar, $status;
 
-    public function __construct(string $judul, string $tanggal, string $deskripsi, string $gambar, string $status, string $detailUrl = "#", string $editUrl = "#", string $hapusUrl = "#")
+    public function __construct(string $judul, string $tanggal, string $deskripsi, string $gambar, string $status)
     {
         $this->judul = $judul;
         $this->tanggal = $tanggal;
         $this->deskripsi = $deskripsi;
         $this->gambar = $gambar;
         $this->status = $status;
-        $this->detailUrl = $detailUrl;
-        $this->editUrl = $editUrl;
-        $this->hapusUrl = $hapusUrl;
     }
 
     public function render(): View|Closure|string

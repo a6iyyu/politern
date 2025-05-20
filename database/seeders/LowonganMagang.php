@@ -12,6 +12,7 @@ class LowonganMagang extends Seeder
     {
         DB::table('lowongan_magang')->insert([
             [
+                'id_lowongan'                  => 1,
                 'id_perusahaan_mitra'          => 1,
                 'id_periode'                   => 1,
                 'judul'                        => 'Frontend Developer',
@@ -32,6 +33,7 @@ class LowonganMagang extends Seeder
                 'updated_at'                   => Carbon::now(),
             ],
             [
+                'id_lowongan'                  => 2,
                 'id_perusahaan_mitra'          => 1,
                 'id_periode'                   => 1,
                 'judul'                        => 'UI/UX Designer',
@@ -52,6 +54,7 @@ class LowonganMagang extends Seeder
                 'updated_at'                   => Carbon::now(),
             ],
             [
+                'id_lowongan'                  => 3,
                 'id_perusahaan_mitra'          => 1,
                 'id_periode'                   => 1,
                 'judul'                        => 'Backend Developer',
@@ -72,6 +75,7 @@ class LowonganMagang extends Seeder
                 'updated_at'                   => Carbon::now(),
             ],
             [
+                'id_lowongan'                  => 4,
                 'id_perusahaan_mitra'          => 1,
                 'id_periode'                   => 1,
                 'judul'                        => 'Fullstack Developer',

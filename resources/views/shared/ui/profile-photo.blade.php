@@ -32,7 +32,7 @@
         {{ Auth::check() && Auth::user()->tipe === 'MAHASISWA' ? $nim : $nip }}
     </figcaption>
     <img
-        src="{{ asset('shared/default-profile.png') }}"
+        src="{{ asset('shared/profil.png') }}"
         alt="Foto Profil"
         class="h-12 w-12 object-cover rounded-full"
         loading="lazy"

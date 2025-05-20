@@ -1,20 +1,30 @@
-<div class="rounded-lg overflow-hidden bg-white border border-[var(--stroke)]">
-  <div class="px-6 py-3 border-b border-[var(--stroke)]">
-    <h2 class="text-[var(--primary)] font-semibold text-base">Informasi Magang Aktif</h2>
-  </div>
-  <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-[var(--text-secondary)]">
-    <div>
-      <p><span class="font-semibold text-[var(--text-primary)]">Perusahaan</span> : PT Otsuka Amerta Indah</p>
-      <p class="mt-3"><span class="font-semibold text-[var(--text-primary)]">Posisi</span> : Magang Frontend Developer</p>
-      <p class="mt-3"><span class="font-semibold text-[var(--text-primary)]">Dosen Pembimbing</span> : Moch. Zawaruddin Abdullah, S.ST., M.Kom.</p>
-    </div>
-    <div>
-      <p><span class="font-semibold text-[var(--text-primary)]">Periode</span> : 1 Feb 2025 – 31 Jul 2025</p>
-      <p class="mt-3"><span class="font-semibold text-[var(--text-primary)]">Total Log</span> : 12 dari 24 minggu</p>
-      <p class="mt-3">
-        <span class="font-semibold text-[var(--text-primary)]">Status</span> :
-        <span class="inline-block px-2 py-1 bg-[var(--tersier-hijau)] text-white text-xs font-semibold rounded-md ml-1">Aktif</span>
-      </p>
-    </div>
-  </div>
-</div>
+<figure class="cursor-default mt-2 bg-white rounded-lg px-8 py-6 w-full border border-[#dadada]">
+    <h4 class="font-bold text-base text-[#5955b2] lg:text-xl">Informasi Magang Aktif</h4>
+    <hr class="my-3 border border-[#dadada]" />
+    <figcaption class="grid grid-cols-1 gap-y-3 text-sm text-[#585858] lg:grid-cols-2">
+        <span class="flex items-center gap-2">
+            <strong>Perusahaan:</strong>
+            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+        </span>
+        <span class="flex items-center gap-2">
+            <strong>Periode:</strong>
+            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+        </span>
+        <span class="flex items-center gap-2">
+            <strong>Posisi:</strong>
+            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+        </span>
+        <span class="flex items-center gap-2">
+            <strong>Total Log:</strong>
+            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+        </span>
+        <span class="flex items-center gap-2">
+            <strong>Dosen Pembimbing:</strong>
+            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+        </span>
+        <span class="flex items-center gap-2">
+            <strong>Status:</strong>
+            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+        </span>
+    </figcaption>
+</figure>

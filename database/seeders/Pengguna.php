@@ -65,6 +65,15 @@ class Pengguna extends Seeder
                 'created_at'    => now(),
                 'updated_at'    => now(),
             ],
+            [
+                'id_pengguna'   => 7,
+                'nama_pengguna' => 'dosen',
+                'email'         => 'dosen@gmail.com',
+                'kata_sandi'    => Hash::make('123'),
+                'tipe'          => 'DOSEN PEMBIMBING',
+                'created_at'    => now(),
+                'updated_at'    => now(),
+            ],
         ]);
     }
 }

@@ -12,14 +12,15 @@ use Illuminate\View\Component;
 class Card extends Component
 {
     public Carbon $createdAt;
-    public string $category, $industry, $location, $maxSalary, $minSalary, $name, $status, $type;
+    public string $category, $industry, $location, $logo, $maxSalary, $minSalary, $name, $status, $type;
 
-    public function __construct(string $category, Carbon $createdAt, string $industry, string $location, string $maxSalary, string $minSalary, string $name, string $status, string $type)
+    public function __construct(string $category, Carbon $createdAt, string $industry, string $location, string $logo, string $maxSalary, string $minSalary, string $name, string $status, string $type)
     {
         $this->category = $category;
         $this->createdAt = $createdAt;
         $this->industry = $industry;
         $this->location = $location;
+        $this->logo = $logo;
         $this->maxSalary = $maxSalary;
         $this->minSalary = $minSalary;
         $this->name = $name;

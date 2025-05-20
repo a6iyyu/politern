@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Autentikasi;
 use App\Http\Controllers\Dasbor;
+use App\Http\Controllers\LogAktivitas;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -35,8 +36,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa.dasbor');
         Route::get('/lowongan', fn() => view('pages.student.lowongan'))->name('mahasiswa.lowongan');
         Route::get('/kelola-lamaran', fn() => view('pages.student.kelola-lamaran'))->name('mahasiswa.kelola-lamaran');
-        Route::get('/log-aktivitas', fn() => view('pages.student.log-aktivitas'))->name('mahasiswa.log-aktivitas');
         Route::get('/cari-lowongan', [Dasbor::class, 'index'])->name('mahasiswa.cari-lowongan');
+
+        Route::resource('log-aktivitas', LogAktivitas::class)->parameters(['log-aktivitas' => 'log'])->names([
+            'index'     => 'mahasiswa.log-aktivitas',
+            'create'    => 'mahasiswa.log-aktivitas.tambah',
+            'edit'      => 'mahasiswa.log-aktivitas.ubah',
+            'update'    => 'mahasiswa.log-aktivitas.perbarui',
+            'destroy'   => 'mahasiswa.log-aktivitas.hapus',
+        ]);
     });
 
     Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');

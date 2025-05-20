@@ -1,6 +1,6 @@
 <aside class="fixed pb-12 z-50 translate-x-0 left-0 top-0 h-full w-76 flex-col space-y-4 border-r-2 rounded-r-2xl border-[#6d6adc] p-6 shadow-2xl bg-[var(--primary)] transition-all duration-300 ease-in-out">
     <section class="grid place-items-center"></section>
-    <nav class="mb-4 mt-2 flex overflow-y-scroll h-full flex-1 flex-col gap-2">
+    <nav class="mb-4 mt-2 flex overflow-y-scroll h-full flex-1 flex-col gap-4">
         @if (Auth::check() && Auth::user()->tipe === 'ADMIN')
             <a href="{{ route('admin.dasbor') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('admin') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('admin') ? asset('icons/dasbor-biru.svg') : asset('icons/dasbor-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
