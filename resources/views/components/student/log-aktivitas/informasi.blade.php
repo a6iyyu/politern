@@ -1,6 +1,6 @@
-<figure class="cursor-default mt-2 bg-white rounded-lg px-8 py-6 w-full border border-[#dadada]">
+<figure class="cursor-default mt-2 bg-white rounded-lg px-8 py-6 w-full border border-[var(--stroke)]">
     <h4 class="font-bold text-base text-[#5955b2] lg:text-xl">Informasi Magang Aktif</h4>
-    <hr class="my-3 border border-[#dadada]" />
+    <hr class="my-3 border border-[var(--stroke)]" />
     <figcaption class="grid grid-cols-1 gap-y-3 text-sm text-[#585858] lg:grid-cols-2">
         <span class="flex items-center gap-2">
             <strong>Perusahaan:</strong>

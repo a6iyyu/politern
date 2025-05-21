@@ -16,7 +16,7 @@
         </thead>
         <tbody>
             @foreach ($rows as $row)
-                <tr class="border-b border-[var(--stroke)] text-sm text-[var(--text-primary)] transition-all duration-200">
+                <tr class="border-b border-[var(--stroke)] text-sm text-[var(--primary-text)] transition-all duration-200">
                     @foreach ($row as $index => $cell)
                         <td class="px-6 py-4 whitespace-nowrap">
                             <section class="flex cursor-default items-center justify-center space-x-3 text-[10pt]">

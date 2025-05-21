@@ -2,15 +2,15 @@
 @source "../views";
 
 :root {
+    --background: #fbfbfb;
     --primary: #5955b2;
     --secondary: #ff77c3;
-    --background: #fbfbfb;
-    --tersier-hijau: #10b981;
-    --tersier-merah: #ef4545;
-    --tersier-kuning: #f59e0b;
-    --tersier-biru: #2c6cd3;
-    --text-primary: #4f4f4f;
-    --text-secondary: #757575;
+    --primary-text: #4f4f4f;
+    --secondary-text: #757575;
+    --green-tertiary: #10b981;
+    --red-tertiary: #ef4545;
+    --yellow-tertiary: #f59e0b;
+    --blue-tertiary: #2c6cd3;
     --stroke: #dadada;
 }
 

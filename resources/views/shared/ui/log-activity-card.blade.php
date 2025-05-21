@@ -1,4 +1,4 @@
-<figure class="bg-white border border-[#dadada] rounded-xl">
+<figure class="bg-white border border-[var(--stroke)] rounded-xl">
     <section class="cursor-default text-white text-xs font-semibold px-5 py-3 rounded-t-xl bg-[var(--primary)] lg:text-sm">
         {{ $judul }}
     </section>
@@ -14,7 +14,9 @@
         </figcaption>
         <h5 class="mt-3">
             Status:
-            <span class="ml-2 font-semibold @if ($status === "DITERIMA") bg-emerald-500 text-white px-2 py-1 rounded @elseif ($status === "DITOLAK") bg-rose-500 text-white px-2 py-1 rounded @else bg-amber-500 text-white px-2 py-1 rounded @endif">{{ $status }}</span>
+            <span class="ml-2 font-semibold @if ($status === "DITERIMA") bg-emerald-500 text-white px-2 py-1 rounded @elseif ($status === "DITOLAK") bg-rose-500 text-white px-2 py-1 rounded @else bg-amber-500 text-white px-2 py-1 rounded @endif">
+                {{ $status }}
+            </span>
         </h5>
         <div class="flex justify-end">
             {{ $attributes }}

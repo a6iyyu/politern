@@ -4,7 +4,7 @@
     </h4>
     <x-table
         :headers="['ID', 'Nama Perusahaan', 'Posisi Magang', 'Tanggal Pengajuan', 'Status', 'Aksi']"
-        :sortable="['Tanggal Pengajuan', 'Status']"
+        :sortable="['Tanggal Pengajuan']"
         :rows="[
             [
                 'ID' => 1,

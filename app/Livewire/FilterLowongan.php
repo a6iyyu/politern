@@ -6,6 +6,7 @@ namespace App\Livewire;
 
 use App\Models\LowonganMagang;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -14,11 +15,18 @@ use Livewire\Component;
  */
 class FilterLowongan extends Component
 {
-    public string $lokasi = '', $namaPerusahaan = '', $tipe = '', $waktuPosting = '';
+    public Collection $hasil;
     public ?int $gajiMaksimal = null, $gajiMinimal = null;
+    public string $lokasi = '', $namaPerusahaan = '', $tipe = '', $waktuPosting = '';
 
-    public function search()
+    public function mount(): void
     {
+        $this->hasil = collect();
+    }
+
+    public function search(): void
+    {
+        $this->resetErrorBag();
         $query = LowonganMagang::query();
 
         if ($this->gajiMaksimal && $this->gajiMinimal && $this->gajiMinimal > $this->gajiMaksimal) {
@@ -32,8 +40,7 @@ class FilterLowongan extends Component
         if ($this->namaPerusahaan) $query->where('nama_perusahaan', 'like', "%$this->namaPerusahaan%");
         if ($this->tipe) $query->where('tipe', 'like', "%$this->tipe%");
         if ($this->waktuPosting) $query->where('created_at', '>=', Carbon::now()->subDays((int) $this->waktuPosting));
-
-        $this->emit('search', $query->get());
+        $this->hasil = $query->get();
     }
 
     public function render(): View

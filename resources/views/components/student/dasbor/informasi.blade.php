@@ -31,14 +31,6 @@
             total="12"
         />
         <x-info
-            background="#fef5e6"
-            color="#f59e0b"
-            icon="fa-solid fa-building"
-            info="Lowongan yang sesuai profil"
-            title="Rekomendasi"
-            total="8"
-        />
-        <x-info
             background="#fdecec"
             color="#ef4545"
             icon="fa-solid fa-briefcase"
