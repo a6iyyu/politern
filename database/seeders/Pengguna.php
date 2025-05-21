@@ -70,7 +70,7 @@ class Pengguna extends Seeder
                 'nama_pengguna' => 'dosen',
                 'email'         => 'dosen@gmail.com',
                 'kata_sandi'    => Hash::make('123'),
-                'tipe'          => 'DOSEN PEMBIMBING',
+                'tipe'          => 'DOSEN',
                 'created_at'    => now(),
                 'updated_at'    => now(),
             ],

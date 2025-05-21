@@ -21,7 +21,7 @@ class Profil extends Controller
     {
         $pengguna = Auth::user();
         if (!$pengguna) return to_route('masuk');
-        if (!in_array($pengguna->tipe, ['ADMIN', 'MAHASISWA'])) abort(403, 'Anda tidak memiliki akses.');
+        if (!in_array($pengguna->tipe, ['ADMIN', 'MAHASISWA', 'DOSEN'])) abort(403, 'Anda tidak memiliki akses.');
 
         $mahasiswa = Mahasiswa::where('id_pengguna', $pengguna->id_pengguna)->first();
         $nama_lengkap = $mahasiswa->nama_lengkap;

@@ -72,6 +72,10 @@ class Autentikasi extends Controller
                     $mahasiswa = $pengguna->mahasiswa;
                     Session::put(['id_mahasiswa' => $mahasiswa->id_mahasiswa, 'nim' => $mahasiswa->nim, 'nama_lengkap' => $mahasiswa->nama_lengkap]);
                     return to_route('mahasiswa.dasbor');
+                case 'DOSEN':
+                    $dosen = $pengguna->dosen;
+                    Session::put(['id_dosen' => $dosen->id_dosen, 'nip' => $dosen->nip, 'nama_dosen' => $dosen->nama]);
+                    return to_route('dosen.dasbor');
                 default:
                     return back()->withErrors(['errors' => 'Tipe pengguna tidak valid.'])->withInput($request->except('kata_sandi'));
             }

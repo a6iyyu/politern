@@ -62,5 +62,19 @@
                 <h4 class="ml-7 text-sm tracking-wider">Log Aktivitas</h4>
             </a>
         @endif
+        @if (Auth::check() && Auth::user()->tipe === 'DOSEN')
+            <a href="{{ route('dosen.dasbor') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('dosen') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
+                <img src="{{ Request::is('dosen') ? asset('icons/dasbor-biru.svg') : asset('icons/dasbor-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
+                <h4 class="ml-7 text-sm tracking-wider">Dasbor</h4>
+            </a>
+            <a href="{{ route('dosen.data-mahasiswa') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('dosen/data-mahasiswa*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
+                <img src="{{ Request::is('dosen/data-mahasiswa*') ? asset('icons/data-mahasiswa-biru.svg') : asset('icons/data-mahasiswa-putih.svg') }}" alt="Data Mahasiswa" class="h-5 w-5" />
+                <h4 class="ml-7 text-sm tracking-wider">Data Mahasiswa</h4>
+            </a>
+            <a href="{{ route('dosen.log-aktivitas') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('dosen/log-aktivitas*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
+                <img src="{{ Request::is('dosen/log-aktivitas*') ? asset('icons/log-aktivitas-biru.svg') : asset('icons/log-aktivitas-putih.svg') }}" alt="Log Aktivitas" class="h-5 w-5" />
+                <h4 class="ml-7 text-sm tracking-wider">Log Aktivitas</h4>
+            </a>
+        @endif
     </nav>
 </aside>

@@ -23,4 +23,9 @@ class Pengguna extends Authenticable
     {
         return $this->hasOne(Mahasiswa::class, 'id_pengguna', 'id_pengguna');
     }
+
+    public function dosen(): HasOne
+    {
+        return $this->hasOne(Dosen::class, 'id_pengguna', 'id_pengguna');
+    }
 }

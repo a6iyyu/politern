@@ -31,7 +31,7 @@ class Dasbor extends Controller
          */
         $pengguna = Auth::user();
         if (!$pengguna) return to_route('masuk');
-        if (!in_array($pengguna->tipe, ['ADMIN', 'MAHASISWA'])) abort(403, 'Anda tidak memiliki akses.');
+        if (!in_array($pengguna->tipe, ['ADMIN', 'MAHASISWA', 'DOSEN'])) abort(403, 'Anda tidak memiliki akses.');
 
         return match ($pengguna->tipe) {
             'ADMIN' => (function () use ($pengguna): View {
@@ -53,6 +53,11 @@ class Dasbor extends Controller
                 $semester = ucfirst(strtolower($mahasiswa->semester));
                 $status = $mahasiswa->status;
                 return view('pages.student.dasbor', compact('ipk', 'jenjang', 'log_aktivitas', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status'));
+            })(),
+            'DOSEN' => (function () use ($pengguna): View {
+                $nama = $pengguna->dosen->nama;
+                $nidn = $pengguna->dosen->nidn;
+                return view('pages.dosen.dasbor', compact('nama', 'nidn'));
             })(),
             default => abort(403),
         };

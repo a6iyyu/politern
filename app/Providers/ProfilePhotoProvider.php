@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Admin;
+use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,12 @@ class ProfilePhotoProvider extends ServiceProvider
                 $admin = Admin::where('id_pengguna', $pengguna->id_pengguna)->first();
                 $nama = $admin->nama ?? '';
                 $nip = $admin->nip ?? '';
+            }
+
+            if ($pengguna->tipe === 'DOSEN') {
+                $dosen = Dosen::where('id_pengguna', $pengguna->id_pengguna)->first();
+                $nama = $dosen->nama ?? '';
+                $nip = $dosen->nip ?? '';
             }
 
             return $views->with(compact('nama', 'nim', 'nip'));

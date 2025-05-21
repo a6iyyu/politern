@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->string('nama_pengguna')->unique('nama_pengguna');
             $table->string('email');
             $table->string('kata_sandi');
-            $table->enum('tipe', ['ADMIN', 'DOSEN PEMBIMBING', 'MAHASISWA']);
+            $table->enum('tipe', ['ADMIN', 'DOSEN', 'MAHASISWA']);
             $table->timestamps();
             $table->rememberToken();
         });

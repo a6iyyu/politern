@@ -17,7 +17,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
         $tipe = strtolower(Session::get('tipe'));
-        if (!in_array($tipe, ['admin', 'mahasiswa'])) return Redirect::route('keluar');
+        if (!in_array($tipe, ['admin', 'mahasiswa', 'dosen'])) return Redirect::route('keluar');
         return Redirect::route("{$tipe}.dasbor");
     })->name('beranda');
 
@@ -45,6 +45,12 @@ Route::middleware('auth')->group(function () {
             'update'    => 'mahasiswa.log-aktivitas.perbarui',
             'destroy'   => 'mahasiswa.log-aktivitas.hapus',
         ]);
+    });
+
+    Route::middleware(['authorize:DOSEN'])->prefix('dosen')->group(function () {
+        Route::get('/', [Dasbor::class, 'index'])->name('dosen.dasbor');
+        Route::get('/data-mahasiswa', fn() => view('pages.dosen.data-mahasiswa'))->name('dosen.data-mahasiswa');
+        Route::get('/log-aktivitas', fn() => view('pages.dosen.log-aktivitas'))->name('dosen.log-aktivitas');
     });
 
     Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');

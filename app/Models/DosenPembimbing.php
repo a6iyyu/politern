@@ -9,9 +9,15 @@ class DosenPembimbing extends Model
 {
     protected $table = 'dosen_pembimbing';
     protected $primaryKey = 'id_dosen_pembimbing';
+    public $timestamps = true;
 
-    public function pengguna(): BelongsTo
+    protected $fillable = [
+        'id_dosen',
+        'jumlah_bimbingan',
+    ];
+
+    public function dosen()
     {
-        return $this->belongsTo(Pengguna::class, 'id_pengguna', 'id_pengguna');
+        return $this->belongsTo(Dosen::class, 'id_dosen', 'id_dosen');
     }
 }

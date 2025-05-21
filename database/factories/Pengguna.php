@@ -17,7 +17,7 @@ class Pengguna extends Factory
             'nama_pengguna'     => $this->faker->userName(),
             'email'             => $this->faker->safeEmail(),
             'kata_sandi'        => bcrypt('BocchiMainGitar123!'),
-            'tipe'              => $this->faker->randomElement(['ADMIN', 'MAHASISWA']),
+            'tipe'              => $this->faker->randomElement(['ADMIN', 'MAHASISWA', 'DOSEN']),
         ];
     }
 
