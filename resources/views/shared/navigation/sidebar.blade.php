@@ -67,6 +67,7 @@
                 <img src="{{ Request::is('dosen') ? asset('icons/dasbor-biru.svg') : asset('icons/dasbor-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
                 <h4 class="ml-7 text-sm tracking-wider">Dasbor</h4>
             </a>
+            <h4 class="cursor-default mb-1 mt-2 pl-5 text-sm tracking-wider text-white/80 font-light">Manajemen Magang</h4>
             <a href="{{ route('dosen.data-mahasiswa') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('dosen/data-mahasiswa*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('dosen/data-mahasiswa*') ? asset('icons/data-mahasiswa-biru.svg') : asset('icons/data-mahasiswa-putih.svg') }}" alt="Data Mahasiswa" class="h-5 w-5" />
                 <h4 class="ml-7 text-sm tracking-wider">Data Mahasiswa</h4>
