@@ -9,11 +9,9 @@ return new class extends Migration {
     {
         Schema::create('evaluasi_magang', function (Blueprint $table) {
             $table->id('id_evaluasi');
-            $table->unsignedBigInteger('id_pengajuan_magang');
-            $table->unsignedBigInteger('id_dosen_pembimbing');
+            $table->unsignedBigInteger('id_magang');
             $table->date('tanggal_evaluasi');
-            $table->string('kriteria_penilaian');
-            $table->json('nilai');                  // This will be an array of integer.
+            $table->enum('status', ['MENUNGGU', 'DISETUJUI', 'DITOLAK'])->default('MENUNGGU');
             $table->text('komentar');
             $table->timestamps();
         });

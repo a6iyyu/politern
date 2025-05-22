@@ -9,14 +9,14 @@ return new class extends Migration {
     {
         Schema::create('log_aktivitas', function (Blueprint $table) {
             $table->id('id_log');
-            $table->unsignedBigInteger('id_kegiatan_magang');
+            $table->unsignedBigInteger('id_magang');
             $table->date('tanggal');
             $table->text('deskripsi');
             $table->integer('durasi');
             $table->enum('status', ['DRAF', 'DIKIRIM', 'DISETUJUI']);
             $table->timestamps();
 
-            $table->foreign('id_kegiatan_magang')->references('id_kegiatan_magang')->on('kegiatan_magang');
+            $table->foreign('id_magang')->references('id_magang')->on('magang');
         });
     }
 

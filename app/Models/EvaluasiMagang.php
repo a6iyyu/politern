@@ -9,15 +9,12 @@ class EvaluasiMagang extends Model
 {
     protected $table = 'evaluasi_magang';
     protected $primaryKey = 'id_evaluasi';
+    protected $fillable = [
+        'id_magang', 'tanggal_evaluasi', 'status', 'komentar'
+    ];
 
-    public function pengajuan_magang(): BelongsTo
-
+    public function magang()
     {
-        return $this->belongsTo(PengajuanMagang::class, 'id_pengajuan_magang', 'id_pengajuan_magang');
-    }
-
-    public function dosen_pembimbing(): BelongsTo
-    {
-        return $this->belongsTo(DosenPembimbing::class, 'id_dosen_pembimbing', 'id_dosen_pembimbing');
+        return $this->belongsTo(Magang::class, 'id_magang');
     }
 }

@@ -15,7 +15,7 @@ class LogAktivitas extends Seeder
         DB::table('log_aktivitas')->insert([
             [
                 'id_log'                => 1,
-                'id_kegiatan_magang'    => 1,
+                'id_magang'             => 1,
                 'tanggal'               => Carbon::now(),
                 'judul'                 => 'Pelatihan Teknologi UI/UX',
                 'minggu'                => 1,
@@ -28,7 +28,7 @@ class LogAktivitas extends Seeder
             ],
             [
                 'id_log'                => 2,
-                'id_kegiatan_magang'    => 1,
+                'id_magang'             => 1,
                 'tanggal'               => Carbon::now(),
                 'judul'                 => 'Pelatihan Teknologi Frontend',
                 'minggu'                => 2,
@@ -41,7 +41,7 @@ class LogAktivitas extends Seeder
             ],
             [
                 'id_log'                => 3,
-                'id_kegiatan_magang'    => 1,
+                'id_magang'             => 1,
                 'tanggal'               => Carbon::now(),
                 'judul'                 => 'Pelatihan Teknologi Backend',
                 'minggu'                => 3,
@@ -54,7 +54,7 @@ class LogAktivitas extends Seeder
             ],
             [
                 'id_log'                => 4,
-                'id_kegiatan_magang'    => 1,
+                'id_magang'             => 1,
                 'tanggal'               => Carbon::now(),
                 'judul'                 => 'Pelatihan Teknologi Deployment',
                 'minggu'                => 4,

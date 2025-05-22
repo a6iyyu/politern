@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Autentikasi;
 use App\Http\Controllers\Dasbor;
+use App\Http\Controllers\DataMahasiswa;
 use App\Http\Controllers\LogAktivitas;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
@@ -49,7 +50,12 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:DOSEN'])->prefix('dosen')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('dosen.dasbor');
-        Route::get('/data-mahasiswa', fn() => view('pages.dosen.data-mahasiswa'))->name('dosen.data-mahasiswa');
+
+        Route::prefix('data-mahasiswa')->group(function () {
+            Route::get('/', fn() => view('pages.dosen.data-mahasiswa'))->name('dosen.data-mahasiswa');
+            Route::get('/detail/{id}', [DataMahasiswa::class, 'detail'])->name('dosen.detail');
+        });
+
         Route::get('/log-aktivitas', fn() => view('pages.dosen.log-aktivitas'))->name('dosen.log-aktivitas');
     });
 

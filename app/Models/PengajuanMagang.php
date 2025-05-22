@@ -9,19 +9,21 @@ class PengajuanMagang extends Model
 {
     protected $table = 'pengajuan_magang';
     protected $primaryKey = 'id_pengajuan_magang';
+    protected $fillable = [
+        'id_mahasiswa', 'id_lowongan', 'tanggal_pengajuan', 'status', 'keterangan'
+    ];
 
-    public function mahasiswa(): BelongsTo
+    public function mahasiswa()
     {
-        return $this->belongsTo(Mahasiswa::class, 'id_mahasiswa', 'id_mahasiswa');
+        return $this->belongsTo(Mahasiswa::class, 'id_mahasiswa');
     }
 
-    public function lowongan_magang(): BelongsTo
+    public function lowongan()
     {
-        return $this->belongsTo(LowonganMagang::class, 'id_lowongan', 'id_lowongan');
+        return $this->belongsTo(LowonganMagang::class, 'id_lowongan');
     }
-
-    public function dosen_pembimbing(): BelongsTo
+    public function magang()
     {
-        return $this->belongsTo(DosenPembimbing::class, 'id_dosen_pembimbing', 'id_dosen_pembimbing');
+        return $this->hasMany(Magang::class, 'id_pengajuan_magang', 'id_pengajuan_magang');
     }
 }

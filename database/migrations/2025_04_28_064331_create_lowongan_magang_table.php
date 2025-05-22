@@ -17,8 +17,6 @@ return new class extends Migration {
             $table->string('lokasi');
             $table->string('bidang_keahlian');
             $table->integer('kuota');
-            $table->date('tanggal_mulai_magang');
-            $table->date('tanggal_selesai_magang');
             $table->date('tanggal_mulai_pendaftaran');
             $table->date('tanggal_selesai_pendaftaran');
             $table->date('tanggal_posting');

@@ -11,13 +11,11 @@ return new class extends Migration {
             $table->id('id_pengajuan_magang');
             $table->unsignedBigInteger('id_mahasiswa');
             $table->unsignedBigInteger('id_lowongan');
-            $table->unsignedBigInteger('id_dosen_pembimbing');
             $table->date('tanggal_pengajuan');
-            $table->enum('status', ['MENUNGGU', 'DISETUJUI', 'DITOLAK']);
-            $table->text('keterangan');
+            $table->enum('status', ['MENUNGGU', 'DISETUJUI', 'DITOLAK'])->default('MENUNGGU');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
 
-            $table->foreign('id_dosen_pembimbing')->references('id_dosen_pembimbing')->on('dosen_pembimbing');
             $table->foreign('id_lowongan')->references('id_lowongan')->on('lowongan_magang');
             $table->foreign('id_mahasiswa')->references('id_mahasiswa')->on('mahasiswa');
         });
