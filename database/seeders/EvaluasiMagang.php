@@ -11,13 +11,13 @@ class EvaluasiMagang extends Seeder
     public function run(): void
     {
         DB::table('evaluasi_magang')->insert([
-            'id_evaluasi' => 1,
-            'id_magang' => 1,
-            'tanggal_evaluasi' => '2025-05-21',
-            'status' => 'MENUNGGU',
-            'komentar' => 'Silahkan lakukan evaluasi',
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            'id_evaluasi'       => 1,
+            'id_magang'         => 1,
+            'tanggal_evaluasi'  => '2025-05-21',
+            'status'            => 'MENUNGGU',
+            'komentar'          => 'Harap bersabar, proses evaluasi Anda sedang diproses.',
+            'created_at'        => Carbon::now(),
+            'updated_at'        => Carbon::now(),
         ]);
     }
 }

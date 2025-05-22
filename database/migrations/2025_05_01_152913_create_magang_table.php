@@ -4,14 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('magang', function (Blueprint $table) {
             $table->id('id_magang');
-            $table->unsignedBigInteger('id_pengajuan_magang'); // pengajuan yang disetujui
-            $table->unsignedBigInteger('id_dosen_pembimbing'); // baru dipilih di sini
+            $table->unsignedBigInteger('id_pengajuan_magang');
+            $table->unsignedBigInteger('id_dosen_pembimbing');
             $table->enum('status', ['AKTIF', 'SELESAI'])->default('AKTIF');
             $table->timestamps();
 

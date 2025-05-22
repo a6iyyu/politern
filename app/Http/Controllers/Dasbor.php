@@ -9,10 +9,11 @@ use App\Models\LowonganMagang;
 use App\Models\Mahasiswa;
 use App\Models\Magang;
 use App\Models\EvaluasiMagang;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;   
+use Illuminate\View\View;
 
 class Dasbor extends Controller
 {
@@ -59,83 +60,47 @@ class Dasbor extends Controller
             'DOSEN' => (function () use ($pengguna): View {
                 $nama = $pengguna->dosen->nama;
                 $nidn = $pengguna->dosen->nidn;
-                $idDosen = $pengguna->dosen->id_dosen;
+                $id_dosen = $pengguna->dosen->id_dosen;
 
-                // Total mahasiswa 
-                $totalMahasiswa = Mahasiswa::count();
-                // Total mahasiswa yang dibimbing oleh dosen
-                $totalBimbingan = Magang::where('id_dosen_pembimbing', $idDosen)->count();
-                // Total mahasiswa aktif magang
-                $mahasiswaAktif = Magang::where('id_dosen_pembimbing', $idDosen)
-                    ->where('status', 'AKTIF')
-                    ->count();
-                // Total mahasiswa selesai magang
-                $mahasiswaSelesai = Magang::where('id_dosen_pembimbing', $idDosen)
-                    ->where('status', 'SELESAI')
-                    ->count();
-                // Total evaluasi
-                $menungguEvaluasi = EvaluasiMagang::whereHas('magang', function ($query) use ($idDosen) {
-                    $query->where('id_dosen_pembimbing', $idDosen);
-                })->where('status', 'MENUNGGU')->count();
-                // Total mahasiswa yang menunggu evaluasi
-                $mahasiswaUnikEvaluasi = EvaluasiMagang::whereHas('magang', function ($query) use ($idDosen) {
-                    $query->where('id_dosen_pembimbing', $idDosen);
-                })
-                ->where('evaluasi_magang.status', 'MENUNGGU')
-                ->join('magang', 'evaluasi_magang.id_magang', '=', 'magang.id_magang')
-                ->join('pengajuan_magang', 'magang.id_pengajuan_magang', '=', 'pengajuan_magang.id_pengajuan_magang')
-                ->select('pengajuan_magang.id_mahasiswa')
-                ->distinct()
-                ->count();
+                $total_mahasiswa = Mahasiswa::count();
+                $total_bimbingan = Magang::where('id_dosen_pembimbing', $id_dosen)->count();
+                $mahasiswa_aktif = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'AKTIF')->count();
+                $mahasiswa_selesai = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'SELESAI')->count();
+                $menunggu_evaluasi = EvaluasiMagang::whereHas('magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->where('status', 'MENUNGGU')->count();
+                $evaluasi_magang = $this->evaluasi_magang();
+                $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
+                $aktivitas_terbaru = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->latest()->take(4)->get();
+                $total_aktivitas = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
 
-                $mahasiswaBimbingan = Mahasiswa::with([
-                    'pengajuan_magang.lowongan.perusahaan', // relasi ke perusahaan
-                    'pengajuan_magang.magang'
-                ])
-                ->whereHas('pengajuan_magang.magang', function ($q) use ($idDosen) {
-                    $q->where('id_dosen_pembimbing', $idDosen);
-                })
-                ->take(8)
-                ->get();
-
-                $aktivitasTerbaru = LogAktivitas::whereHas('magang.pengajuan_magang', function($q) use ($idDosen) {
-                    $q->where('id_dosen_pembimbing', $idDosen);
-                })->latest()->take(4)->get();
-
-                $totalAktivitas = LogAktivitas::whereHas('magang.pengajuan_magang', function($q) use ($idDosen) {
-                    $q->where('id_dosen_pembimbing', $idDosen);
-                })->count();
-
-                $rows = $mahasiswaBimbingan->map(function($mhs) {
-                    $pengajuan = $mhs->pengajuan_magang->first(); // ambil 1 pengajuan
+                $rows = $mahasiswa_bimbingan->map(function ($mhs): array {
+                    $pengajuan = $mhs->pengajuan_magang->first();
                     $lowongan = $pengajuan?->lowongan;
                     $perusahaan = $lowongan?->perusahaan;
-                
+
                     return [
                         '<div class="flex items-center gap-2">
-                            <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" />
-                            ' . e($mhs->nama_lengkap) . '
+                            <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($mhs->nama_lengkap) . '
                         </div>',
                         $mhs->nim,
                         $perusahaan?->nama ?? '-',
                         $lowongan?->judul ?? '-',
                         $mhs->status ?? '-',
-                        view('components.dosen.dasbor.aksi', compact('mhs'))->render(),
+                        view('components.lecturer.dasbor.aksi', compact('mhs'))->render(),
                     ];
                 })->toArray();
 
-                return view('pages.dosen.dasbor', compact(
+                return view('pages.lecturer.dasbor', compact(
                     'nama',
                     'nidn',
-                    'totalMahasiswa',
-                    'totalBimbingan',
-                    'mahasiswaAktif',
-                    'mahasiswaSelesai',
-                    'menungguEvaluasi',
-                    'mahasiswaUnikEvaluasi',
-                    'mahasiswaBimbingan',
-                    'aktivitasTerbaru',
-                    'totalAktivitas',
+                    'total_mahasiswa',
+                    'total_bimbingan',
+                    'mahasiswa_aktif',
+                    'mahasiswa_selesai',
+                    'menunggu_evaluasi',
+                    'evaluasi_magang',
+                    'mahasiswa_bimbingan',
+                    'aktivitas_terbaru',
+                    'total_aktivitas',
                     'rows',
                 ));
             })(),
@@ -200,6 +165,21 @@ class Dasbor extends Controller
     }
 
     /**
+     * @return Collection|\Illuminate\Database\Eloquent\Builder[]
+     *
+     * Mengambil data mahasiswa yang sedang bimbingan dosen pembimbing saat ini.
+     */
+    private function mahasiswa_bimbingan(): array|Collection
+    {
+        $pengguna = Auth::user();
+        $id_dosen = $pengguna->dosen->id_dosen;
+        return Mahasiswa::with(['pengajuan_magang.lowongan.perusahaan', 'pengajuan_magang.magang'])
+            ->whereHas('pengajuan_magang.magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))
+            ->take(8)
+            ->get();
+    }
+
+    /**
      * @return int
      *
      * Mengambil seluruh data log aktivitas beserta relasi terkait.
@@ -208,10 +188,26 @@ class Dasbor extends Controller
     {
         $mahasiswa = $this->mahasiswa();
         if ($mahasiswa === null) return 0;
+        return LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_mahasiswa', $mahasiswa->id_mahasiswa))->count();
+    }
 
-        return LogAktivitas::whereHas('magang.pengajuan_magang', function ($query) use ($mahasiswa) {
-            $query->where('id_mahasiswa', $mahasiswa->id_mahasiswa);
-        })->count();
+    /**
+     * Menghitung jumlah mahasiswa yang masih menunggu evaluasi magang
+     * berdasarkan dosen pembimbing saat ini.
+     *
+     * @return int Jumlah mahasiswa yang menunggu evaluasi
+     */
+    private function evaluasi_magang(): int
+    {
+        $pengguna = Auth::user();
+        $id_dosen = $pengguna->dosen->id_dosen;
+        return EvaluasiMagang::whereHas('magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))
+            ->where('evaluasi_magang.status', 'MENUNGGU')
+            ->join('magang', 'evaluasi_magang.id_magang', '=', 'magang.id_magang')
+            ->join('pengajuan_magang', 'magang.id_pengajuan_magang', '=', 'pengajuan_magang.id_pengajuan_magang')
+            ->select('pengajuan_magang.id_mahasiswa')
+            ->distinct()
+            ->count();
     }
 
     /**

@@ -1,16 +1,16 @@
 @extends('layouts.main')
 
 @section('judul')
-    Data Mahasiswa
+    Log Aktivitas
 @endsection
 
 @section('deskripsi')
 @endsection
 
 @section('konten')
-    <x-header title="Data Mahasiswa" />
+    <x-header title="Log Aktivitas" />
     <main class="flex flex-col pb-10 px-10 pl-84 transition-all duration-300">
-        @include('components.dosen.data-mahasiswa.filter')
-        @include('components.dosen.data-mahasiswa.tabel')
+        @include('components.lecturer.log-aktivitas.filter')
+        @include('components.lecturer.log-aktivitas.daftar')
     </main> 
 @endsection

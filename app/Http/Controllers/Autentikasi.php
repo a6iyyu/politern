@@ -19,9 +19,8 @@ class Autentikasi extends Controller
     public function lupa_kata_sandi(): void
     {
         try {
-            // Fais Restu
         } catch (Exception $exception) {
-            // Fais Restu
+            Log::error('Terjadi kesalahan: ', ['errors' => $exception->getMessage()]);
         }
     }
 

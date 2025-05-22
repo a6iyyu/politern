@@ -76,3 +76,4 @@ dist
 .svelte-kit
 /resources/js/
 /public/vendor/
+database/seeders/Mahasiswa.php

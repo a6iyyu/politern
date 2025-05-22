@@ -4,33 +4,33 @@
             background="#ebf2fe"
             color="#2c6cd3"
             icon="fa-solid fa-user-group"
-            info="{{ $totalMahasiswa ? round(($totalBimbingan / $totalMahasiswa) * 100) : 0 }}% dari total seluruh mahasiswa"
+            info="{{ $total_mahasiswa ? round(($total_bimbingan / $total_mahasiswa) * 100) : 0 }}% dari total seluruh mahasiswa"
             title="Total Mahasiswa Bimbingan"
-            total="{{ $totalBimbingan }}"
+            total="{{ $total_bimbingan }}"
         />
         <x-info
             background="#e7f8f2"
             color="#10b981"
             icon="fa-solid fa-user-check"
-            info="{{ $totalBimbingan ? round(($mahasiswaAktif / $totalBimbingan) * 100) : 0 }}% dari total mahasiswa bimbingan"
+            info="{{ $total_bimbingan ? round(($mahasiswa_aktif / $total_bimbingan) * 100) : 0 }}% dari total mahasiswa bimbingan"
             title="Mahasiswa Aktif Magang"
-            total="{{ $mahasiswaAktif }}"
+            total="{{ $mahasiswa_aktif }}"
         />
         <x-info
             background="#fef5e6"
             color="#f59e0b"
             icon="fa-solid fa-user-xmark"
-            info="{{ $mahasiswaUnikEvaluasi }} mahasiswa menunggu evaluasi"
+            info="{{ $evaluasi_magang }} mahasiswa menunggu evaluasi"
             title="Menunggu Evaluasi"
-            total="{{ $menungguEvaluasi }}"
+            total="{{ $menunggu_evaluasi }}"
         />
         <x-info
             background="#fdecec"
             color="#ef4545"
             icon="fa-solid fa-bars-progress"
-            info="{{ $totalBimbingan ? round(($mahasiswaSelesai / $totalBimbingan) * 100) : 0 }}% dari total mahasiswa bimbingan"
+            info="{{ $total_bimbingan ? round(($mahasiswa_selesai / $total_bimbingan) * 100) : 0 }}% dari total mahasiswa bimbingan"
             title="Mahasiswa Selesai Magang"
-            total="{{ $mahasiswaSelesai }}"
+            total="{{ $mahasiswa_selesai }}"
         />
     </div>
 </section>

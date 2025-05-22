@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -17,8 +18,8 @@ class Pengguna extends Seeder
                 'email'         => 'admin@gmail.com',
                 'kata_sandi'    => Hash::make('admin123'),
                 'tipe'          => 'ADMIN',
-                'created_at'    => now(),
-                'updated_at'    => now(),
+                'created_at'    => Carbon::now(),
+                'updated_at'    => Carbon::now(),
             ],
             [
                 'id_pengguna'   => 2,
@@ -26,8 +27,8 @@ class Pengguna extends Seeder
                 'email'         => 'ayleen@gmail.com',
                 'kata_sandi'    => Hash::make('123'),
                 'tipe'          => 'MAHASISWA',
-                'created_at'    => now(),
-                'updated_at'    => now(),
+                'created_at'    => Carbon::now(),
+                'updated_at'    => Carbon::now(),
             ],
             [
                 'id_pengguna'   => 3,
@@ -35,8 +36,8 @@ class Pengguna extends Seeder
                 'email'         => 'faisrestu@gmail.com',
                 'kata_sandi'    => Hash::make('123'),
                 'tipe'          => 'MAHASISWA',
-                'created_at'    => now(),
-                'updated_at'    => now(),
+                'created_at'    => Carbon::now(),
+                'updated_at'    => Carbon::now(),
             ],
             [
                 'id_pengguna'   => 4,
@@ -44,8 +45,8 @@ class Pengguna extends Seeder
                 'email'         => 'ivansyah@gmail.com',
                 'kata_sandi'    => Hash::make('123'),
                 'tipe'          => 'MAHASISWA',
-                'created_at'    => now(),
-                'updated_at'    => now(),
+                'created_at'    => Carbon::now(),
+                'updated_at'    => Carbon::now(),
             ],
             [
                 'id_pengguna'   => 5,
@@ -53,8 +54,8 @@ class Pengguna extends Seeder
                 'email'         => 'rengga@gmail.com',
                 'kata_sandi'    => Hash::make('123'),
                 'tipe'          => 'MAHASISWA',
-                'created_at'    => now(),
-                'updated_at'    => now(),
+                'created_at'    => Carbon::now(),
+                'updated_at'    => Carbon::now(),
             ],
             [
                 'id_pengguna'   => 6,
@@ -62,8 +63,8 @@ class Pengguna extends Seeder
                 'email'         => 'rafi@gmail.com',
                 'kata_sandi'    => Hash::make('123'),
                 'tipe'          => 'MAHASISWA',
-                'created_at'    => now(),
-                'updated_at'    => now(),
+                'created_at'    => Carbon::now(),
+                'updated_at'    => Carbon::now(),
             ],
             [
                 'id_pengguna'   => 7,
@@ -71,8 +72,8 @@ class Pengguna extends Seeder
                 'email'         => 'dosen@gmail.com',
                 'kata_sandi'    => Hash::make('123'),
                 'tipe'          => 'DOSEN',
-                'created_at'    => now(),
-                'updated_at'    => now(),
+                'created_at'    => Carbon::now(),
+                'updated_at'    => Carbon::now(),
             ],
         ]);
     }

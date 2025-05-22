@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin;
 use App\Http\Controllers\Autentikasi;
 use App\Http\Controllers\Dasbor;
 use App\Http\Controllers\DataMahasiswa;
@@ -50,13 +49,12 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:DOSEN'])->prefix('dosen')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('dosen.dasbor');
-
-        Route::prefix('data-mahasiswa')->group(function () {
-            Route::get('/', fn() => view('pages.dosen.data-mahasiswa'))->name('dosen.data-mahasiswa');
-            Route::get('/detail/{id}', [DataMahasiswa::class, 'detail'])->name('dosen.detail');
-        });
-
-        Route::get('/log-aktivitas', fn() => view('pages.dosen.log-aktivitas'))->name('dosen.log-aktivitas');
+        Route::get('/log-aktivitas', fn() => view('pages.lecturer.log-aktivitas'))->name('dosen.log-aktivitas');
+        
+        Route::resource('data-mahasiswa', DataMahasiswa::class)->parameters(['data-mahasiswa' => 'id'])->names([
+            'index' => 'dosen.data-mahasiswa',
+            'show'  => 'dosen.detail',
+        ]);
     });
 
     Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');
