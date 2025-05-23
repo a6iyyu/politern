@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->date('tanggal');
             $table->text('deskripsi');
             $table->integer('durasi');
-            $table->enum('status', ['DRAF', 'DIKIRIM', 'DISETUJUI']);
+            $table->enum('status', ['DISETUJUI', 'DITOLAK', 'MENUNGGU']);
             $table->timestamps();
 
             $table->foreign('id_magang')->references('id_magang')->on('magang');

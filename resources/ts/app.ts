@@ -17,7 +17,6 @@ import "./bootstrap";
 import "./chart";
 import "./form";
 import "./hamburger-menu";
-import "./profile-photo";
-import "./save-intern";
+import "./modal";
 import "./search";
 import "./sorting";

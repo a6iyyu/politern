@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
@@ -12,11 +14,11 @@ class DataMahasiswa extends Controller {
         if ($pengguna === "ADMIN") {
             return view('pages.admin.data-mahasiswa');
         } else if ($pengguna === "DOSEN") {
-            return view('pages.admin.data-mahasiswa');
+            return view('pages.lecturer.data-mahasiswa');
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
     }
 
-    public function detail() {}
+    public function show() {}
 }

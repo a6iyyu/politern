@@ -108,6 +108,8 @@ class Dasbor extends Controller
         };
     }
 
+    public function detail() {}
+
     /**
      * @param Request $request
      * @return void

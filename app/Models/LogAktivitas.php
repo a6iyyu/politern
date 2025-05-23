@@ -13,7 +13,7 @@ class LogAktivitas extends Model
     use HasFactory;
 
     protected $table = 'log_aktivitas';
-    protected $primaryKey = ['id_log', 'id_magang'];
+    protected $primaryKey = 'id_log';
 
     public function magang(): BelongsTo
     {

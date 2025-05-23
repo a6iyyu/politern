@@ -12,13 +12,13 @@
     <meta name="description" content="@yield('deskripsi')" />
     <meta property="og:title" content="@yield('judul') | Politern" />
     <meta property="og:description" content="@yield('deskripsi')" />
-    <meta property="og:image" content="{{ asset('shared/polinema.png') }}" />
+    <meta property="og:image" content="{{ asset('shared/logo.png') }}" />
     <meta name="twitter:title" content="@yield('judul') | Politern" />
     <meta name="twitter:description" content="@yield('deskripsi')" />
-    <meta name="twitter:image" content="{{ asset('shared/polinema.png') }}" />
+    <meta name="twitter:image" content="{{ asset('shared/logo.png') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('judul') | Politern</title>
-    <link rel="icon" href="{{ asset('shared/polinema.png') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('shared/logo.png') }}" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet" />

@@ -49,12 +49,11 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:DOSEN'])->prefix('dosen')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('dosen.dasbor');
-        Route::get('/log-aktivitas', fn() => view('pages.lecturer.log-aktivitas'))->name('dosen.log-aktivitas');
-        
-        Route::resource('data-mahasiswa', DataMahasiswa::class)->parameters(['data-mahasiswa' => 'id'])->names([
-            'index' => 'dosen.data-mahasiswa',
-            'show'  => 'dosen.detail',
-        ]);
+        Route::get('/mahasiswa-bimbingan/{id}', [Dasbor::class, 'detail'])->name('dosen.mahasiswa-bimbingan');
+        Route::get('/data-mahasiswa', [DataMahasiswa::class, 'index'])->name('dosen.data-mahasiswa');
+        Route::get('/data-mahasiswa/{id}', [DataMahasiswa::class, 'show'])->name('dosen.data-mahasiswa.detail');
+        Route::get('/log-aktivitas', [LogAktivitas::class, 'index'])->name('dosen.log-aktivitas');
+        Route::get('/log-aktivitas/{id}', [LogAktivitas::class, 'show'])->name('dosen.log-aktivitas.detail');
     });
 
     Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');

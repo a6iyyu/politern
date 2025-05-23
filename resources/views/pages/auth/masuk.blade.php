@@ -10,12 +10,16 @@
 
 @section('konten')
     <main class="bg-white rounded-xl my-20 p-10 w-4/5 border border-slate-300/50 md:w-3/5 lg:w-[45%]">
-        <span class="absolute flex space-x-4 top-4 left-6">
+        <div class="flex items-center justify-center gap-4">
+            <img src="{{ asset('shared/logo.png') }}" alt="Politern" class="h-14 w-14" />
             <img src="{{ asset('shared/polinema.png') }}" alt="Polinema" class="h-14 w-14" />
-            <section></section>
-        </span>
-        <h4 class="cursor-default text-xl text-center font-semibold tracking-wide">Selamat Datang 👋🏻</h4>
-        <h5 class="mt-2 mb-7 cursor-default text-slate-600 text-center tracking-wide">Silakan masuk dengan akun Anda.</h5>
+        </div>
+        <h4 class="mt-4 cursor-default text-lg text-center font-semibold tracking-wide">
+            Selamat Datang 👋🏻
+        </h4>
+        <h5 class="mt-1.5 mb-7 cursor-default text-sm text-slate-600 text-center tracking-wide">
+            Silakan masuk dengan akun Anda.
+        </h5>
         <form action="{{ route('login') }}" method="POST">
             @csrf
             @if ($errors->any())

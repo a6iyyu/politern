@@ -12,10 +12,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         DB::table('evaluasi_magang')->delete();
+        DB::table('log_aktivitas')->delete();
         DB::table('magang')->delete();
         DB::table('pengajuan_magang')->delete();
         DB::table('lowongan_magang')->delete();
-        DB::table('log_aktivitas')->delete();
         DB::table('periode_magang')->delete();
         DB::table('perusahaan_mitra')->delete();
         DB::table('mahasiswa')->delete();
