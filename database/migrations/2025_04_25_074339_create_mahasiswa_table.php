@@ -11,15 +11,18 @@ return new class extends Migration
         Schema::create('mahasiswa', function (Blueprint $table) {
             $table->id('id_mahasiswa');
             $table->unsignedBigInteger('id_pengguna');
+            $table->unsignedBigInteger('id_prodi');
             $table->string('nim')->unique('nim');
             $table->string('nama_lengkap');
-            $table->unsignedBigInteger('id_prodi');
             $table->year('angkatan');
-            $table->enum('semester', ['GANJIL', 'GENAP']);
+            $table->integer('semester');
+            $table->text('deskripsi')->nullable();
+            $table->float('ipk');
             $table->string('alamat');
             $table->string('nomor_telepon');
             $table->text('cv');
-            $table->float('ipk');
+            $table->float('nilai_test')->nullable();
+            $table->decimal('gaji', 12, 2)->nullable();
             $table->enum('status', ['BELUM MAGANG', 'DALAM PROSES', 'SEDANG MAGANG', 'SELESAI'])->default('BELUM MAGANG');
             $table->timestamps();
 

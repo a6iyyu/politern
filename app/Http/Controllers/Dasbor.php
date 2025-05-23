@@ -53,7 +53,7 @@ class Dasbor extends Controller
                 $log_aktivitas = $this->log_aktivitas();
                 $nama_pengguna = $pengguna->nama_pengguna;
                 $nama_prodi = $prodi->nama;
-                $semester = ucfirst(strtolower($mahasiswa->semester));
+                $semester = $mahasiswa->semester;
                 $status = $mahasiswa->status;
                 return view('pages.student.dasbor', compact('ipk', 'jenjang', 'log_aktivitas', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status'));
             })(),

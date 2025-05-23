@@ -21,20 +21,17 @@ class Perusahaan extends Seeder
 
         DB::table('perusahaan_mitra')->insert([
             [
-                'id_perusahaan_mitra'   => 1,
-                'nama'                  => 'Molca Teknologi Nusantara',
-                'nib'                   => '1101230026145',
-                'alamat'                => 'JAPFA Tower II Lt. 12',
-                'kota'                  => 'Surabaya',
-                'provinsi'              => 'Jawa Timur',
-                'nomor_telepon'         => '0811324066',
-                'email'                 => 'hello@molca.id',
-                'website'               => 'https://www.molca.id/',
-                'logo'                  => 'storage/images/molca.avif',
-                'bidang'                => 'TEKNOLOGI',
-                'status'                => 'AKTIF',
-                'created_at'            => Carbon::now(),
-                'updated_at'            => Carbon::now(),
+                'id_perusahaan_mitra' => 1,
+                'id_lokasi'           => 1,
+                'nama'                => 'Molca Teknologi Nusantara',
+                'nib'                 => '1101230026145',
+                'nomor_telepon'       => '0811324066',
+                'email'               => 'hello@molca.id',
+                'website'             => 'https://www.molca.id/',
+                'logo'                => 'storage/images/molca.avif',
+                'status'              => 'AKTIF',
+                'created_at'          => Carbon::now(),
+                'updated_at'          => Carbon::now(),
             ]
         ]);
     }

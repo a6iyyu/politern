@@ -11,13 +11,9 @@ return new class extends Migration {
             $table->id('id_perusahaan_mitra');
             $table->string('nama');
             $table->string('nib')->unique('nib');
-            $table->string('alamat');
-            $table->string('kota');
-            $table->string('provinsi');
             $table->string('nomor_telepon')->unique('nomor_telepon');
             $table->string('email')->unique('email');
             $table->string('website');
-            $table->enum('bidang', ['INDUSTRI', 'KESEHATAN', 'KEUANGAN', 'KONSULTASI', 'KREATIF', 'PENDIDIKAN', 'PSDM', 'TEKNOLOGI', 'SIPIL']);
             $table->enum('status', ['AKTIF', 'TIDAK AKTIF'])->default('AKTIF');
             $table->timestamps();
         });
@@ -25,6 +21,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('perusahaan');
+        Schema::dropIfExists('perusahaan_mitra');
     }
 };

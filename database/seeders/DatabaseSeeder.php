@@ -28,6 +28,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             Pengguna::class,
             Prodi::class,
+            Bidang::class,
+            Keahlian::class,
+            Lokasi::class,
+            JenisLokasi::class,
             Dosen::class,
             DosenPembimbing::class,
             Admin::class,

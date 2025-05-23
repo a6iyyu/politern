@@ -13,10 +13,8 @@ return new class extends Migration {
             $table->unsignedBigInteger('id_periode');
             $table->string('judul');
             $table->text('deskripsi');
-            $table->enum('kategori', ['JARAK JAUH', 'GABUNGAN', 'DI LOKASI']);
-            $table->string('lokasi');
-            $table->string('bidang_keahlian');
             $table->integer('kuota');
+            $table->decimal('gaji', 12, 2)->nullable();
             $table->date('tanggal_mulai_pendaftaran');
             $table->date('tanggal_selesai_pendaftaran');
             $table->date('tanggal_posting');
