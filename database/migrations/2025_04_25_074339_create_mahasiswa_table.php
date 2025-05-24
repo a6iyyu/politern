@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('alamat');
             $table->string('nomor_telepon');
             $table->text('cv');
-            $table->float('nilai_test')->nullable();
+            $table->decimal('nilai_test')->nullable();
             $table->decimal('gaji', 12, 2)->nullable();
             $table->enum('status', ['BELUM MAGANG', 'DALAM PROSES', 'SEDANG MAGANG', 'SELESAI'])->default('BELUM MAGANG');
             $table->timestamps();

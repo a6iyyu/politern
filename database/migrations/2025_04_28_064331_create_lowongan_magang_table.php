@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->text('deskripsi');
             $table->integer('kuota');
             $table->decimal('gaji', 12, 2)->nullable();
+            $table->decimal('nilai_minimal')->nullable();
+            $table->float('ipk');
             $table->date('tanggal_mulai_pendaftaran');
             $table->date('tanggal_selesai_pendaftaran');
             $table->date('tanggal_posting');
