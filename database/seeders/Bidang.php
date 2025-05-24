@@ -9,7 +9,7 @@ class Bidang extends Seeder
 {
     public function run(): void
     {
-        DB::table('bidang')->insert([            
+        DB::table('bidang')->insert([
             ['id_bidang' => 1, 'nama_bidang' => 'Full Stack Development'],
             ['id_bidang' => 2, 'nama_bidang' => 'Front End Development'],
             ['id_bidang' => 3, 'nama_bidang' => 'Back End Development'],

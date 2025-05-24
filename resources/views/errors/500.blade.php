@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.errors')
 
 @section('judul')
     500

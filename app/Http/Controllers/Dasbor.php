@@ -9,7 +9,9 @@ use App\Models\LowonganMagang;
 use App\Models\Mahasiswa;
 use App\Models\Magang;
 use App\Models\EvaluasiMagang;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,24 +57,33 @@ class Dasbor extends Controller
                 $nama_prodi = $prodi->nama;
                 $semester = $mahasiswa->semester;
                 $status = $mahasiswa->status;
-                return view('pages.student.dasbor', compact('ipk', 'jenjang', 'log_aktivitas', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status'));
+                return view('pages.student.dasbor', compact(
+                    'ipk',
+                    'jenjang',
+                    'log_aktivitas',
+                    'lowongan',
+                    'nama_pengguna',
+                    'nama_prodi',
+                    'semester',
+                    'status',
+                ));
             })(),
             'DOSEN' => (function () use ($pengguna): View {
                 $nama = $pengguna->dosen->nama;
                 $nidn = $pengguna->dosen->nidn;
                 $id_dosen = $pengguna->dosen->id_dosen;
 
-                $total_mahasiswa = Mahasiswa::count();
-                $total_bimbingan = Magang::where('id_dosen_pembimbing', $id_dosen)->count();
+                $aktivitas_terbaru = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->latest()->take(4)->get();
+                $evaluasi_magang = $this->evaluasi_magang();
                 $mahasiswa_aktif = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'AKTIF')->count();
+                $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
                 $mahasiswa_selesai = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'SELESAI')->count();
                 $menunggu_evaluasi = EvaluasiMagang::whereHas('magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->where('status', 'MENUNGGU')->count();
-                $evaluasi_magang = $this->evaluasi_magang();
-                $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
-                $aktivitas_terbaru = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->latest()->take(4)->get();
                 $total_aktivitas = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
+                $total_bimbingan = Magang::where('id_dosen_pembimbing', $id_dosen)->count();
+                $total_mahasiswa = Mahasiswa::count();
 
-                $rows = $mahasiswa_bimbingan->map(function ($mhs): array {
+                $data = $mahasiswa_bimbingan->map(function ($mhs): array {
                     $pengajuan = $mhs->pengajuan_magang->first();
                     $lowongan = $pengajuan?->lowongan;
                     $perusahaan = $lowongan?->perusahaan;
@@ -90,25 +101,38 @@ class Dasbor extends Controller
                 })->toArray();
 
                 return view('pages.lecturer.dasbor', compact(
-                    'nama',
-                    'nidn',
-                    'total_mahasiswa',
-                    'total_bimbingan',
+                    'aktivitas_terbaru',
+                    'data',
+                    'evaluasi_magang',
                     'mahasiswa_aktif',
+                    'mahasiswa_bimbingan',
                     'mahasiswa_selesai',
                     'menunggu_evaluasi',
-                    'evaluasi_magang',
-                    'mahasiswa_bimbingan',
-                    'aktivitas_terbaru',
+                    'nama',
+                    'nidn',
                     'total_aktivitas',
-                    'rows',
+                    'total_bimbingan',
+                    'total_mahasiswa',
                 ));
             })(),
             default => abort(403),
         };
     }
 
-    public function detail() {}
+    public function detail(string $id): View
+    {
+        try {
+            $mahasiswa = $this->mahasiswa_bimbingan($id)->firstOrFail();
+            if (!$mahasiswa) abort(404, "Data mahasiswa tidak ditemukan atau bukan bimbingan Anda.");
+            return view('pages.lecturer.detail-mahasiswa-bimbingan', compact('mahasiswa'));
+        } catch (ModelNotFoundException $exception) {
+            report($exception);
+            abort(404, "Data mahasiswa bimbingan tidak ditemukan.");
+        } catch (Exception $exception) {
+            report($exception);
+            abort(500, "Terjadi kesalahan pada server.");
+        }
+    }
 
     /**
      * @param Request $request
@@ -171,14 +195,14 @@ class Dasbor extends Controller
      *
      * Mengambil data mahasiswa yang sedang bimbingan dosen pembimbing saat ini.
      */
-    private function mahasiswa_bimbingan(): array|Collection
+    private function mahasiswa_bimbingan(?string $id_mahasiswa = null): Collection
     {
         $pengguna = Auth::user();
         $id_dosen = $pengguna->dosen->id_dosen;
-        return Mahasiswa::with(['pengajuan_magang.lowongan.perusahaan', 'pengajuan_magang.magang'])
-            ->whereHas('pengajuan_magang.magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))
-            ->take(8)
-            ->get();
+        $mahasiswa_bimbingan = Mahasiswa::with(['pengajuan_magang.lowongan.perusahaan', 'pengajuan_magang.magang'])->whereHas('pengajuan_magang.magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen));
+
+        if ($id_mahasiswa) $mahasiswa_bimbingan->where('id_mahasiswa', $id_mahasiswa);
+        return $mahasiswa_bimbingan->take(8)->get();
     }
 
     /**

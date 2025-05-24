@@ -8,9 +8,9 @@
     <x-table
         :headers="['Mahasiswa', 'NIM', 'Perusahaan', 'Posisi', 'Status', 'Aksi']"
         :sortable="['Mahasiswa', 'Status']"
-        :rows="$rows"
+        :rows="$data"
     />
     <h5 class="cursor-default text-xs font-light text-[var(--primary-text)]">
-        Menampilkan {{ count($rows) ?? 0 }} dari {{ $total_bimbingan ?? "N/A" }} mahasiswa bimbingan
+        Menampilkan {{ count($data) ?? 0 }} dari {{ $total_bimbingan ?? "N/A" }} mahasiswa bimbingan
     </h5>
 </section>
