@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class KompetensiMahasiswa extends Model
 {
+    use HasFactory;
+
     protected $table = 'kompetensi_mahasiswa';
     protected $primaryKey = 'id_kompetensi';
 

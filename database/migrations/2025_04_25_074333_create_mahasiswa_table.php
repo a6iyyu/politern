@@ -13,6 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_pengguna');
             $table->unsignedBigInteger('id_prodi');
             $table->string('nim')->unique('nim');
+            $table->string('foto_profil');
             $table->string('nama_lengkap');
             $table->year('angkatan');
             $table->integer('semester');

@@ -19,13 +19,13 @@ class DatabaseSeeder extends Seeder
         DB::table('lowongan_magang')->delete();
         DB::table('periode_magang')->delete();
         DB::table('perusahaan_mitra')->delete();
+        DB::table('bidang_mahasiswa')->delete();
+        DB::table('keahlian_mahasiswa')->delete();
         DB::table('mahasiswa')->delete();
         DB::table('keahlian')->delete();
-        DB::table('keahlian_mahasiswa')->delete();
         DB::table('lokasi')->delete();
         DB::table('jenis_lokasi')->delete();
         DB::table('admin')->delete();
-        DB::table('bidang_mahasiswa')->delete();
         DB::table('bidang')->delete();
         DB::table('dosen_pembimbing')->delete();
         DB::table('dosen')->delete();

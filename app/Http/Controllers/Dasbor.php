@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\BidangMahasiswa;
 use App\Models\LogAktivitas;
 use App\Models\LowonganMagang;
 use App\Models\Mahasiswa;
@@ -12,9 +13,11 @@ use App\Models\EvaluasiMagang;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
 
 class Dasbor extends Controller
@@ -90,7 +93,7 @@ class Dasbor extends Controller
 
                     return [
                         '<div class="flex items-center gap-2">
-                            <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($mhs->nama_lengkap) . '
+                            <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . $mhs->nama_lengkap . '
                         </div>',
                         $mhs->nim,
                         $perusahaan?->nama ?? '-',
@@ -119,6 +122,13 @@ class Dasbor extends Controller
         };
     }
 
+    /**
+     * @param string $id
+     * @return View
+     *
+     * Fungsi di bawah ini bertujuan untuk menampilkan data mahasiswa bimbingan
+     * pada peran dosen berdasarkan ID mahasiswa.
+     */
     public function detail(string $id): View
     {
         try {
@@ -131,6 +141,41 @@ class Dasbor extends Controller
         } catch (Exception $exception) {
             report($exception);
             abort(500, "Terjadi kesalahan pada server.");
+        }
+    }
+
+    /**
+     * @return View
+     *
+     * Fungsi di bawah ini bertujuan untuk mengembalikan semua data-data
+     * yang nantinya akan divisualisasikan dalam berbagai bentuk grafik. 
+     */
+    public function grafik(): JsonResponse
+    {
+        try {
+            /** Mengembalikan semua data yang dibutuhkan pada grafik lingkaran */
+            $total = BidangMahasiswa::count();
+            $kategori_bidang_magang_terbanyak = BidangMahasiswa::with('bidang')
+                ->get()
+                ->groupBy('id_bidang')
+                ->take(5)
+                ->map(fn ($bidang) => [
+                    'id_bidang'     => $bidang->first()->id_bidang,
+                    'jumlah_bidang' => $bidang->count() ?? 0,
+                    'nama_bidang'   => $bidang->first()->bidang->nama_bidang ?? 'N/A',
+                    'persentase'    => round($bidang->count() / $total * 100, 2) ?? 'N/A',
+                ])
+                ->values();
+
+            return Response::json([
+                'kategori_bidang_magang_terbanyak' => $kategori_bidang_magang_terbanyak,
+            ]);
+        } catch (ModelNotFoundException $exception) {
+            report($exception);
+            return Response::json(['error' => 'Data tidak ditemukan.'], 404);
+        } catch (Exception $exception) {
+            report($exception);
+            return Response::json(['error' => 'Terjadi kesalahan pada server.'], 500);
         }
     }
 
@@ -191,7 +236,7 @@ class Dasbor extends Controller
     }
 
     /**
-     * @return Collection|\Illuminate\Database\Eloquent\Builder[]
+     * @return Collection
      *
      * Mengambil data mahasiswa yang sedang bimbingan dosen pembimbing saat ini.
      */
@@ -218,10 +263,10 @@ class Dasbor extends Controller
     }
 
     /**
+     * @return int
+     *
      * Menghitung jumlah mahasiswa yang masih menunggu evaluasi magang
      * berdasarkan dosen pembimbing saat ini.
-     *
-     * @return int Jumlah mahasiswa yang menunggu evaluasi
      */
     private function evaluasi_magang(): int
     {

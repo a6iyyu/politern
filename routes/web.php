@@ -23,13 +23,14 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:ADMIN'])->prefix('admin')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
+        Route::get('/grafik', [Dasbor::class, 'grafik'])->name('admin.dasbor.grafik');
+        Route::get('/aktivitas-magang', fn() => view('pages.admin.aktivitas-magang'))->name('admin.aktivitas-magang');
         Route::get('/data-mahasiswa', fn() => view('pages.admin.data-mahasiswa'))->name('admin.data-mahasiswa');
         Route::get('/data-dosen', fn() => view('pages.admin.data-dosen'))->name('admin.data-dosen');
         Route::get('/data-perusahaan', fn() => view('pages.admin.data-perusahaan'))->name('admin.data-perusahaan');
-        Route::get('/periode-magang', fn() => view('pages.admin.periode-magang'))->name('admin.periode-magang');
         Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
+        Route::get('/periode-magang', fn() => view('pages.admin.periode-magang'))->name('admin.periode-magang');
         Route::get('/pengajuan-magang', fn() => view('pages.admin.pengajuan-magang'))->name('admin.pengajuan-magang');
-        Route::get('/aktivitas-magang', fn() => view('pages.admin.aktivitas-magang'))->name('admin.aktivitas-magang');
     });
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
