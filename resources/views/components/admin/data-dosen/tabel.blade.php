@@ -30,7 +30,7 @@
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <i class="fas fa-search text-[var(--primary)] text-sm"></i>
                 </div>
-                <input type="text" id="search" name="search" placeholder="Cari nama mahasiswa" class="md:w-64 text-sm text-[var(--primary-text)] border border-[var(--primary)] rounded px-4 py-2 pl-10 bg-white min-w-[250px] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent">
+                <input type="text" id="search" name="search" placeholder="Cari nama dosen" class="md:w-64 text-sm text-[var(--primary-text)] border border-[var(--primary)] rounded px-4 py-2 pl-10 bg-white min-w-[250px] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent">
             </div>
         </div>
 
