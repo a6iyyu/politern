@@ -5,16 +5,15 @@
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         @foreach ($lowongan as $item)
             <x-card
-                :category="$item->bidang_keahlian ?? 'N/A'"
+                :category="$item->bidang->nama_bidang ?? 'N/A'"
                 :createdAt="$item->created_at ?? 'N/A'"
                 :industry="$item->perusahaan->nama ?? 'N/A'"
-                :location="$item->lokasi ?? 'N/A'"
+                :location="$item->perusahaan->lokasi->nama_lokasi ?? 'N/A'"
                 :logo="$item->perusahaan->logo ?? 'N/A'"
-                :maxSalary="$item->gaji_maksimal ?? 'N/A'"
-                :minSalary="$item->gaji_minimal ?? 'N/A'"
                 :name="$item->judul ?? 'N/A'"
+                :salary="$item->gaji ?? 'N/A'"
                 :status="$item->status ?? 'N/A'"
-                :type="ucwords(strtolower($item->kategori)) ?? 'N/A'"
+                :type="$item->jenis_lokasi->nama_jenis_lokasi ?? 'N/A'"
             />
         @endforeach
     </div>

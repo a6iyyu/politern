@@ -14,7 +14,7 @@ class Perusahaan extends Seeder
     public function run(): void
     {
         $destination = storage_path('app/public/images');
-        $source = $source = public_path('img/molca.avif');
+        $source = public_path('img/molca.avif');
 
         if (!File::exists($destination)) File::makeDirectory($destination, 0755, true);
         if (File::exists($source)) File::copy($source, "$destination/molca.avif");

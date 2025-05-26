@@ -1,22 +1,25 @@
 /**
  * @fileoverview
- * Titik masuk utama (entry point) untuk aplikasi frontend Laravel.
- * File ini digunakan untuk mengimpor seluruh file JavaScript kustom yang dibutuhkan.
+ * Main entry point for the Laravel frontend application.
+ * This file imports all the necessary custom JavaScript files.
  *
- * - bootstrap.ts: Berisi konfigurasi dasar seperti axios, CSRF token, dll.
- * - chart.ts: Logika terkait chart atau grafik.
- * - form.ts: Logika validasi dan interaksi form.
- * - hamburger-menu.ts: Logika navigasi menu samping.
- * - profile-photo.ts: Logika interaksi foto profil.
- * - save-intern.ts: Logika penyimpanan data magang.
- * - search.ts: Logika pencarian data.
- * - sorting.ts: Logika pengurutan data pada komponen tabel.
+ * Imports:
+ * - bootstrap.ts: Contains basic configurations like axios, CSRF token, etc.
+ * - chart.ts: Logic related to charts or graphs.
+ * - form.ts: Form validation and interaction logic.
+ * - hamburger-menu.ts: Navigation logic for side menu.
+ * - profile-photo.ts: Interaction logic for profile photos.
+ * - save-intern.ts: Logic for saving internship data.
+ * - search.ts: Data search logic.
+ * - sorting.ts: Data sorting logic for table components.
+ * - student-guidance-data-modal.ts: Logic for student guidance data modal.
  */
 
+import "./add-log-activity";
 import "./bootstrap";
 import "./chart";
 import "./form";
 import "./hamburger-menu";
-import "./modal";
 import "./search";
 import "./sorting";
+import "./student-guidance-data-modal";

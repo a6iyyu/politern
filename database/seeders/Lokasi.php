@@ -107,5 +107,5 @@ class Lokasi extends Seeder
             ['id_lokasi' => 95, 'nama_lokasi' => 'Wamena'],
             ['id_lokasi' => 96, 'nama_lokasi' => 'Yogyakarta'],
         ]);
-        }
     }
+}

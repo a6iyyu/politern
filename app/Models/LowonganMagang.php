@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class LowonganMagang extends Model
 {
@@ -28,6 +29,16 @@ class LowonganMagang extends Model
         'tanggal_posting',
         'status'
     ];
+
+    public function bidang(): BelongsTo
+    {
+        return $this->belongsTo(Bidang::class, 'id_bidang', 'id_bidang');
+    }
+
+    public function jenis_lokasi(): BelongsTo
+    {
+        return $this->belongsTo(JenisLokasi::class, 'id_jenis_lokasi', 'id_jenis_lokasi');
+    }
 
     public function periode_magang(): BelongsTo
     {

@@ -13,6 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_pengguna');
             $table->unsignedBigInteger('id_prodi');
             $table->string('nim')->unique('nim');
+            $table->string('foto_profil');
             $table->string('nama_lengkap');
             $table->year('angkatan');
             $table->integer('semester');
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->string('alamat');
             $table->string('nomor_telepon');
             $table->text('cv');
-            $table->decimal('nilai_test')->nullable();
+            $table->decimal('nilai_tes')->nullable();
             $table->decimal('gaji', 12, 2)->nullable();
             $table->enum('status', ['BELUM MAGANG', 'DALAM PROSES', 'SEDANG MAGANG', 'SELESAI'])->default('BELUM MAGANG');
             $table->timestamps();
