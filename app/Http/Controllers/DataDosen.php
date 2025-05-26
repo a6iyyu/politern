@@ -24,8 +24,8 @@ class DataDosen extends Controller {
                         <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($dsn->nama) . '
                     </div>',
                     $dsn->nip,
-                    $dsn->nama,
                     $dsn->nomor_telepon,
+                    $dsn->nama,
                     view('components.admin.data-dosen.aksi', compact('dsn'))->render(),
                 ];
             })->toArray();
