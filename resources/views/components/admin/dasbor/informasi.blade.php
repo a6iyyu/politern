@@ -6,34 +6,34 @@
         <x-info
             background="#ebf2fe"
             color="#2c6cd3"
-            icon="fa-solid fa-user-group"
-            info="+12% dari tahun lalu"
-            title="Total Mahasiswa Magang"
-            total="256"
+            icon="fa-solid fa-user-graduate"
+            info="total semua mahasiswa"
+            title="Total Mahasiswa"
+            total="{{ $total_mahasiswa }}"
         />
         <x-info
             background="#e7f8f2"
             color="#10b981"
-            icon="fa-solid fa-user-graduate"
-            info="73% dari total mahasiswa"
-            title="Mahasiswa Aktif Magang"
-            total="189"
+            icon="fa-solid fa-user-group"
+            info="total semua dosen"
+            title="Total Dosen"
+            total="{{ $total_dosen }}"
         />
         <x-info
             background="#fef5e6"
             color="#f59e0b"
             icon="fa-solid fa-building"
-            info="Bertambah 5 perusahaan bulan ini"
+            info="total semua perusahaan mitra"
             title="Perusahaan Mitra"
-            total="42"
+            total="{{ $total_perusahaan_mitra }}"
         />
         <x-info
             background="#fdecec"
             color="#ef4545"
             icon="fa-solid fa-briefcase"
-            info="18 lowongan baru minggu ini"
+            info="total semua lowongan magang"
             title="Lowongan Tersedia"
-            total="68"
+            total="{{ $total_lowongan }}"
         />
     </div>
 </section>

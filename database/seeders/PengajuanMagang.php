@@ -25,7 +25,7 @@ class PengajuanMagang extends Seeder
             ],
             [
                 'id_pengajuan_magang'   => 2,
-                'id_mahasiswa'          => 4,
+                'id_mahasiswa'          => 1,
                 'id_lowongan'           => 2,
                 'tanggal_pengajuan'     => '2025-04-28',
                 'status'                => 'DISETUJUI',

@@ -9,6 +9,8 @@ use App\Models\LowonganMagang;
 use App\Models\Mahasiswa;
 use App\Models\Magang;
 use App\Models\EvaluasiMagang;
+use App\Models\Dosen;
+use App\Models\Perusahaan;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,7 +42,12 @@ class Dasbor extends Controller
             'ADMIN' => (function () use ($pengguna): View {
                 $nama = $pengguna->admin->nama;
                 $nip = $pengguna->admin->nip;
-                return view('pages.admin.dasbor', compact('nama', 'nip'));
+
+                $total_mahasiswa = Mahasiswa::count();
+                $total_dosen = Dosen::count();
+                $total_perusahaan_mitra = Perusahaan::count();
+                $total_lowongan = LowonganMagang::count();
+                return view('pages.admin.dasbor', compact('nama', 'nip', 'total_mahasiswa', 'total_dosen', 'total_perusahaan_mitra', 'total_lowongan'));
             })(),
             'MAHASISWA' => (function () use ($pengguna): View {
                 $lowongan = LowonganMagang::with('perusahaan')->orderBy('tanggal_posting', 'desc')->get();

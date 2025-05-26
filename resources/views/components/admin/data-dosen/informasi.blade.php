@@ -4,17 +4,17 @@
             background="#ebf2fe"
             color="#2c6cd3"
             icon="fa-solid fa-user-group"
-            info="+12% dari tahun lalu"
+            info="total semua dosen"
             title="Total Dosen"
-            total="124"
+            total="{{ $total_dosen }}"
         />
         <x-info
             background="#e7f8f2"
             color="#10b981"
             icon="fa-solid fa-user-check"
-            info="22.6% dari total mahasiswa"
+            info="total semua dosen pembimbing"
             title="Total Dosen Pembimbing"
-            total="28"
+            total="{{ $total_dosen_pembimbing }}"
         />
     </div>
 </section>
