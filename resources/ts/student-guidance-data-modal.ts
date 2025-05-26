@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const judul = document.getElementById("judul");
     const deskripsi = document.getElementById("deskripsi");
     const status = document.getElementById("status_log_aktivitas");
-    console.log(status)
     if (!nama || !prodi || !judul || !deskripsi || !status) return;
 
     buttons.forEach((button) => {

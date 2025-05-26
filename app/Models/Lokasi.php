@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lokasi extends Model
 {
@@ -19,5 +20,10 @@ class Lokasi extends Model
     public function mahasiswa(): BelongsToMany
     {
         return $this->belongsToMany(Mahasiswa::class, 'preferensi_lokasi_magang', 'id_lokasi', 'id_mahasiswa');
+    }
+
+    public function perusahaan(): HasMany
+    {
+        return $this->hasMany(Perusahaan::class, 'id_lokasi', 'id_lokasi');
     }
 }

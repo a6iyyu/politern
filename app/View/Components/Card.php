@@ -12,18 +12,18 @@ use Illuminate\View\Component;
 class Card extends Component
 {
     public Carbon $createdAt;
-    public string $category, $industry, $location, $logo, $maxSalary, $minSalary, $name, $status, $type;
+    public float $salary;
+    public string $category, $industry, $location, $logo, $name, $status, $type;
 
-    public function __construct(string $category, Carbon $createdAt, string $industry, string $location, string $logo, string $maxSalary, string $minSalary, string $name, string $status, string $type)
+    public function __construct(string $category, Carbon $createdAt, string $industry, string $location, string $logo, string $name, float $salary, string $status, string $type)
     {
         $this->category = $category;
         $this->createdAt = $createdAt;
         $this->industry = $industry;
         $this->location = $location;
         $this->logo = $logo;
-        $this->maxSalary = $maxSalary;
-        $this->minSalary = $minSalary;
         $this->name = $name;
+        $this->salary = $salary;
         $this->status = $status;
         $this->type = $type;
     }
@@ -32,6 +32,11 @@ class Card extends Component
     {
         Carbon::setLocale('id');
         return $this->createdAt->translatedFormat($format);
+    }
+
+    public function formattedSalary(): string
+    {
+        return 'Rp' . number_format($this->salary, 0, ',', '.');
     }
 
     public function render(): View|Closure|string

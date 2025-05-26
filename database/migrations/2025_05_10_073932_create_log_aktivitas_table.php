@@ -10,7 +10,6 @@ return new class extends Migration {
         Schema::create('log_aktivitas', function (Blueprint $table) {
             $table->id('id_log');
             $table->unsignedBigInteger('id_magang');
-            $table->date('tanggal');
             $table->text('deskripsi');
             $table->integer('durasi');
             $table->enum('status', ['DISETUJUI', 'DITOLAK', 'MENUNGGU']);

@@ -1,4 +1,9 @@
-<section class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
+<section class="mt-8 flex items-center justify-end">
+    <button type="button" id="open" class="cursor-pointer w-fit text-sm bg-[var(--green-tertiary)] text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
+        Tambah Aktivitas
+    </button>
+</section>
+<section class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
     <x-log-activity
         judul="Minggu ke-1 : Pengenalan Perusahaan & Orientasi"
         tanggal="4 Mar 2025 - 10 Mar 2025"

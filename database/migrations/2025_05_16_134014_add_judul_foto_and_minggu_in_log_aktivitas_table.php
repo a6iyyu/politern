@@ -10,7 +10,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('log_aktivitas', function (Blueprint $table) {
-            $table->string('judul')->after('tanggal');
+            $table->string('judul')->after('id_magang');
             $table->integer('minggu')->after('judul');
             $table->string('foto')->after('durasi');
         });
