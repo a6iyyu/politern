@@ -33,6 +33,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/data-mahasiswa/{id}/edit', [DataMahasiswa::class, 'edit'])->name('admin.data-mahasiswa.edit');
         Route::delete('/data-mahasiswa/{id}', [DataMahasiswa::class, 'destroy'])->name('admin.data-mahasiswa.destroy');
         Route::get('/data-dosen', [DataDosen::class, 'index'])->name('admin.data-dosen');
+        Route::get('/data-dosen/create', [DataDosen::class, 'create'])->name('admin.data-dosen.create');
+        Route::post('/data-dosen', [DataDosen::class, 'store'])->name('admin.data-dosen.store');
+        Route::get('/data-dosen/{id}', [DataDosen::class, 'show'])->name('admin.data-dosen.detail');
+        Route::get('/data-dosen/{id}/edit', [DataDosen::class, 'edit'])->name('admin.data-dosen.edit');
+        Route::delete('/data-dosen/{id}', [DataDosen::class, 'destroy'])->name('admin.data-dosen.destroy');
         Route::get('/data-perusahaan', fn() => view('pages.admin.data-perusahaan'))->name('admin.data-perusahaan');
         Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
         Route::get('/periode-magang', fn() => view('pages.admin.periode-magang'))->name('admin.periode-magang');
