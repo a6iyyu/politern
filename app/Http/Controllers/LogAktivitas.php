@@ -83,11 +83,11 @@ class LogAktivitas extends Controller
         $mahasiswa = Mahasiswa::where('id_pengguna', Auth::user()->id_pengguna)->first();
         if (!$mahasiswa) return '';
 
-        $pengajuan = PengajuanMagang::with('lowongan_magang.perusahaan')
+        $pengajuan = PengajuanMagang::with('lowongan.perusahaan')
             ->where('id_mahasiswa', $mahasiswa->id_mahasiswa)
             ->first();
 
-        return $pengajuan?->lowongan_magang?->perusahaan?->nama_perusahaan ?? "N/A";
+        return $pengajuan?->lowongan?->perusahaan?->nama_perusahaan ?? "N/A";
     }
 
     private function posisi()

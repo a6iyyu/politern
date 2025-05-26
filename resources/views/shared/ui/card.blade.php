@@ -1,7 +1,7 @@
 <figure class="rounded-xl px-7 py-5 border border-[var(--stroke)]">
     <div class="cursor-default flex justify-between">
         <figcaption class="flex gap-3 space-y-1">
-            <img src="{{ $logo ?? "N/A" }}" alt="{{ $industry }}" class="w-7 object-cover md:w-10" />
+            <img src="{{ $logo ?? 'N/A' }}" alt="{{ $industry }}" class="w-7 object-cover md:w-10" />
             <span>
                 <h4 class="text-[#5955b2] font-semibold">
                     {{ $name ?? 'N/A' }}
