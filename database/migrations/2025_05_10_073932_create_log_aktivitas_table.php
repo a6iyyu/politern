@@ -11,7 +11,6 @@ return new class extends Migration {
             $table->id('id_log');
             $table->unsignedBigInteger('id_magang');
             $table->text('deskripsi');
-            $table->integer('durasi');
             $table->enum('status', ['DISETUJUI', 'DITOLAK', 'MENUNGGU']);
             $table->timestamps();
 
