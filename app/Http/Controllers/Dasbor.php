@@ -12,11 +12,13 @@ use App\Models\Magang;
 use App\Models\EvaluasiMagang;
 use App\Models\Dosen;
 use App\Models\Perusahaan;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
@@ -66,16 +68,7 @@ class Dasbor extends Controller
                 $nama_prodi = $prodi->nama;
                 $semester = $mahasiswa->semester;
                 $status = $mahasiswa->status;
-                return view('pages.student.dasbor', compact(
-                    'ipk',
-                    'jenjang',
-                    'log_aktivitas',
-                    'lowongan',
-                    'nama_pengguna',
-                    'nama_prodi',
-                    'semester',
-                    'status',
-                ));
+                return view('pages.student.dasbor', compact('ipk', 'jenjang', 'log_aktivitas', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status'));
             })(),
             'DOSEN' => (function () use ($pengguna): View {
                 $nama = $pengguna->dosen->nama;
@@ -92,7 +85,8 @@ class Dasbor extends Controller
                 $total_bimbingan = Magang::where('id_dosen_pembimbing', $id_dosen)->count();
                 $total_mahasiswa = Mahasiswa::count();
 
-                $data = $mahasiswa_bimbingan->map(function ($mhs): array {
+                /** @var SupportCollection<int, Mahasiswa> $mahasiswa_bimbingan */
+                $data = $mahasiswa_bimbingan->map(function (Mahasiswa $mhs): array {
                     $pengajuan = $mhs->pengajuan_magang->first();
                     $lowongan = $pengajuan?->lowongan;
                     $perusahaan = $lowongan?->perusahaan;
@@ -109,20 +103,7 @@ class Dasbor extends Controller
                     ];
                 })->toArray();
 
-                return view('pages.lecturer.dasbor', compact(
-                    'aktivitas_terbaru',
-                    'data',
-                    'evaluasi_magang',
-                    'mahasiswa_aktif',
-                    'mahasiswa_bimbingan',
-                    'mahasiswa_selesai',
-                    'menunggu_evaluasi',
-                    'nama',
-                    'nidn',
-                    'total_aktivitas',
-                    'total_bimbingan',
-                    'total_mahasiswa',
-                ));
+                return view('pages.lecturer.dasbor', compact('aktivitas_terbaru', 'data', 'evaluasi_magang', 'mahasiswa_aktif', 'mahasiswa_bimbingan', 'mahasiswa_selesai', 'menunggu_evaluasi', 'nama', 'nidn', 'total_aktivitas', 'total_bimbingan', 'total_mahasiswa'));
             })(),
             default => abort(403),
         };
@@ -139,11 +120,10 @@ class Dasbor extends Controller
     {
         try {
             $mahasiswa = $this->mahasiswa_bimbingan($id)->firstOrFail();
-            if (!$mahasiswa) abort(404, "Data mahasiswa tidak ditemukan atau bukan bimbingan Anda.");
             return view('pages.lecturer.detail-mahasiswa-bimbingan', compact('mahasiswa'));
         } catch (ModelNotFoundException $exception) {
             report($exception);
-            abort(404, "Data mahasiswa bimbingan tidak ditemukan.");
+            abort(404, "Data mahasiswa tidak ditemukan atau bukan bimbingan Anda.");
         } catch (Exception $exception) {
             report($exception);
             abort(500, "Terjadi kesalahan pada server.");
@@ -156,7 +136,7 @@ class Dasbor extends Controller
      * Fungsi di bawah ini bertujuan untuk mengembalikan semua data-data
      * yang nantinya akan divisualisasikan dalam berbagai bentuk grafik. 
      */
-    public function grafik(): JsonResponse
+    public function grafik(): JsonResponse|View
     {
         try {
             /** Mengembalikan semua data yang dibutuhkan pada grafik lingkaran */
@@ -167,9 +147,9 @@ class Dasbor extends Controller
                 ->take(5)
                 ->map(fn ($bidang) => [
                     'id_bidang'     => $bidang->first()->id_bidang,
-                    'jumlah_bidang' => $bidang->count() ?? 0,
+                    'jumlah_bidang' => $bidang->count(),
                     'nama_bidang'   => $bidang->first()->bidang->nama_bidang ?? 'N/A',
-                    'persentase'    => round($bidang->count() / $total * 100, 2) ?? 'N/A',
+                    'persentase'    => round($bidang->count() / $total * 100, 2),
                 ])
                 ->values();
 
@@ -187,7 +167,7 @@ class Dasbor extends Controller
 
     /**
      * @param Request $request
-     * @return void
+     * @return View
      *
      * Fungsi ini bertujuan untuk menampilkan halaman rekomendasi magang
      * dan menghitung metode WASPAS.
@@ -231,12 +211,12 @@ class Dasbor extends Controller
     }
 
     /**
-     * @return Mahasiswa
+     * @return Mahasiswa|null
      *
      * Mengambil data mahasiswa beserta relasi program studi berdasarkan
      * pengguna yang sedang masuk.
      */
-    private function mahasiswa(): Mahasiswa
+    private function mahasiswa(): ?Mahasiswa
     {
         return Mahasiswa::with('program_studi')->where('id_pengguna', Auth::user()->id_pengguna)->first();
     }
@@ -292,7 +272,7 @@ class Dasbor extends Controller
      * @param array $alternatif
      * @param array $bobot
      * @param float $lambda
-     * @return void
+     * @return array
      *
      * Fungsi ini bertujuan untuk melakukan perhitungan metode WASPAS untuk
      * menentukan alternatif terbaik pada rekomendasi magang.

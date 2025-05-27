@@ -16,24 +16,24 @@ class DataDosen extends Controller {
         if ($pengguna === "ADMIN") {
             $total_dosen = Dosen::count();
             $total_dosen_pembimbing = DosenPembimbing::count();
-            
-              $rows = Dosen::select()->get()->map(function ($dsn): array {
-                return [
-                    $dsn->id_dosen,
-                    '<div class="flex items-center gap-2">
-                        <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($dsn->nama) . '
-                    </div>',
-                    $dsn->nip,
-                    $dsn->nomor_telepon,
-                    $dsn->nama,
-                    view('components.admin.data-dosen.aksi', compact('dsn'))->render(),
-                ];
-            })->toArray();
-            return view('pages.admin.data-dosen', compact('total_dosen', 'total_dosen_pembimbing', 'rows'));
+
+            $paginasi = Dosen::paginate(request('per_page', 10));
+            $data = collect($paginasi->items())->map(fn(Dosen $dsn): array => [
+                $dsn->id_dosen,
+                '<div class="flex items-center gap-2">
+                    <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($dsn->nama) . '
+                </div>',
+                $dsn->nip,
+                $dsn->nomor_telepon,
+                view('components.admin.data-dosen.aksi', compact('dsn'))->render(),
+            ])->toArray();
+            return view('pages.admin.data-dosen', compact('data', 'paginasi', 'total_dosen', 'total_dosen_pembimbing'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
     }
+
+    public function create() {}
 
     public function show($id) {
         $dosen = Dosen::findOrFail($id);

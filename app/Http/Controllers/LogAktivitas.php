@@ -68,12 +68,12 @@ class LogAktivitas extends Controller
         }
     }
 
-    private function dospem()
+    private function dospem(): int
     {
         return 0;
     }
 
-    private function periode()
+    private function periode(): int
     {
         return 0;
     }

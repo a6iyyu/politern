@@ -4,15 +4,13 @@
 >
     Detail
 </a>
-
 <a
     href="{{ route('admin.data-mahasiswa.edit', ['id' => $mhs->id_mahasiswa]) }}"
     class="inline-flex items-center rounded px-4 py-2 text-white text-xs font-medium bg-[var(--yellow-tertiary)] hover:bg-yellow-500 mr-2"
 >
     Edit
 </a>
-
-<form action="{{ route('admin.data-mahasiswa.destroy', ['id' => $mhs->id_mahasiswa]) }}" method="POST" class="inline-block">
+<form action="{{ route('admin.data-mahasiswa.hapus', ['id' => $mhs->id_mahasiswa]) }}" method="POST" class="inline-block">
     @csrf
     @method('DELETE')
     <button

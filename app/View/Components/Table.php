@@ -6,13 +6,15 @@ namespace App\View\Components;
 
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\Component;
 
 class Table extends Component
 {
-    public array $headers, $rows, $sortable;
+    public array $headers, $sortable;
+    public array|LengthAwarePaginator $rows;
 
-    public function __construct(array $headers, array $rows, array $sortable)
+    public function __construct(array $headers, array|LengthAwarePaginator $rows, array $sortable)
     {
         $this->headers = $headers;
         $this->rows = $rows;

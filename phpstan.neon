@@ -4,12 +4,14 @@ includes:
 parameters:
     paths:
         - app
+        - database
+        - resources
         - routes
+        - tests
 
     level: 5
 
     excludePaths:
         - vendor/*
-        - tests/*
 
     reportUnmatchedIgnoredErrors: false

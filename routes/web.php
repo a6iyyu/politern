@@ -26,22 +26,28 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
         Route::get('/grafik', [Dasbor::class, 'grafik'])->name('admin.dasbor.grafik');
         Route::get('/aktivitas-magang', fn() => view('pages.admin.aktivitas-magang'))->name('admin.aktivitas-magang');
-        Route::get('/data-mahasiswa', [DataMahasiswa::class, 'index'])->name('admin.data-mahasiswa');
-        Route::get('/data-mahasiswa/create', [DataMahasiswa::class, 'create'])->name('admin.data-mahasiswa.create');
-        Route::post('/data-mahasiswa', [DataMahasiswa::class, 'store'])->name('admin.data-mahasiswa.store');
-        Route::get('/data-mahasiswa/{id}', [DataMahasiswa::class, 'show'])->name('admin.data-mahasiswa.detail');
-        Route::get('/data-mahasiswa/{id}/edit', [DataMahasiswa::class, 'edit'])->name('admin.data-mahasiswa.edit');
-        Route::delete('/data-mahasiswa/{id}', [DataMahasiswa::class, 'destroy'])->name('admin.data-mahasiswa.destroy');
-        Route::get('/data-dosen', [DataDosen::class, 'index'])->name('admin.data-dosen');
-        Route::get('/data-dosen/create', [DataDosen::class, 'create'])->name('admin.data-dosen.create');
-        Route::post('/data-dosen', [DataDosen::class, 'store'])->name('admin.data-dosen.store');
-        Route::get('/data-dosen/{id}', [DataDosen::class, 'show'])->name('admin.data-dosen.detail');
-        Route::get('/data-dosen/{id}/edit', [DataDosen::class, 'edit'])->name('admin.data-dosen.edit');
-        Route::delete('/data-dosen/{id}', [DataDosen::class, 'destroy'])->name('admin.data-dosen.destroy');
+        
+        
         Route::get('/data-perusahaan', fn() => view('pages.admin.data-perusahaan'))->name('admin.data-perusahaan');
         Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
         Route::get('/periode-magang', fn() => view('pages.admin.periode-magang'))->name('admin.periode-magang');
         Route::get('/pengajuan-magang', fn() => view('pages.admin.pengajuan-magang'))->name('admin.pengajuan-magang');
+
+        Route::prefix('data-dosen')->group(function () {
+            Route::get('/', [DataDosen::class, 'index'])->name('admin.data-dosen');
+            Route::get('/tambah', [DataDosen::class, 'create'])->name('admin.data-dosen.tambah');
+            Route::get('/{id}', [DataDosen::class, 'show'])->name('admin.data-dosen.detail');
+            Route::get('/{id}/edit', [DataDosen::class, 'edit'])->name('admin.data-dosen.edit');
+            Route::delete('/{id}/hapus', [DataDosen::class, 'destroy'])->name('admin.data-mahasiswa.hapus');
+        });
+
+        Route::prefix('data-mahasiswa')->group(function () {
+            Route::get('/', [DataMahasiswa::class, 'index'])->name('admin.data-mahasiswa');
+            Route::get('/tambah', [DataMahasiswa::class, 'create'])->name('admin.data-mahasiswa.tambah');
+            Route::get('/{id}/detail', [DataMahasiswa::class, 'show'])->name('admin.data-mahasiswa.detail');
+            Route::get('/{id}/edit', [DataMahasiswa::class, 'edit'])->name('admin.data-mahasiswa.edit');
+            Route::delete('/{id}/hapus', [DataMahasiswa::class, 'destroy'])->name('admin.data-mahasiswa.hapus');
+        });
     });
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {

@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pengguna;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,14 +14,20 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class Autentikasi extends Controller
 {
-    public function lupa_kata_sandi(): void
+    public function lupa_kata_sandi(): View
     {
         try {
+            return view('pages.auth.lupa-kata-sandi');
+        } catch (ModelNotFoundException $exception) {
+            report($exception);
+            abort(404, "Data pengguna tidak ditemukan.");
         } catch (Exception $exception) {
-            Log::error('Terjadi kesalahan: ', ['errors' => $exception->getMessage()]);
+            report($exception);
+            abort(500, "Terjadi kesalahan pada server.");
         }
     }
 

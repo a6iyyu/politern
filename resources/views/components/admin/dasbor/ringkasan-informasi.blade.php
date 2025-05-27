@@ -9,7 +9,7 @@
             icon="fa-solid fa-user-graduate"
             info="total semua mahasiswa"
             title="Total Mahasiswa"
-            total="{{ $total_mahasiswa }}"
+            :total="$total_mahasiswa ?? 'N/A'"
         />
         <x-info
             background="#e7f8f2"
@@ -17,7 +17,7 @@
             icon="fa-solid fa-user-group"
             info="total semua dosen"
             title="Total Dosen"
-            total="{{ $total_dosen }}"
+            :total="$total_dosen ?? 'N/A'"
         />
         <x-info
             background="#fef5e6"
@@ -25,7 +25,7 @@
             icon="fa-solid fa-building"
             info="total semua perusahaan mitra"
             title="Perusahaan Mitra"
-            total="{{ $total_perusahaan_mitra }}"
+            :total="$total_perusahaan_mitra ?? 'N/A'"
         />
         <x-info
             background="#fdecec"
@@ -33,7 +33,7 @@
             icon="fa-solid fa-briefcase"
             info="total semua lowongan magang"
             title="Lowongan Tersedia"
-            total="{{ $total_lowongan }}"
+            :total="$total_lowongan ?? 'N/A'"
         />
     </div>
 </section>
