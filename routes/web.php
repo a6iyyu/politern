@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/tambah', [DataDosen::class, 'create'])->name('admin.data-dosen.tambah');
             Route::get('/{id}', [DataDosen::class, 'show'])->name('admin.data-dosen.detail');
             Route::get('/{id}/edit', [DataDosen::class, 'edit'])->name('admin.data-dosen.edit');
-            Route::delete('/{id}/hapus', [DataDosen::class, 'destroy'])->name('admin.data-mahasiswa.hapus');
+            Route::delete('/{id}/hapus', [DataDosen::class, 'destroy'])->name('admin.data-dosen.hapus');
         });
 
         Route::prefix('data-mahasiswa')->group(function () {
