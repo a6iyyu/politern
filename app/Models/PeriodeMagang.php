@@ -9,4 +9,13 @@ class PeriodeMagang extends Model
 {
     protected $table = 'periode_magang';
     protected $primaryKey = 'id_periode';
+
+    public $timestamps = true;
+
+    protected $fillable = [
+        'durasi',
+        'tanggal_mulai',
+        'tanggal_selesai',
+        'semester',
+    ];
 }

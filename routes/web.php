@@ -5,6 +5,7 @@ use App\Http\Controllers\Dasbor;
 use App\Http\Controllers\DataDosen;
 use App\Http\Controllers\DataMahasiswa;
 use App\Http\Controllers\LogAktivitas;
+use App\Http\Controllers\PeriodeMagang;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -30,9 +31,8 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/data-perusahaan', fn() => view('pages.admin.data-perusahaan'))->name('admin.data-perusahaan');
         Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
-        Route::get('/periode-magang', fn() => view('pages.admin.periode-magang'))->name('admin.periode-magang');
         Route::get('/pengajuan-magang', fn() => view('pages.admin.pengajuan-magang'))->name('admin.pengajuan-magang');
-
+        
         Route::prefix('data-dosen')->group(function () {
             Route::get('/', [DataDosen::class, 'index'])->name('admin.data-dosen');
             Route::get('/tambah', [DataDosen::class, 'create'])->name('admin.data-dosen.tambah');
@@ -47,6 +47,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/detail', [DataMahasiswa::class, 'show'])->name('admin.data-mahasiswa.detail');
             Route::get('/{id}/edit', [DataMahasiswa::class, 'edit'])->name('admin.data-mahasiswa.edit');
             Route::delete('/{id}/hapus', [DataMahasiswa::class, 'destroy'])->name('admin.data-mahasiswa.hapus');
+        });
+        
+        Route::prefix('periode-magang')->group(function () {
+            Route::get('/', [PeriodeMagang::class, 'index'])->name('admin.periode-magang');
+            Route::get('/{id}/detail', [PeriodeMagang::class, 'detail'])->name('admin.periode-magang.detail');
+            Route::get('/{id}/edit', [PeriodeMagang::class, 'edit'])->name('admin.periode-magang.edit');
+            Route::get('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
+            Route::get('/{id}/tambah', [PeriodeMagang::class, 'create'])->name('admin.periode-magang.tambah');
         });
     });
 
