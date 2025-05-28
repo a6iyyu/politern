@@ -31,19 +31,19 @@
             @endif
             <div class="mt-5 space-y-5">
                 <x-input
-                    name="nama_pengguna"
-                    label="Nama Pengguna"
                     icon="fa-solid fa-id-card"
+                    label="Nama Pengguna"
+                    name="nama_pengguna"
                     placeholder="Masukkan Nama Pengguna Anda"
-                    required
+                    :required="true"
                 />
                 <x-input
-                    name="kata_sandi"
-                    label="Kata Sandi"
-                    type="password"
                     icon="fa-solid fa-lock"
+                    label="Kata Sandi"
+                    name="kata_sandi"
                     placeholder="Masukkan Kata Sandi Anda"
-                    required
+                    type="password"
+                    :required="true"
                 />
             </div>
             <div class="mt-5 flex items-center justify-between text-sm">

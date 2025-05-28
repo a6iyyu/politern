@@ -1,5 +1,5 @@
 <section class="mt-8 flex items-center justify-end">
-    <button type="button" id="open" class="cursor-pointer w-fit text-sm bg-[var(--green-tertiary)] text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
+    <button type="button" data-target="log-mahasiswa" class="open cursor-pointer w-fit text-sm bg-[var(--green-tertiary)] text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
         Tambah Aktivitas
     </button>
 </section>

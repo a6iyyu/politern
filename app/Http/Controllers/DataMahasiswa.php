@@ -11,7 +11,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-class DataMahasiswa extends Controller {
+class DataMahasiswa extends Controller
+{
     public function index(): View
     {
         $pengguna = Auth::user()->tipe;
@@ -21,9 +22,9 @@ class DataMahasiswa extends Controller {
             $mahasiswa_belum_magang = Mahasiswa::where('status', 'BELUM MAGANG')->count();
             $mahasiswa_sedang_magang = Mahasiswa::where('status', 'SEDANG MAGANG')->count();
             $mahasiswa_selesai_magang = Mahasiswa::where('status', 'SELESAI')->count();
-            
+
             /** @var LengthAwarePaginator $paginasi */
-            $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', 10));
+            $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', default: 10));
             $data = $paginasi->getCollection()->map(fn($mhs) => [
                 $mhs->id_mahasiswa,
                 '<div class="flex items-center gap-2">
@@ -45,24 +46,25 @@ class DataMahasiswa extends Controller {
     }
 
     public function create() {}
-    
-    public function show($id): View
-    {
-        $mahasiswa = Mahasiswa::findOrFail($id);
-        return view('pages.admin.detail-data-mahasiswa', compact('mahasiswa'));
-    }
-    
-    public function edit($id): View
-    {
-        $mahasiswa = Mahasiswa::findOrFail($id);
-        return view('pages.admin.edit-data-mahasiswa', compact('mahasiswa'));
-    }
-    
-    public function destroy($id): RedirectResponse
+
+    public function destroy(string $id): RedirectResponse
     {
         $mahasiswa = Mahasiswa::findOrFail($id);
         $mahasiswa->delete();
-        
+
         return to_route('admin.data-mahasiswa')->with('success', 'Data mahasiswa berhasil dihapus');
+    }
+
+    public function show(string $id): View
+    {
+        $pengguna = Auth::user()->tipe;
+        $mahasiswa = Mahasiswa::findOrFail($id);
+        if ($pengguna === "ADMIN") {
+            return view('pages.admin.detail-data-mahasiswa', compact('mahasiswa'));
+        } else if ($pengguna === "DOSEN") {
+            return view('pages.lecturer.detail-data-mahasiswa', compact('mahasiswa'));
+        } else {
+            abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
+        }
     }
 }

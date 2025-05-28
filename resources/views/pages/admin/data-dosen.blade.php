@@ -15,5 +15,7 @@
             @include('components.admin.data-dosen.filter')
             @include('components.admin.data-dosen.tabel')
         </section>
+        @include('components.admin.data-dosen.detail')
+        @include('components.admin.data-dosen.edit')
     </main>
 @endsection

@@ -1,4 +1,4 @@
-<section id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
+<section class="modal modal-log-dosen fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="flex items-center justify-center min-h-screen px-4">
         @if (!empty($log_aktivitas))
             <figure class="w-full max-w-md rounded-xl bg-white p-6 shadow-lg border-2 border-[var(--stroke)]">
@@ -28,7 +28,7 @@
                         N/A
                     </h5>
                 </figcaption>
-                <button id="tutup" class="cursor-pointer mt-6 w-full px-4 py-2 bg-red-500 text-white rounded-lg transition-all duration-300 ease-in-out lg:hover:bg-red-600">
+                <button class="close cursor-pointer mt-6 w-full px-4 py-2 bg-red-500 text-white rounded-lg transition-all duration-300 ease-in-out lg:hover:bg-red-600">
                     Tutup
                 </button>
             </figure>

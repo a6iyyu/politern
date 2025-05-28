@@ -1,21 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PeriodeMagang extends Model
 {
     protected $table = 'periode_magang';
     protected $primaryKey = 'id_periode';
-
     public $timestamps = true;
 
-    protected $fillable = [
-        'durasi',
-        'tanggal_mulai',
-        'tanggal_selesai',
-        'semester',
-    ];
+    protected $fillable = ['tanggal_mulai', 'tanggal_selesai', 'semester'];
 }

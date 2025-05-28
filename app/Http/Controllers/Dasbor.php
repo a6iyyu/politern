@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -33,13 +32,6 @@ class Dasbor extends Controller
      */
     public function index(): callable|RedirectResponse|View
     {
-        /**
-         * @var mixed $pengguna
-         *
-         * Inisialisasi variabel $pengguna, bertujuan untuk menyimpan data
-         * pengguna yang sedang masuk sistem dengan menggunakan fungsi
-         * Auth::user().
-         */
         $pengguna = Auth::user();
         if (!$pengguna) return to_route('masuk');
         if (!in_array($pengguna->tipe, ['ADMIN', 'MAHASISWA', 'DOSEN'])) abort(403, 'Anda tidak memiliki akses.');
@@ -118,14 +110,15 @@ class Dasbor extends Controller
      */
     public function detail(string $id): View
     {
+        $pengguna = Auth::user()->tipe;
         try {
             $mahasiswa = $this->mahasiswa_bimbingan($id)->firstOrFail();
             return view('pages.lecturer.detail-mahasiswa-bimbingan', compact('mahasiswa'));
         } catch (ModelNotFoundException $exception) {
             report($exception);
             abort(404, "Data mahasiswa tidak ditemukan atau bukan bimbingan Anda.");
-        } catch (Exception $exception) {
-            report($exception);
+        } catch (Exception $e) {
+            report($e);
             abort(500, "Terjadi kesalahan pada server.");
         }
     }
@@ -163,51 +156,6 @@ class Dasbor extends Controller
             report($exception);
             return Response::json(['error' => 'Terjadi kesalahan pada server.'], 500);
         }
-    }
-
-    /**
-     * @param Request $request
-     * @return View
-     *
-     * Fungsi ini bertujuan untuk menampilkan halaman rekomendasi magang
-     * dan menghitung metode WASPAS.
-     * NB: Ini hanyalah dummy data.
-     */
-    public function rekomendasi_magang(Request $request): View
-    {
-        $request->validate([
-            'ipk' => ['required', 'numeric', 'min:0', 'max:4'],
-            'semester' => ['required', 'numeric', 'min:1', 'max:8'],
-            'jenjang' => ['required', 'numeric', 'min:1', 'max:2'],
-            'status' => ['required', 'numeric', 'min:1', 'max:2'],
-            'lokasi' => ['required', 'numeric', 'min:1', 'max:2'],
-        ], [
-            'ipk.required'      => 'IPK wajib diisi.',
-            'ipk.numeric'       => 'IPK harus berupa angka.',
-            'ipk.min'           => 'IPK minimal 0.',
-            'ipk.max'           => 'IPK maksimal 4.',
-            'semester.required' => 'Semester wajib diisi.',
-            'semester.numeric'  => 'Semester harus berupa angka.',
-            'semester.min'      => 'Semester minimal 1.',
-            'semester.max'      => 'Semester maksimal 8.',
-            'jenjang.required'  => 'Jenjang wajib diisi.',
-            'jenjang.numeric'   => 'Jenjang harus berupa angka.',
-            'jenjang.min'       => 'Jenjang minimal 1.',
-            'jenjang.max'       => 'Jenjang maksimal 2.',
-            'status.required'   => 'Status wajib diisi.',
-            'status.numeric'    => 'Status harus berupa angka.',
-            'status.min'        => 'Status minimal 1.',
-            'status.max'        => 'Status maksimal 2.',
-        ]);
-
-        $ipk = $request->ipk;
-        $semester = $request->semester;
-        $jenjang = $request->jenjang;
-        $status = $request->status;
-        $lokasi = $request->lokasi;
-
-        $this->waspas([$ipk, $semester, $jenjang, $status, $lokasi], [0.2, 0.2, 0.2, 0.2, 0.2], 0.5);
-        return view('pages.student.dasbor', compact('ipk', 'semester', 'jenjang', 'status', 'lokasi'));
     }
 
     /**
@@ -265,49 +213,5 @@ class Dasbor extends Controller
             ->select('pengajuan_magang.id_mahasiswa')
             ->distinct()
             ->count();
-    }
-
-    /**
-     *
-     * @param array $alternatif
-     * @param array $bobot
-     * @param float $lambda
-     * @return array
-     *
-     * Fungsi ini bertujuan untuk melakukan perhitungan metode WASPAS untuk
-     * menentukan alternatif terbaik pada rekomendasi magang.
-     */
-    private function waspas(array $alternatif, array $bobot, float $lambda = 0.5): array
-    {
-        $jumlah_kriteria = count($bobot);
-        $normalisasi = [];
-
-        /** Menghitung nilai maksimum */
-        $maks_per_kriteria = [];
-        for ($j = 0; $j < $jumlah_kriteria; $j++) {
-            $maks_per_kriteria[$j] = max(array_column($alternatif, $j));
-        }
-
-        /** Menghitung nilai normalisasi */
-        foreach ($alternatif as $i => $a) {
-            for ($j = 0; $j < $jumlah_kriteria; $j++) {
-                $normalisasi[$i][$j] = $maks_per_kriteria[$j] > 0 ? $a[$j] / $maks_per_kriteria[$j] : 0;
-            }
-        }
-
-        /** Menghitung nilai Q */
-        $hasil = [];
-        foreach ($normalisasi as $i => $nilai) {
-            $q1 = 0;
-            $q2 = 1;
-            foreach ($nilai as $j => $v) {
-                $q1 += $bobot[$j] * $v;
-                $q2 *= pow($v, $bobot[$j]);
-            }
-            $qi = $lambda * $q1 + (1 - $lambda) * $q2;
-            $hasil[$i] = compact('q1', 'q2', 'qi');
-        }
-
-        return $hasil;
     }
 }

@@ -21,36 +21,33 @@
             <div class="cursor-default flex flex-col">
                 <figcaption class="flex items-center gap-2">
                     <h5 class="cursor-default font-semibold text-[var(--primary)] text-sm">
-                        {{ $perusahaan ?? "Politeknik Negeri Malang" }}
+                        {{ $id->nama ?? "Politeknik Negeri Malang" }}
                     </h5>
                     <h5 class="cursor-default text-sm text-[var(--secondary-text)]">
-                        {{ $lokasi ?? "Jl. Raya Malang No. 1" }}
+                        {{ $id->lokasi->nama ?? "Jl. Raya Malang No. 1" }}
                     </h5>
                 </figcaption>
                 <span class="mt-4 flex items-center gap-10">
                     <h5 class="flex items-center text-sm text-[var(--secondary-text)]">
                         <i class="fa-solid fa-building mr-4"></i>
-                        <p>{{ $nib ?? "1234567890" }}</p>
+                        <p>{{ $id->nib ?? "1234567890" }}</p>
                     </h5>
                     <h5 class="flex items-center text-sm text-[var(--secondary-text)]">
                         <i class="fa-solid fa-phone mr-4"></i>
-                        <p>{{ $nomor_telepon ?? "1234567890" }}</p>
-                    </h5>
-                    <h5 class="text-sm bg-[var(--secondary)] text-[var(--background)] font-medium px-6 py-2 rounded-full">
-                        {{ $bidang ?? "Bidang" }}
+                        <p>{{ $id->nomor_telepon ?? "1234567890" }}</p>
                     </h5>
                 </span>
             </div>
             <div class="cursor-default flex items-center justify-end">
                 <h5 class="text-sm text-white px-6 py-2 rounded-lg @if ("AKTIF") bg-emerald-500 @endif">
-                    {{ $status ?? "AKTIF" }}
+                    {{ $id->status ?? "N/A" }}
                 </h5>
             </div>
         </section>
         <section class="flex items-center justify-between gap-7">
-            <a href="" class="fa-solid fa-eye text-lg text-[var(--primary-text)]"></a>
-            <a href="" class="fa-solid fa-pencil text-[var(--primary-text)]"></a>
-            <a href="" class="fa-solid fa-trash text-[var(--primary-text)]"></a>
+            <a href="{{ route('admin.data-perusahaan.detail', ['id' => $id->id_perusahaan_mitra]) }}" class="fa-solid fa-eye text-lg text-[var(--primary-text)]"></a>
+            <a href="{{ route('admin.data-perusahaan.edit', ['id' => $id->id_perusahaan_mitra]) }}" class="fa-solid fa-pencil text-[var(--primary-text)]"></a>
+            <a href="{{ route('admin.data-perusahaan.hapus', ['id' => $id->id_perusahaan_mitra]) }}" class="fa-solid fa-trash text-[var(--primary-text)]"></a>
         </section>
     </figure>
 </section>

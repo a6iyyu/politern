@@ -13,9 +13,9 @@ class Card extends Component
 {
     public Carbon $createdAt;
     public float $salary;
-    public string $category, $industry, $location, $logo, $name, $status, $type;
+    public string $category, $industry, $location, $logo, $name, $status, $type, $url;
 
-    public function __construct(string $category, Carbon $createdAt, string $industry, string $location, string $logo, string $name, float $salary, string $status, string $type)
+    public function __construct(string $category, Carbon $createdAt, string $industry, string $location, string $logo, string $name, float $salary, string $status, string $type, string $url)
     {
         $this->category = $category;
         $this->createdAt = $createdAt;
@@ -26,6 +26,7 @@ class Card extends Component
         $this->salary = $salary;
         $this->status = $status;
         $this->type = $type;
+        $this->url = $url;
     }
 
     public function formattedDate(string $format = 'j F Y'): string
