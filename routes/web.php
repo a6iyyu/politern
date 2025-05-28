@@ -6,8 +6,10 @@ use App\Http\Controllers\DataDosen;
 use App\Http\Controllers\DataMahasiswa;
 use App\Http\Controllers\DataPerusahaan;
 use App\Http\Controllers\LogAktivitas;
+use App\Http\Controllers\Lowongan;
 use App\Http\Controllers\PeriodeMagang;
 use App\Http\Controllers\RekomendasiMagang;
+use App\Models\LowonganMagang;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -65,6 +67,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/edit', [PeriodeMagang::class, 'edit'])->name('admin.periode-magang.edit');
             Route::get('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
             Route::get('/{id}/tambah', [PeriodeMagang::class, 'create'])->name('admin.periode-magang.tambah');
+        });
+
+        Route::prefix('lowongan-magang')->group(function () {
+            Route::get('/', [Lowongan::class, 'index'])->name('admin.lowongan-magang');
+            Route::get('/tambah', [Lowongan::class, 'create'])->name('admin.lowongan-magang.tambah');
+            Route::get('/{id}/detail', [Lowongan::class, 'detail'])->name('admin.lowongan-magang.detail');
+            Route::get('/{id}/edit', [Lowongan::class, 'edit'])->name('admin.lowongan-magang.edit');
+            Route::post('/{id}/edit', [Lowongan::class, 'update'])->name('admin.lowongan-magang.perbarui');
+            Route::delete('/{id}/hapus', [Lowongan::class, 'destroy'])->name('admin.lowongan-magang.hapus');
         });
     });
 

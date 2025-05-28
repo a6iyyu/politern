@@ -37,10 +37,10 @@ class DataDosen extends Controller
 
     public function create() {}
 
-    public function show($id): View
+    public function show($id): array
     {
         $dosen = Dosen::findOrFail($id);
-        return view('pages.admin.detail-data-dosen', compact('dosen'));
+        return compact('dosen');
     }
 
     public function edit($id): View
