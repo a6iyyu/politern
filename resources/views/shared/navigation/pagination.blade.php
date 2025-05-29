@@ -6,9 +6,9 @@
                 id="per_page"
                 name="per_page"
                 onchange="update_per_page(this.value)"
-                class="bg-green-medium appearance-none rounded-md border border-gray-200 px-3 py-1.5 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                class="bg-green-medium appearance-none rounded-md border border-gray-200 px-3 py-1.5"
             >
-                @foreach ([5, 10, 25, 50, 100] as $perPageOption)
+                @foreach ([10, 25, 50, 100] as $perPageOption)
                     <option value="{{ $perPageOption }}" {{ Request::input('per_page', 10) == $perPageOption ? 'selected' : '' }}>
                         {{ $perPageOption }}
                     </option>
@@ -28,7 +28,7 @@
         <nav class="flex items-center space-x-1">
             <a
                 href="{{ $paginator->previousPageUrl() }}"
-                class="{{ $paginator->onFirstPage() ? 'cursor-not-allowed opacity-50' : 'hover:bg-emerald-50' }} text-white-600 flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white transition-colors"
+                class="{{ $paginator->onFirstPage() ? 'cursor-not-allowed opacity-50' : 'lg:hover:bg-[#c0bbff]' }} text-white-600 flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white transition-colors"
                 {{ $paginator->onFirstPage() ? 'aria-disabled=true' : '' }}
             >
                 <i class="fas fa-chevron-left text-xs"></i>
@@ -39,14 +39,14 @@
                 $start = max(2, $current - 1);
                 $end = min($last - 1, $current + 1);
             @endphp
-            <a href="{{ $paginator->url(1) }}" class="{{ $current == 1 ? 'bg-[var(--green-tertiary)] text-white' : 'text-white-700 border-gray-200 bg-white hover:bg-emerald-50' }} flex h-8 min-w-[2rem] items-center justify-center rounded-md border text-sm transition-colors">
+            <a href="{{ $paginator->url(1) }}" class="{{ $current == 1 ? 'bg-[var(--primary)] text-white' : 'text-white-700 border-gray-200 bg-white lg:hover:bg-[#c0bbff]' }} flex h-8 min-w-[2rem] items-center justify-center rounded-md border text-sm transition-colors">
                 1
             </a>
             @if ($start > 2)
                 <span class="text-white px-1">...</span>
             @endif
             @for ($i = $start; $i <= $end; $i++)
-                <a href="{{ $paginator->url($i) }}" class="{{ $current == $i ? 'bg-[var(--green-tertiary)] text-white' : 'text-white-700 border-gray-200 bg-white hover:bg-emerald-50' }} flex h-8 min-w-[2rem] items-center justify-center rounded-md border text-sm transition-colors">
+                <a href="{{ $paginator->url($i) }}" class="{{ $current == $i ? 'bg-[var(--primary)] text-white' : 'text-white-700 border-gray-200 bg-white lg:hover:bg-[#c0bbff]' }} flex h-8 min-w-[2rem] items-center justify-center rounded-md border text-sm transition-colors">
                     {{ $i }}
                 </a>
             @endfor
@@ -54,13 +54,13 @@
                 <span class="text-white px-1">...</span>
             @endif
             @if ($last > 1)
-                <a href="{{ $paginator->url($last) }}" class="{{ $current == $last ? 'bg-[var(--green-tertiary)] text-white' : 'text-white-700 border-gray-200 bg-white hover:bg-emerald-50' }} flex h-8 min-w-[2rem] items-center justify-center rounded-md border text-sm transition-colors">
+                <a href="{{ $paginator->url($last) }}" class="{{ $current == $last ? 'bg-[var(--primary)] text-white' : 'text-white-700 border-gray-200 bg-white lg:hover:bg-[#c0bbff]' }} flex h-8 min-w-[2rem] items-center justify-center rounded-md border text-sm transition-colors">
                     {{ $last }}
                 </a>
             @endif
             <a
                 href="{{ $paginator->nextPageUrl() }}"
-                class="{{ $paginator->hasMorePages() ? 'hover:bg-emerald-50' : 'cursor-not-allowed opacity-50' }} text-white-600 flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white transition-colors"
+                class="{{ $paginator->hasMorePages() ? 'lg:hover:bg-[#c0bbff]' : 'cursor-not-allowed opacity-50' }} text-white-600 flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white transition-colors"
                 {{ $paginator->hasMorePages() ? '' : 'aria-disabled=true' }}
             >
                 <i class="fas fa-chevron-right text-xs"></i>

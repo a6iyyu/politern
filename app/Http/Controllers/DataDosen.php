@@ -6,10 +6,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Dosen;
 use App\Models\DosenPembimbing;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-class DataDosen extends Controller {
+class DataDosen extends Controller
+{
     public function index(): View
     {
         $pengguna = Auth::user()->tipe;
@@ -18,14 +20,14 @@ class DataDosen extends Controller {
             $total_dosen_pembimbing = DosenPembimbing::count();
 
             $paginasi = Dosen::paginate(request('per_page', 10));
-            $data = collect($paginasi->items())->map(fn(Dosen $dsn): array => [
-                $dsn->id_dosen,
+            $data = collect($paginasi->items())->map(fn(Dosen $dosen): array => [
+                $dosen->id_dosen,
                 '<div class="flex items-center gap-2">
-                    <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($dsn->nama) . '
+                    <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($dosen->nama) . '
                 </div>',
-                $dsn->nip,
-                $dsn->nomor_telepon,
-                view('components.admin.data-dosen.aksi', compact('dsn'))->render(),
+                $dosen->nip,
+                $dosen->nomor_telepon,
+                view('components.admin.data-dosen.aksi', compact('dosen'))->render(),
             ])->toArray();
             return view('pages.admin.data-dosen', compact('data', 'paginasi', 'total_dosen', 'total_dosen_pembimbing'));
         } else {
@@ -35,19 +37,22 @@ class DataDosen extends Controller {
 
     public function create() {}
 
-    public function show($id) {
+    public function show($id): array
+    {
         $dosen = Dosen::findOrFail($id);
-        return view('pages.admin.data-dosen.show', compact('dosen'));
-    }
-    
-    public function edit($id) {
-        $dosen = Dosen::findOrFail($id);
-        return view('pages.admin.data-dosen.edit', compact('dosen'));
+        return compact('dosen');
     }
 
-    public function destroy($id) {
+    public function edit($id): View
+    {
+        $dosen = Dosen::findOrFail($id);
+        return view('pages.admin.edit-data-dosen', compact('dosen'));
+    }
+
+    public function destroy($id): RedirectResponse
+    {
         $dosen = Dosen::findOrFail($id);
         $dosen->delete();
-        return redirect()->route('pages.admin.data-dosen.index')->with('success', 'Data Dosen berhasil dihapus.');
+        return redirect()->route('admin.data-dosen')->with('success', 'Data Dosen berhasil dihapus.');
     }
 }

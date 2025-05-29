@@ -34,8 +34,7 @@
     </h5>
     <span class="mt-6 flex items-center justify-between">
         <img src="{{ asset('icons/simpan-biru.svg') }}" alt="Simpan" id="save" />
-        <a href=""
-            class="bg-[#ff77c3] text-white text-sm px-4 py-2 rounded-lg font-medium cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[#ff60b8]">
+        <a href="{{ $url }}" class="bg-[#ff77c3] text-white text-sm px-4 py-2 rounded-lg font-medium cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[#ff60b8]">
             Lihat Detail
         </a>
     </span>

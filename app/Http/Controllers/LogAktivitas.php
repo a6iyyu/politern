@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\LogAktivitas as LogAktivitasModel;
+use App\Models\Magang;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanMagang;
 use Exception;
@@ -20,19 +21,26 @@ class LogAktivitas extends Controller
     public function index(): View
     {
         $pengguna = Auth::user()->tipe;
+
+        if ($pengguna === 'DOSEN') {
+            $log_aktivitas = LogAktivitasModel::all();
+            return view('pages.lecturer.log-aktivitas', compact('log_aktivitas'));
+        }
+
         if ($pengguna === 'MAHASISWA') {
+            $status_magang = Magang::where('id_pengajuan_magang', Auth::user()->id)->first();
+            if (!$status_magang || $status_magang->status !== 'AKTIF') return view('pages.student.log-aktivitas');
+
             $dospem = $this->dospem();
             $periode = $this->periode();
             $perusahaan = $this->perusahaan();
             $posisi = $this->posisi();
             $status = $this->status();
+
             return view('pages.student.log-aktivitas', compact('dospem', 'periode', 'perusahaan', 'posisi', 'status'));
-        } else if ($pengguna === 'DOSEN') {
-            $log_aktivitas = LogAktivitasModel::all();
-            return view('pages.lecturer.log-aktivitas', compact('log_aktivitas'));
-        } else {
-            abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
+
+        abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
     }
 
     public function create(Request $request) {}
@@ -42,6 +50,8 @@ class LogAktivitas extends Controller
     public function update(Request $request) {}
 
     public function destroy(Request $request) {}
+
+    public function detail() {}
 
     public function show(string $id): JsonResponse
     {
