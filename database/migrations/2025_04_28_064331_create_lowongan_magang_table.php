@@ -11,7 +11,6 @@ return new class extends Migration {
             $table->id('id_lowongan');
             $table->unsignedBigInteger('id_perusahaan_mitra');
             $table->unsignedBigInteger('id_periode');
-            $table->string('judul');
             $table->text('deskripsi');
             $table->integer('kuota');
             $table->decimal('gaji', 12, 2)->nullable();
@@ -19,7 +18,6 @@ return new class extends Migration {
             $table->float('ipk')->default(0);
             $table->date('tanggal_mulai_pendaftaran');
             $table->date('tanggal_selesai_pendaftaran');
-            $table->date('tanggal_posting');
             $table->enum('status', ['DIBUKA', 'DITUTUP']);
             $table->timestamps();
 

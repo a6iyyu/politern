@@ -12,7 +12,7 @@ return new class extends Migration {
         Schema::table('log_aktivitas', function (Blueprint $table) {
             $table->string('judul')->after('id_magang');
             $table->integer('minggu')->after('judul');
-            $table->string('foto')->after('durasi');
+            $table->string('foto')->after('minggu');
         });
     }
 

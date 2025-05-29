@@ -11,7 +11,6 @@ return new class extends Migration {
             $table->id('id_pengajuan_magang');
             $table->unsignedBigInteger('id_mahasiswa');
             $table->unsignedBigInteger('id_lowongan');
-            $table->date('tanggal_pengajuan');
             $table->enum('status', ['MENUNGGU', 'DISETUJUI', 'DITOLAK'])->default('MENUNGGU');
             $table->text('keterangan')->nullable();
             $table->timestamps();

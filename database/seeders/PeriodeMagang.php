@@ -13,9 +13,11 @@ class PeriodeMagang extends Seeder
         DB::table('periode_magang')->insert([
             [
                 'id_periode'       => 1,
+                'nama_periode'     => 'Semester Genap 2025/2026',
+                'durasi'           => '6 Bulan',
                 'tanggal_mulai'    => '2025-07-01',
                 'tanggal_selesai'  => '2025-12-31',
-                'semester'         => 'GENAP',
+                'status'           => 'AKTIF',
                 'created_at'       => Carbon::now(),
                 'updated_at'       => Carbon::now(),
             ],
