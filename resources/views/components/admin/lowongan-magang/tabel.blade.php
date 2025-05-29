@@ -20,6 +20,6 @@
     </div>
 @else
     <h5 class="mt-4 cursor-default text-xs font-light text-[var(--primary-text)]">
-        Menampilkan {{ count($data) ?? 0 }} dari {{ $total_lowongan ?? 'N/A' }} lowonga
+        Menampilkan {{ count($data) ?? 0 }} dari {{ $total_lowongan ?? 'N/A' }} lowongan
     </h5>
 @endif
