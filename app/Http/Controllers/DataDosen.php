@@ -9,6 +9,7 @@ use App\Models\DosenPembimbing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class DataDosen extends Controller
 {
@@ -55,5 +56,54 @@ class DataDosen extends Controller
         $dosen = Dosen::findOrFail($id);
         $dosen->delete();
         return redirect()->route('admin.data-dosen')->with('success', 'Data Dosen berhasil dihapus.');
+    }
+
+    public function export_excel()
+    {
+        $dosen = Dosen::select("id_dosen", "nama", "nip", "nomor_telepon")
+                    ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Nama');
+        $sheet->setCellValue('C1', 'NIP');
+        $sheet->setCellValue('D1', 'Nomor Telepon');
+
+        $sheet->getStyle("A1:D1")->getFont()->setBold(true);
+
+        $no = 1;
+        $baris = 2;
+        foreach ($dosen as $key => $value) {
+            $sheet->setCellValue('A'.$baris, $no);
+            $sheet->setCellValue('B'.$baris, $value->nama);
+            $sheet->setCellValueExplicit('C'.$baris, $value->nip, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValue('D'.$baris, $value->nomor_telepon);
+            $baris++;
+            $no++;
+        }   
+
+        foreach (range('A', 'D') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $sheet->setTitle("Data Dosen"); // set title sheet
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data Dosen ' . date("Y-m-d H:i:s") . '.xlsx';
+
+        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header("Cache-Control: max-age=0");
+        header("Cache-Control: max-age=1");
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate('D, d M Y H:i:s') . ' GMT');
+        header("Cache-Control: cache, must-revalidate");
+        header("Pragma: public");
+
+        $writer->save('php://output');
+        exit;
+        // end function export_excel
     }
 }

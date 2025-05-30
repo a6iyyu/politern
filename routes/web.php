@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/tambah', [DataDosen::class, 'create'])->name('admin.data-dosen.tambah');
             Route::get('/{id}/detail', [DataDosen::class, 'show'])->name('admin.data-dosen.detail');
             Route::get('/{id}/edit', [DataDosen::class, 'edit'])->name('admin.data-dosen.edit');
+            Route::get('/export_excel', [DataDosen::class, 'export_excel'])->name('admin.data-dosen.export_excel');
             Route::delete('/{id}/hapus', [DataDosen::class, 'destroy'])->name('admin.data-dosen.hapus');
         });
 
@@ -50,6 +51,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/edit', [DataMahasiswa::class, 'edit'])->name('admin.data-mahasiswa.edit');
             Route::post('/{id}/edit', [DataMahasiswa::class, 'update'])->name('admin.data-mahasiswa.perbarui');
             Route::delete('/{id}/hapus', [DataMahasiswa::class, 'destroy'])->name('admin.data-mahasiswa.hapus');
+            Route::get('/export_excel', [DataMahasiswa::class, 'export_excel'])->name('admin.data-mahasiswa.export_excel');
         });
         
         Route::prefix('data-perusahaan')->group(function () {
@@ -66,7 +68,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/detail', [PeriodeMagang::class, 'detail'])->name('admin.periode-magang.detail');
             Route::get('/{id}/edit', [PeriodeMagang::class, 'edit'])->name('admin.periode-magang.edit');
             Route::get('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
-            Route::get('/{id}/tambah', [PeriodeMagang::class, 'create'])->name('admin.periode-magang.tambah');
+            Route::get('/tambah', [PeriodeMagang::class, 'create'])->name('admin.periode-magang.tambah');
+            Route::get('/export_excel', [PeriodeMagang::class, 'export_excel'])->name('admin.periode-magang.export_excel');
         });
 
         Route::prefix('lowongan-magang')->group(function () {

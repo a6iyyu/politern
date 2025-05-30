@@ -8,6 +8,7 @@ use App\Models\PeriodeMagang as PeriodeMagangModel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class PeriodeMagang extends Controller
 {
@@ -15,22 +16,75 @@ class PeriodeMagang extends Controller
     {
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
-            $data = PeriodeMagangModel::all()->map(fn(PeriodeMagangModel $periode): array => [
+            $total_periode = PeriodeMagangModel::count();
+
+            $paginasi = PeriodeMagangModel::paginate(request('per_page', 10));
+            $data = collect($paginasi->items())->map(fn(PeriodeMagangModel $periode): array => [
                 $periode->id_periode,
-                "Periode $periode->durasi",
-                date('Y', strtotime($periode->tanggal_mulai)),
-                $periode->semester,
+                $periode->nama_periode,
+                $periode->durasi,
                 $periode->tanggal_mulai,
                 $periode->tanggal_selesai,
-                $periode->tanggal_selesai < Carbon::now()->toDateString() ? 'SELESAI' : 'AKTIF',
+                $periode->status,
                 view('components.admin.periode-magang.aksi', compact('periode'))->render(),
             ])->toArray();
 
-            return view('pages.admin.periode-magang', compact('data'));
-        } else if ($pengguna === 'DOSEN') {
-            abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
+            return view('pages.admin.periode-magang', compact('data', 'paginasi', 'total_periode'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
+    }
+
+    public function export_excel()
+    {
+        $periode = PeriodeMagangModel::select("id_periode", "nama_periode", "durasi", "tanggal_mulai", "tanggal_selesai", "status")
+                    ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Nama Periode');
+        $sheet->setCellValue('C1', 'Durasi');
+        $sheet->setCellValue('D1', 'Tanggal Mulai');
+        $sheet->setCellValue('E1', 'Tanggal Selesai');
+        $sheet->setCellValue('F1', 'Status');
+
+        $sheet->getStyle("A1:F1")->getFont()->setBold(true);
+
+        $no = 1;
+        $baris = 2;
+        foreach ($periode as $key => $value) {
+            $sheet->setCellValue('A'.$baris, $no);
+            $sheet->setCellValue('B'.$baris, $value->nama_periode);
+            $sheet->setCellValue('C'.$baris, $value->durasi);
+            $sheet->setCellValue('D'.$baris, $value->tanggal_mulai);
+            $sheet->setCellValue('E'.$baris, $value->tanggal_selesai);
+            $sheet->setCellValue('F'.$baris, $value->status);
+            $baris++;
+            $no++;
+        }   
+
+        foreach (range('A', 'F') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $sheet->setTitle("Data periode Magang"); // set title sheet
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data periode Magang' . date("Y-m-d H:i:s") . '.xlsx';
+
+        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header("Cache-Control: max-age=0");
+        header("Cache-Control: max-age=1");
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate('D, d M Y H:i:s') . ' GMT');
+        header("Cache-Control: cache, must-revalidate");
+        header("Pragma: public");
+
+        $writer->save('php://output');
+        exit;
+        // end function export_excel
     }
 }

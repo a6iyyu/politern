@@ -2,6 +2,11 @@
     <h2 class="text-base font-semibold text-[var(--primary-text)]">
         Daftar Data Dosen
     </h2>
+    <div class="flex items-center gap-4">
+        <a href="{{ route('admin.data-dosen.export_excel') }}" 
+                    class="text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
+                    <i class="fa fa-file-excel"></i> Export Data
+                </a>
     <a
         href="javascript:void(0)"
         data-target="tambah-dosen"
@@ -9,6 +14,7 @@
     >
         Tambah Data Dosen
     </a>
+    </div>
 </div>
 <x-table
     :headers="['No', 'Dosen', 'NIP', 'Nomor Telepon', 'Aksi']"
@@ -24,3 +30,10 @@
         Menampilkan {{ count($data) ?? 0 }} dari {{ $total_dosen ?? 'N/A' }} dosen
     </h5>
 @endif
+
+
+<div class="flex items-center gap-4">
+<a href="{{ route('admin.data-dosen.export_excel') }}" 
+            class="text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
+            <i class="fa fa-file-excel"></i> Export Data
+        </a>

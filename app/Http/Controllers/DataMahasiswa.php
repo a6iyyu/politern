@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class DataMahasiswa extends Controller
 {
@@ -55,16 +56,57 @@ class DataMahasiswa extends Controller
         return to_route('admin.data-mahasiswa')->with('success', 'Data mahasiswa berhasil dihapus');
     }
 
-    public function show(string $id): View
+    public function export_excel()
     {
-        $pengguna = Auth::user()->tipe;
-        $mahasiswa = Mahasiswa::findOrFail($id);
-        if ($pengguna === "ADMIN") {
-            return view('pages.admin.detail-data-mahasiswa', compact('mahasiswa'));
-        } else if ($pengguna === "DOSEN") {
-            return view('pages.lecturer.detail-data-mahasiswa', compact('mahasiswa'));
-        } else {
-            abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
+        $mahasiswa = Mahasiswa::select("id_mahasiswa", "nama_lengkap", "nim", "id_prodi", "angkatan", "semester")
+                    ->with('program_studi:id_prodi,nama')
+                    ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Nama Lengkap');
+        $sheet->setCellValue('C1', 'NIM');
+        $sheet->setCellValue('D1', 'Program Studi');
+        $sheet->setCellValue('E1', 'Angkatan');
+        $sheet->setCellValue('F1', 'Semester');
+
+        $sheet->getStyle("A1:F1")->getFont()->setBold(true);
+
+        $no = 1;
+        $baris = 2;
+        foreach ($mahasiswa as $key => $value) {
+            $sheet->setCellValue('A'.$baris, $no);
+            $sheet->setCellValue('B'.$baris, $value->nama_lengkap);
+            $sheet->setCellValue('C'.$baris, $value->nim);
+            $sheet->setCellValue('D'.$baris, $value->program_studi->nama);
+            $sheet->setCellValue('E'.$baris, $value->angkatan);
+            $sheet->setCellValue('F'.$baris, $value->semester);
+            $baris++;
+            $no++;
+        }   
+
+        foreach (range('A', 'F') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
+
+        $sheet->setTitle("Data Mahasiswa"); // set title sheet
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data Mahasiswa ' . date("Y-m-d H:i:s") . '.xlsx';
+
+        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header("Cache-Control: max-age=0");
+        header("Cache-Control: max-age=1");
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate('D, d M Y H:i:s') . ' GMT');
+        header("Cache-Control: cache, must-revalidate");
+        header("Pragma: public");
+
+        $writer->save('php://output');
+        exit;
+        // end function export_excel
     }
 }

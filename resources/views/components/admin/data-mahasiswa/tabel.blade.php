@@ -2,13 +2,20 @@
     <h2 class="text-base font-semibold text-[var(--primary-text)]">
         Daftar Mahasiswa Bimbingan
     </h2>
-    <a
-        href="javascript:void(0)"
-        data-target="tambah-mahasiswa"
-        class="open text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
-    >
-        Tambah Data Mahasiswa
-    </a>
+    <div class="flex items-center gap-4">
+        <a href="{{ route('admin.data-mahasiswa.export_excel') }}" 
+            class="text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
+            <i class="fa fa-file-excel"></i> Export Data
+        </a>
+
+        <a
+            href="{{ route('admin.data-mahasiswa.tambah') }}"
+            class="text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
+        >
+            Tambah Data Mahasiswa
+        </a>
+    </div>
+    
 </div>
 <x-table
     :headers="['No', 'Mahasiswa', 'NIM', 'Program Studi', 'Angkatan', 'Semester', 'Status', 'Aksi']"
