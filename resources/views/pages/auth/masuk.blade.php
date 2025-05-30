@@ -22,6 +22,7 @@
         </h5>
         <form action="{{ route('login') }}" method="POST">
             @csrf
+            @method('POST')
             @if ($errors->any())
                 <ul class="p-4 cursor-default rounded-lg bg-red-50 border border-red-500 list-disc list-inside text-sm text-red-500">
                     @foreach ($errors->all() as $error)

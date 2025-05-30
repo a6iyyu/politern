@@ -8,15 +8,21 @@ use Illuminate\View\Component;
 
 class Select extends Component
 {
-    public array $choices;
+    public array $options;
+    public bool $required;
+    public string $label, $name;
+    public ?string $selected;
 
-    public function __construct(array $choices)
-    {
-        $this->choices = $choices;
+    public function __construct(array $options = [], bool $required = false, string $label, string $name, string $selected) {
+        $this->name = $name;
+        $this->label = $label;
+        $this->required = $required;
+        $this->options = $options;
+        $this->selected = $selected;
     }
 
     public function render(): View|Closure|string
     {
-        return view('components.select');
+        return view('shared.form.select');
     }
 }
