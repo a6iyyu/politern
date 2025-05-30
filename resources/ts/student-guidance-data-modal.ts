@@ -25,8 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!nama || !prodi || !judul || !deskripsi || !status) return;
 
     buttons.forEach((button) => {
-        button.addEventListener("click", async (e) => {
-            e.preventDefault();
+        button.addEventListener("click", async () => {
             const id = button.dataset.id;
             if (!id) return;
 

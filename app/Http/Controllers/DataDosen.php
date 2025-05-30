@@ -40,7 +40,8 @@ class DataDosen extends Controller
     public function show($id): array
     {
         $dosen = Dosen::findOrFail($id);
-        return compact('dosen');
+        $pengguna = $dosen->pengguna;
+        return compact('dosen', 'pengguna');
     }
 
     public function edit($id): View

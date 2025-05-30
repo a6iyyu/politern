@@ -3,8 +3,9 @@
         Daftar Mahasiswa Bimbingan
     </h2>
     <a
-        href="{{ route('admin.data-mahasiswa.tambah') }}"
-        class="text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
+        href="javascript:void(0)"
+        data-target="tambah-mahasiswa"
+        class="open text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
     >
         Tambah Data Mahasiswa
     </a>

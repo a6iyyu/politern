@@ -14,5 +14,6 @@
         <section class="p-6 mt-8 rounded-lg overflow-hidden bg-white border border-[var(--stroke)]">
             @include('components.admin.data-mahasiswa.tabel')
         </section>
+        @include('components.admin.data-mahasiswa.tambah')
     </main>
 @endsection

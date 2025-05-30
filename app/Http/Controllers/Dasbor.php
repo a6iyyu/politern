@@ -64,7 +64,7 @@ class Dasbor extends Controller
             })(),
             'DOSEN' => (function () use ($pengguna): View {
                 $nama = $pengguna->dosen->nama;
-                $nidn = $pengguna->dosen->nidn;
+                $nip = $pengguna->dosen->nip;
                 $id_dosen = $pengguna->dosen->id_dosen;
 
                 $aktivitas_terbaru = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->latest()->take(4)->get();
@@ -95,9 +95,8 @@ class Dasbor extends Controller
                     ];
                 })->toArray();
 
-                return view('pages.lecturer.dasbor', compact('aktivitas_terbaru', 'data', 'evaluasi_magang', 'mahasiswa_aktif', 'mahasiswa_bimbingan', 'mahasiswa_selesai', 'menunggu_evaluasi', 'nama', 'nidn', 'total_aktivitas', 'total_bimbingan', 'total_mahasiswa'));
+                return view('pages.lecturer.dasbor', compact('aktivitas_terbaru', 'data', 'evaluasi_magang', 'mahasiswa_aktif', 'mahasiswa_bimbingan', 'mahasiswa_selesai', 'menunggu_evaluasi', 'nama', 'nip', 'total_aktivitas', 'total_bimbingan', 'total_mahasiswa'));
             })(),
-            default => abort(403),
         };
     }
 
