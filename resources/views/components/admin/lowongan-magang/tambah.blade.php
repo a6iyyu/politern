@@ -1,31 +1,149 @@
-{{--
-    TODO: Menambahkan beberapa input form pada modal ini,
-    sesuaikan dengan database.
---}}
-
-<section class="modal modal-periode fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
-    <div class="flex items-center justify-center min-h-screen px-4">
-        <figure class="w-full max-w-md rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
-            <h2 class="cursor-default mb-3 font-semibold text-lg text-center text-gray-800">
-                Tambah Lowongan Magang
-            </h2>
-            <hr class="mb-3 border border-[var(--stroke)]" />
-            <figcaption class="space-y-4">
-                <span class="flex items-center justify-between">
-                    <fieldset>
-                        <label for="nama" class="sr-only"></label>
-                        <input type="text" name="nama" id="nama" />
-                    </fieldset>
-                </span>
-            </figcaption>
-            <span class="flex items-center justify-end gap-3 text-xs text-white">
-                <button class="close cursor-pointer mt-6 w-fit px-5 py-2 bg-red-500 rounded transition-all duration-300 ease-in-out lg:hover:bg-red-600">
-                    Tutup
-                </button>
-                <a href="" class="cursor-pointer mt-6 w-fit px-5 py-2 bg-[var(--green-tertiary)] rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
-                    Kirim
-                </a>
-            </span>
-        </figure>
+<section class="modal modal-tambah-lowongan fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
+<div class="min-h-screen flex items-center justify-center w-full px-4">
+  <form action="" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-2xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+    @csrf
+    @method('POST')
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-[#5955B2]">Tambah Lowongan Magang</h2>
+<button id="close-tambah-lowongan" type="button" class="text-gray-400 hover:text-gray-600">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+</button>
     </div>
+    <hr class="border border-[var(--primary)] mb-6 " />
+
+    <h5 class="bg-[#E86BB1] text-white text-left py-2 rounded-md text-sm font-medium mb-6 px-4">
+      Data Lowongan Magang
+    </h5>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <x-select
+        label="Perusahaan"
+        name="id_perusahaan_mitra"
+        :required="true"
+        placeholder="Pilih nama perusahaan"
+        :options="$perusahaanOptions ?? []"
+      />
+      <x-select
+        label="Bidang Posisi Magang"
+        name="id_bidang"
+        :required="true"
+        placeholder="Pilih jenis bidang"
+        :options="$bidangOptions ?? []"
+      />
+
+      <div class="md:col-span-2">
+        <div class="flex items-end gap-2">
+          <x-select
+            label="Pilih Keahlian"
+            name="id_keahlian"
+            placeholder="Pilih jenis keahlian magang"
+            :options="$keahlianOptions ?? []"
+            class="flex-1"
+            required="true"
+          />
+          <button type="button" class="bg-[#E86BB1] text-white h-[42px] px-4 rounded hover:bg-pink-500 transition">
+            Tambah
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <!-- contoh Chips -->
+          <span class="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs flex items-center">
+            Java
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </span>
+          <!-- Tambahkan chip lainnya di sini -->
+        </div>
+      </div>
+
+      <x-select
+        label="Periode"
+        name="id_periode"
+        :required="true"
+        placeholder="Pilih periode magang"
+        :options="$periodeOptions ?? []"
+      />
+      <x-select
+        label="Jenis Lokasi Magang"
+        name="id_jenis_lokasi"
+        :required="true"
+        placeholder="Pilih jenis lokasi magang"
+        :options="$lokasiOptions ?? []"
+      />
+    </div>
+
+      <x-input
+        icon=""
+        label="Deskripsi Lowongan"
+        name="deskripsi"
+        placeholder="Masukkan deskripsi dan persyaratan lengkap lowongan magang"
+        :required="true"
+        class="mt-6 h-32"
+      />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+      <x-input
+        icon=""
+        label="Perkiraan Gaji"
+        type="number"
+        name="gaji"
+        placeholder="Masukkan gaji"
+        :required="true"
+      />
+      <x-input
+        icon=""
+        label="Minimal IPK"
+        type="number"
+        step="0.01"
+        name="ipk"
+        placeholder="Masukkan minimal IPK"
+        :required="true"
+      />
+      <x-input
+        icon="user-group"
+        label="Jumlah Kuota"
+        type="number"
+        name="kuota"
+        placeholder="Masukkan jumlah kuota"
+        :required="true"
+      />
+      <x-select
+        icon=""
+        label="Status"
+        name="status"
+        :required="true"
+        placeholder="Pilih Status"
+        :options="['Aktif' => 'Aktif', 'Tidak Aktif' => 'Tidak Aktif']"
+      />
+      <x-input
+        icon="calendar"
+        label="Tanggal Mulai Pendaftaran"
+        type="date"
+        name="tanggal_mulai_pendaftaran"
+        :required="true"
+      />
+      <x-input
+        icon="calendar"
+        label="Tanggal Selesai Pendaftaran"
+        type="date"
+        name="tanggal_selesai_pendaftaran"
+        :required="true"
+      />
+    </div>
+
+    <div class="mt-8">
+      <button type="submit" class="w-full bg-[#5955B2] text-white py-3 rounded hover:bg-indigo-700 transition">
+        Tambah
+      </button>
+    </div>
+  </form>
+</div>
 </section>
+<script>
+  document.getElementById('close-tambah-lowongan').addEventListener('click', function() {
+    document.querySelector('.modal-tambah-lowongan').classList.add('hidden');
+  });
+</script>
