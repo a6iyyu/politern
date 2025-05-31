@@ -2,9 +2,16 @@
     <h2 class="text-base font-semibold text-[var(--primary-text)]">
         Manajemen Lowongan Magang
     </h2>
-    <a
+    {{-- <a
         href="{{ route('admin.lowongan-magang.tambah') }}"
         class="text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
+    >
+        Tambah Data Lowongan
+    </a> --}}
+        <a
+        href="javascript:void(0)"
+        data-target="tambah-lowongan"
+        class="open text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
     >
         Tambah Data Lowongan
     </a>

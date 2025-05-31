@@ -13,7 +13,7 @@ class Select extends Component
     public string $label, $name;
     public ?string $selected;
 
-    public function __construct(array $options = [], bool $required = false, string $label, string $name, string $selected) {
+    public function __construct(array $options = [], bool $required = false, string $label, string $name, string $selected = null) {
         $this->name = $name;
         $this->label = $label;
         $this->required = $required;
