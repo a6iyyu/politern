@@ -9,9 +9,9 @@
         <select name="{{ $name }}" id="{{ $name }}" class="w-full appearance-none rounded-md border border-[#8d8d8d]/50 bg-transparent px-4 py-3 focus:ring-0 focus:outline-none" required>
             <option value="" hidden>Pilih {{ $label }}</option>
             @if (is_array($options))
-                @foreach ($options as $option)
-                    <option value="{{ $option['value'] }}" {{ (old($name, $selected ?? '') == $option['value']) ? 'selected' : '' }}>
-                        {{ $option['label'] }}
+                @foreach ($options as $value => $label)
+                    <option value="{{ $value }}" {{ (old($name, $selected ?? '') == $value) ? 'selected' : '' }}>
+                        {{ $label }}
                     </option>
                 @endforeach
             @endif
