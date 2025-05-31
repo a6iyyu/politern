@@ -77,14 +77,24 @@
                     name="prodi"
                     label="Program Studi"
                     selected="{{ old('id_dosen', $mahasiswa->id_dosen ?? '') }}"
-                    :options="['TI' => 'Teknik Informatika', 'SI' => 'Sistem Informasi']"
+                    :options="[['value' => 'TI', 'label' => 'Teknik Informatika'], ['value' => 'SI', 'label' => 'Sistem Informasi'] ]"
                     :required="true"
+                />
+                <x-select
+                    name="program_studi"
+                    label="Pilih Program Studi"
+                    :options="array_merge(
+                        [['value' => '', 'label' => '--Semua Program Studi--']],
+                        $program_studi->map(fn($ps) => ['value' => $ps->id_prodi, 'label' => $ps->nama])->toArray()
+                    )"
+                    selected=""
+                    :required="false"
                 />
                 <x-select
                     name="angkatan"
                     label="Angkatan"
                     selected="{{ old('angkatan', $mahasiswa->angkatan ?? '') }}"
-                    :options="['2023' => '2023', '2024' => '2024']"
+                    :options="[['value' => '2023', 'label' => '2023'], ['value' => '2024', 'label' => '2024']]"
                     :required="true"
                 />
             </span>

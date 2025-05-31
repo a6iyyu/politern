@@ -39,7 +39,7 @@
                 </span>
             </div>
             <div class="cursor-default flex items-center justify-end">
-                <h5 class="text-sm text-white px-6 py-2 rounded-lg @if ("AKTIF") bg-emerald-500 @endif">
+                <h5 class="text-sm text-white px-6 py-2 rounded-lg @if ("AKTIF") bg-[var(--green-tertiary)] @endif @if ("TIDAK AKTIF") bg-[var(--red-tertiary)] @endif">
                     {{ $id->status ?? "N/A" }}
                 </h5>
             </div>

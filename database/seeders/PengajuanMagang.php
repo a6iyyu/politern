@@ -19,7 +19,7 @@ class PengajuanMagang extends Seeder
                 'id_lowongan'           => 1,
                 'status'                => 'MENUNGGU',
                 'keterangan'            => 'Pengajuan magang',
-                'created_at'            => Carbon::now(),
+                'created_at'            => Carbon::now(), 
                 'updated_at'            => Carbon::now(),
             ],
             [

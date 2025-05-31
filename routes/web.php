@@ -9,7 +9,7 @@ use App\Http\Controllers\LogAktivitas;
 use App\Http\Controllers\Lowongan;
 use App\Http\Controllers\PeriodeMagang;
 use App\Http\Controllers\RekomendasiMagang;
-use App\Models\LowonganMagang;
+use App\Http\Controllers\Pengajuan;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/aktivitas-magang', fn() => view('pages.admin.aktivitas-magang'))->name('admin.aktivitas-magang');
 
         Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
-        Route::get('/pengajuan-magang', fn() => view('pages.admin.pengajuan-magang'))->name('admin.pengajuan-magang');
+        Route::get('/pengajuan-magang', [Pengajuan::class, 'index'])->name('admin.pengajuan-magang');
 
         Route::prefix('data-dosen')->group(function () {
             Route::get('/', [DataDosen::class, 'index'])->name('admin.data-dosen');
@@ -79,6 +79,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/edit', [Lowongan::class, 'edit'])->name('admin.lowongan-magang.edit');
             Route::post('/{id}/edit', [Lowongan::class, 'update'])->name('admin.lowongan-magang.perbarui');
             Route::delete('/{id}/hapus', [Lowongan::class, 'destroy'])->name('admin.lowongan-magang.hapus');
+        });
+        
+        Route::prefix('pengajuan-magang')->group(function () {
+            Route::get('/', [Pengajuan::class, 'index'])->name('admin.pengajuan-magang');
+            Route::get('/{id}/detail', [Pengajuan::class, 'detail'])->name('admin.pengajuan-magang.detail');
+            Route::get('/{id}/edit', [Pengajuan::class, 'edit'])->name('admin.pengajuan-magang.edit');
+            Route::post('/{id}/edit', [Pengajuan::class, 'update'])->name('admin.pengajuan-magang.perbarui');
+            Route::delete('/{id}/hapus', [Pengajuan::class, 'destroy'])->name('admin.pengajuan-magang.hapus');
         });
     });
 

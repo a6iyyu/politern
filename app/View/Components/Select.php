@@ -23,6 +23,7 @@ class Select extends Component
 
     public function render(): View|Closure|string
     {
+        // dd($this->options);
         return view('shared.form.select');
     }
 }
