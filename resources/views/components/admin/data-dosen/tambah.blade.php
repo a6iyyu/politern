@@ -52,7 +52,7 @@
                 <x-input
                     icon="fa-solid fa-id-card"
                     label="NIP"
-                    type="text"
+                    type="number"
                     name="nip"
                     placeholder="Masukkan NIP"
                     :required="true"
