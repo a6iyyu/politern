@@ -8,5 +8,8 @@
                 "tabWidth": 4
             }
         }
-    ]
+    ],
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5"
 }

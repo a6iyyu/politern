@@ -10,20 +10,21 @@ class Select extends Component
 {
     public array $options;
     public bool $required;
-    public string $label, $name;
+    public string $label, $name, $placeholder;
     public ?string $selected;
 
-    public function __construct(array $options = [], bool $required = false, string $label, string $name, string $selected = null) {
-        $this->name = $name;
+    public function __construct(string $label, string $name, string $placeholder, array $options = [], bool $required = false, ?string $selected = null)
+    {
         $this->label = $label;
-        $this->required = $required;
+        $this->name = $name;
         $this->options = $options;
+        $this->placeholder = $placeholder;
+        $this->required = $required;
         $this->selected = $selected;
     }
 
     public function render(): View|Closure|string
     {
-        // dd($this->options);
         return view('shared.form.select');
     }
 }

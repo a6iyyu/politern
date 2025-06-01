@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class PeriodeMagang extends Controller
 {
@@ -17,7 +18,6 @@ class PeriodeMagang extends Controller
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
             $total_periode = PeriodeMagangModel::count();
-
             $paginasi = PeriodeMagangModel::paginate(request('per_page', 10));
             $data = collect($paginasi->items())->map(fn(PeriodeMagangModel $periode): array => [
                 $periode->id_periode,
@@ -35,12 +35,10 @@ class PeriodeMagang extends Controller
         }
     }
 
-    public function export_excel()
+    public function export_excel(): never
     {
-        $periode = PeriodeMagangModel::select("id_periode", "nama_periode", "durasi", "tanggal_mulai", "tanggal_selesai", "status")
-                    ->get();
-
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $periode = PeriodeMagangModel::select('id_periode', 'nama_periode', 'durasi', 'tanggal_mulai', 'tanggal_selesai', 'status')->get();
+        $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
         $sheet->setCellValue('A1', 'No');
@@ -49,33 +47,30 @@ class PeriodeMagang extends Controller
         $sheet->setCellValue('D1', 'Tanggal Mulai');
         $sheet->setCellValue('E1', 'Tanggal Selesai');
         $sheet->setCellValue('F1', 'Status');
-
         $sheet->getStyle("A1:F1")->getFont()->setBold(true);
 
-        $no = 1;
+        $nomor = 1;
         $baris = 2;
         foreach ($periode as $key => $value) {
-            $sheet->setCellValue('A'.$baris, $no);
-            $sheet->setCellValue('B'.$baris, $value->nama_periode);
-            $sheet->setCellValue('C'.$baris, $value->durasi);
-            $sheet->setCellValue('D'.$baris, $value->tanggal_mulai);
-            $sheet->setCellValue('E'.$baris, $value->tanggal_selesai);
-            $sheet->setCellValue('F'.$baris, $value->status);
+            $sheet->setCellValue("A$baris", $nomor);
+            $sheet->setCellValue("B$baris", $value->nama_periode);
+            $sheet->setCellValue("C$baris", $value->durasi);
+            $sheet->setCellValue("D$baris", $value->tanggal_mulai);
+            $sheet->setCellValue("E$baris", $value->tanggal_selesai);
+            $sheet->setCellValue("F$baris", $value->status);
             $baris++;
-            $no++;
-        }   
+            $nomor++;
+        }
 
         foreach (range('A', 'F') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
-        $sheet->setTitle("Data periode Magang"); // set title sheet
-
+        $sheet->setTitle("Data periode Magang");
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-        $filename = 'Data periode Magang' . date("Y-m-d H:i:s") . '.xlsx';
 
         header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Disposition: attachment; filename="' . 'Data periode Magang' . date("Y-m-d H:i:s") . '.xlsx' . '"');
         header("Cache-Control: max-age=0");
         header("Cache-Control: max-age=1");
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -85,6 +80,5 @@ class PeriodeMagang extends Controller
 
         $writer->save('php://output');
         exit;
-        // end function export_excel
     }
 }

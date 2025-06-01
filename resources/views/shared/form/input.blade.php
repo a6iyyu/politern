@@ -1,8 +1,7 @@
 <fieldset class="flex w-full flex-col justify-between @if (empty($info)) space-y-4 @endif">
     <label for="{{ $name }}" class="font-medium text-sm">
-        {{ $label }}
         @if (!empty($required))
-            <span class="text-red-500">*</span>
+            {{ $label }} <span class="text-red-500">*</span>
         @endif
     </label>
     @if (!empty($info))

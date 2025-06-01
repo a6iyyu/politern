@@ -8,6 +8,7 @@ use App\Models\LogAktivitas as LogAktivitasModel;
 use App\Models\Magang;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanMagang;
+use App\Models\Perusahaan;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -21,13 +22,14 @@ class LogAktivitas extends Controller
     public function index(): View
     {
         $pengguna = Auth::user()->tipe;
+        $log_aktivitas = LogAktivitasModel::all();
+        $perusahaan = Perusahaan::pluck('nama', 'id_perusahaan_mitra')->toArray();
 
-        if ($pengguna === 'DOSEN') {
-            $log_aktivitas = LogAktivitasModel::all();
+        if ($pengguna === 'ADMIN') {
+            return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'perusahaan'));
+        } else if ($pengguna === 'DOSEN') {
             return view('pages.lecturer.log-aktivitas', compact('log_aktivitas'));
-        }
-
-        if ($pengguna === 'MAHASISWA') {
+        } else if ($pengguna === 'MAHASISWA') {
             $status_magang = Magang::where('id_pengajuan_magang', Auth::user()->id)->first();
             if (!$status_magang || $status_magang->status !== 'AKTIF') return view('pages.student.log-aktivitas');
 
@@ -92,11 +94,7 @@ class LogAktivitas extends Controller
     {
         $mahasiswa = Mahasiswa::where('id_pengguna', Auth::user()->id_pengguna)->first();
         if (!$mahasiswa) return '';
-
-        $pengajuan = PengajuanMagang::with('lowongan.perusahaan')
-            ->where('id_mahasiswa', $mahasiswa->id_mahasiswa)
-            ->first();
-
+        $pengajuan = PengajuanMagang::with('lowongan.perusahaan')->where('id_mahasiswa', $mahasiswa->id_mahasiswa)->first();
         return $pengajuan?->lowongan?->perusahaan?->nama_perusahaan ?? "N/A";
     }
 

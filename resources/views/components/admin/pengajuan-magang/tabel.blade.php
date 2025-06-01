@@ -1,14 +1,6 @@
-<div class="flex items-center justify-between mb-7">
-    <h2 class="text-base font-semibold text-[var(--primary-text)]">
-        Manajemen Pengajuan Magang
-    </h2>   
-</div>
-
-@include('components.admin.pengajuan-magang.filter')
-
 <x-table
-    :headers="['ID', 'Tanggal Pengajuan', 'NIM', 'Mahasiswa', 'Perusahaan', 'Posisi', 'Status', 'Aksi']"
-    :sortable="[]"
+    :headers="['Tanggal Pengajuan', 'NIM', 'Mahasiswa', 'Perusahaan', 'Posisi', 'Status', 'Aksi']"
+    :sortable="['Tanggal Pengajuan', 'Mahasiswa']"
     :rows="$data"
 />
 @if ($paginasi->hasPages())

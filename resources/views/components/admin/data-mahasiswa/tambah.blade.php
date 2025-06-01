@@ -74,37 +74,37 @@
             </span>
             <span class="mb-3 mt-6 flex items-center justify-between gap-4">
                 <x-select
-                    name="prodi"
                     label="Program Studi"
-                    selected="{{ old('id_dosen', $mahasiswa->id_dosen ?? '') }}"
-                    :options="[['value' => 'TI', 'label' => 'Teknik Informatika'], ['value' => 'SI', 'label' => 'Sistem Informasi'] ]"
+                    name="prodi"
+                    placeholder="-- Semua Program Studi --"
+                    :options="['TI' => 'Teknik Informatika', 'SI' => 'Sistem Informasi']"
                     :required="true"
+                    :selected="old('id_dosen', $mahasiswa->id_dosen ?? '')"
                 />
                 <x-select
-                    name="program_studi"
                     label="Pilih Program Studi"
-                    :options="array_merge(
-                        [['value' => '', 'label' => '--Semua Program Studi--']],
-                        $program_studi->map(fn($ps) => ['value' => $ps->id_prodi, 'label' => $ps->nama])->toArray()
-                    )"
-                    selected=""
+                    name="program_studi"
+                    placeholder="-- Semua Program Studi --"
+                    :options="['' => '-- Semua Program Studi --'] + $program_studi->pluck('nama', 'id_prodi')->toArray()"
                     :required="false"
+                    :selected="old('program_studi', '')"
                 />
                 <x-select
-                    name="angkatan"
                     label="Angkatan"
-                    selected="{{ old('angkatan', $mahasiswa->angkatan ?? '') }}"
-                    :options="[['value' => '2023', 'label' => '2023'], ['value' => '2024', 'label' => '2024']]"
+                    name="angkatan"
+                    placeholder="-- Semua Angkatan --"
+                    :selected="old('angkatan', $mahasiswa->angkatan ?? '')"
+                    :options="['2023' => '2023', '2024' => '2024']"
                     :required="true"
                 />
             </span>
-            <span class="flex items-center justify-end gap-3 text-xs text-white">
-                <button class="close cursor-pointer mt-6 w-fit px-5 py-2 bg-red-500 rounded transition-all duration-300 ease-in-out lg:hover:bg-red-600">
+            <span class="flex justify-end gap-3 items-center mt-6">
+                <button type="button" class="close bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600 transition-all duration-300">
                     Tutup
                 </button>
-                <a href="" class="cursor-pointer mt-6 w-fit px-5 py-2 bg-[var(--green-tertiary)] rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
+                <button type="submit" class="bg-[var(--blue-tertiary)] text-white px-5 py-2 rounded hover:bg-[#66c2a3] transition-all duration-300">
                     Kirim
-                </a>
+                </button>
             </span>
         </form>
     </div>

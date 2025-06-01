@@ -13,9 +13,10 @@ class Card extends Component
 {
     public Carbon $createdAt;
     public float $salary;
-    public string $category, $industry, $location, $logo, $name, $status, $type, $url;
+    public string $category, $industry, $location, $logo, $name, $status, $type;
+    public ?string $url;
 
-    public function __construct(string $category, Carbon $createdAt, string $industry, string $location, string $logo, string $name, float $salary, string $status, string $type, string $url)
+    public function __construct(string $category, Carbon $createdAt, string $industry, string $location, string $logo, string $name, float $salary, string $status, string $type, ?string $url = null)
     {
         $this->category = $category;
         $this->createdAt = $createdAt;

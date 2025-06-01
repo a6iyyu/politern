@@ -2,13 +2,7 @@
     <h2 class="text-base font-semibold text-[var(--primary-text)]">
         Manajemen Lowongan Magang
     </h2>
-    {{-- <a
-        href="{{ route('admin.lowongan-magang.tambah') }}"
-        class="text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
-    >
-        Tambah Data Lowongan
-    </a> --}}
-        <a
+    <a
         href="javascript:void(0)"
         data-target="tambah-lowongan"
         class="open text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
@@ -17,7 +11,7 @@
     </a>
 </div>
 <x-table
-    :headers="['No', 'Judul Lowongan', 'Perusahaan', 'Bidang', 'Kuota', 'Periode', 'Status', 'Aksi']"
+    :headers="['Judul Lowongan', 'Perusahaan', 'Kuota', 'Periode', 'Status', 'Aksi']"
     :sortable="['Lowongan']"
     :rows="$data"
 />

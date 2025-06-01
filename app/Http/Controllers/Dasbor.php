@@ -48,7 +48,7 @@ class Dasbor extends Controller
                 return view('pages.admin.dasbor', compact('nama', 'nip', 'total_mahasiswa', 'total_dosen', 'total_perusahaan_mitra', 'total_lowongan'));
             })(),
             'MAHASISWA' => (function () use ($pengguna): View {
-                $lowongan = LowonganMagang::with('perusahaan')->orderBy('tanggal_posting', 'desc')->get();
+                $lowongan = LowonganMagang::with('perusahaan')->orderBy('created_at', 'desc')->get();
                 $mahasiswa = $this->mahasiswa();
                 if ($mahasiswa === null || !$mahasiswa->program_studi) abort(404, 'Data mahasiswa tidak ditemukan.');
 
