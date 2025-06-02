@@ -1,7 +1,6 @@
 <section class="modal modal-tambah-dosen fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="min-h-screen flex items-center justify-center w-full px-4">
-        <form action="{{ route('admin.data-dosen.tambah') }}" method="POST"
-            class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+        <form action="{{ route('admin.data-dosen.tambah') }}" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('POST')
             <h2 class="text-lg font-semibold text-center text-gray-800 mb-3">
@@ -38,7 +37,7 @@
                 :required="true"
             />
             <h5 class="cursor-default my-6 px-6 py-4 rounded-md text-sm bg-[var(--secondary)] text-white">
-                Data Pengguna
+                Data Dosen
             </h5>
             <div class="my-6 flex flex-col gap-3">
                 <x-input

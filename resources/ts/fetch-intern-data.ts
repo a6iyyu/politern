@@ -21,7 +21,10 @@ interface Intern {
 
 document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById("modal-detail-lowongan") as HTMLElement;
+    if (!modal) return;
+
     const close = modal.querySelector(".close") as HTMLElement;
+    if (!close) return;
 
     const fields = {
         status: document.getElementById("status") as HTMLElement,

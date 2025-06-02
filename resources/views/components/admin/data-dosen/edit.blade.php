@@ -19,6 +19,7 @@
                     name="nama_pengguna"
                     placeholder="Masukkan Nama Pengguna"
                     :required="true"
+                    :value="''"
                 />
                 <x-input
                     icon="fa-solid fa-key"
@@ -27,6 +28,7 @@
                     name="kata_sandi"
                     placeholder="Masukkan Kata Sandi"
                     :required="true"
+                    :value="''"
                 />
             </span>
             <x-input
@@ -36,6 +38,7 @@
                 name="email"
                 placeholder="Masukkan Email"
                 :required="true"
+                :value="''"
             />
             <h5 class="cursor-default my-6 px-6 py-4 rounded-md text-sm bg-[var(--secondary)] text-white">
                 Data Pengguna
@@ -48,6 +51,7 @@
                     name="nama"
                     placeholder="Masukkan nama lengkap"
                     :required="true"
+                    :value="''"
                 />
                 <x-input
                     icon="fa-solid fa-id-card"
@@ -56,13 +60,14 @@
                     name="nip"
                     placeholder="Masukkan NIP"
                     :required="true"
+                    :value="''"
                 />
             </div>
             <span class="flex justify-end gap-3 items-center mt-6">
-                <button type="button" class="close bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600 transition-all duration-300">
+                <button type="button" class="close cursor-pointer bg-red-500 text-white px-5 py-2 rounded transition-all duration-300 lg:hover:bg-red-600">
                     Tutup
                 </button>
-                <button type="submit" class="bg-[var(--blue-tertiary)] text-white px-5 py-2 rounded hover:bg-[#66c2a3] transition-all duration-300">
+                <button type="submit" class="cursor-pointer bg-[var(--blue-tertiary)] text-white px-5 py-2 rounded transition-all duration-300 lg:hover:bg-[var(--blue-tertiary)]/80">
                     Edit
                 </button>
             </span>

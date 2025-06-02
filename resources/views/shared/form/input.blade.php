@@ -16,8 +16,7 @@
         <input
             name="{{ $name }}"
             type="{{ $type ?? 'text' }}"
-            id="{{ $name }}"
-            class="appearance-none w-full rounded-lg border-1 text-sm transition-all duration-200 border-[var(--stroke)]
+            class="{{ $name }} appearance-none w-full rounded-lg border-1 text-sm transition-all duration-200 border-[var(--stroke)]
                 @if ($type !== 'file') pl-12 py-2.5 @endif
                 {{ $type === 'password' ? 'pr-12' : 'pr-4' }}
                 lg:focus:outline-none lg:focus:border-[#5955b2]

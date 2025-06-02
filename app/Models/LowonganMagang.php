@@ -45,7 +45,7 @@ class LowonganMagang extends Model
         return $this->belongsTo(PeriodeMagang::class, 'id_periode', 'id_periode');
     }
 
-    public function perusahaan_mitra(): BelongsTo
+    public function perusahaan(): BelongsTo
     {
         return $this->belongsTo(Perusahaan::class, 'id_perusahaan_mitra', 'id_perusahaan_mitra');
     }
