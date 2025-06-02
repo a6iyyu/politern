@@ -1,3 +1,4 @@
+<div class="mb-7 ">
 @if (isset($perusahaan) || !empty($perusahaan))
     <form action="" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-4" method="GET" enctype="multipart/form-data">
         @csrf
@@ -21,7 +22,7 @@
             label="Status"
             name="status"
             placeholder="-- Semua Status --"
-            :options="['DISETUJUI' => 'Disetujui', 'DITOLAK' => 'Ditolak', 'MENUNGGU' => 'Menunggu']"
+            :options="$status_aktivitas"
             :selected="request('status', '')"
             :required="false"
         />
@@ -33,3 +34,16 @@
         </section>
     </form>
 @endif
+@if (isset($periode_magang) || !empty($periode_magang))
+    <div class="w-max">
+        <x-select
+            label="Periode Magang"
+            name="periode_magang"
+            placeholder="-- Pilih Periode Magang --"
+            :options="$periode_magang"
+            :selected="request('periode_magang', '')"
+            :required="false"
+        />
+    </div>
+@endif
+</div>

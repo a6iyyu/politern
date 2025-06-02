@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Magang;
 use App\Models\Mahasiswa;
+use App\Models\PengajuanMagang;
 use App\Models\ProgramStudi;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -23,8 +24,8 @@ class DataMahasiswa extends Controller
             $total_mahasiswa = Mahasiswa::count();
             $total_mahasiswa_magang = Magang::count();
             $mahasiswa_belum_magang = Mahasiswa::where('status', 'BELUM MAGANG')->count();
-            $mahasiswa_sedang_magang = Mahasiswa::where('status', 'SEDANG MAGANG')->count();
-            $mahasiswa_selesai_magang = Mahasiswa::where('status', 'SELESAI')->count();
+            $mahasiswa_sedang_magang = Magang::where('status', 'AKTIF')->count();
+            $mahasiswa_selesai_magang = Magang::where('status', 'SELESAI')->count();
             $program_studi = ProgramStudi::all();
 
             /** @var LengthAwarePaginator $paginasi */
@@ -38,7 +39,7 @@ class DataMahasiswa extends Controller
                 $mhs->program_studi->nama,
                 $mhs->angkatan,
                 $mhs->semester,
-                $mhs->status,
+                $mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG',
                 view('components.admin.data-mahasiswa.aksi', compact('mhs'))->render(),
             ])->toArray();
             return view('pages.admin.data-mahasiswa', compact('data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi'));

@@ -25,8 +25,8 @@
         :selected="request('perusahaan', '')"
         :required="false"
     />
-    <section class="flex items-end lg:justify-end">
-        <button type="submit" class="cursor-pointer bg-[var(--secondary)] text-white px-7 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:w-3/4 lg:py-2.5 lg:hover:bg-[#ff86cb]">
+    <section class="flex items-end lg:justify-right">
+        <button type="submit" class="cursor-pointer bg-[var(--secondary)] border border-[var(--secondary)] text-white px-7 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:py-2.5 lg:hover:bg-[#ff86cb]">
             Cari
         </button>
     </section>

@@ -7,7 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PengajuanMagang extends Model
 {
@@ -26,8 +26,8 @@ class PengajuanMagang extends Model
     {
         return $this->belongsTo(LowonganMagang::class, 'id_lowongan');
     }
-    public function magang(): HasMany
+    public function magang(): HasOne
     {
-        return $this->hasMany(Magang::class, 'id_pengajuan_magang', 'id_pengajuan_magang');
+        return $this->hasOne(Magang::class, 'id_pengajuan_magang', 'id_pengajuan_magang');
     }
 }

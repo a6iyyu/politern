@@ -25,6 +25,13 @@ class Magang extends Seeder
                 'status'               => 'AKTIF',
                 'created_at'           => Carbon::now(),
                 'updated_at'           => Carbon::now(),
+            ],[
+                'id_magang'            => 3,
+                'id_pengajuan_magang'  => 3,
+                'id_dosen_pembimbing'  => 1,
+                'status'               => 'SELESAI',
+                'created_at'           => Carbon::now(),
+                'updated_at'           => Carbon::now(),
             ]
         ]);
     }

@@ -10,7 +10,7 @@
         <select
             name="{{ $name }}"
             id="{{ $name }}"
-            class="w-full appearance-none rounded-lg border border-[#8d8d8d]/50 bg-transparent pl-4 pr-10 py-2.5 focus:ring-0 focus:outline-none"
+            class="w-full appearance-none rounded-lg text-[var(--secondary-text)] border border-[var(--stroke)] bg-transparent pl-4 pr-10 py-2.5 focus:ring-1 focus:ring-[var(--primary)] focus:outline-none"
             {{ $required ? 'required' : '' }}
         >
             @if ($placeholder)
@@ -24,7 +24,7 @@
                 </option>
             @endforeach
         </select>
-        <span class="pointer-events-none absolute inset-y-0 right-0 hidden items-center px-5 text-xs text-gray-400 lg:flex">
+        <span class="pointer-events-none absolute inset-y-0 right-0 hidden items-center px-5 text-[var(--primary)] lg:flex">
             <i class="fa-solid fa-chevron-down"></i>
         </span>
     </div>

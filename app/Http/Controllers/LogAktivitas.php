@@ -9,6 +9,8 @@ use App\Models\Magang;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanMagang;
 use App\Models\Perusahaan;
+use App\Models\PeriodeMagang;
+use App\Models\EvaluasiMagang;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -24,9 +26,11 @@ class LogAktivitas extends Controller
         $pengguna = Auth::user()->tipe;
         $log_aktivitas = LogAktivitasModel::all();
         $perusahaan = Perusahaan::pluck('nama', 'id_perusahaan_mitra')->toArray();
+        $periode_magang = PeriodeMagang::pluck('nama_periode', 'id_periode')->toArray();
+        $status_aktivitas = EvaluasiMagang::pluck('status', 'id_evaluasi')->toArray();
 
         if ($pengguna === 'ADMIN') {
-            return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'perusahaan'));
+            return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
         } else if ($pengguna === 'DOSEN') {
             return view('pages.lecturer.log-aktivitas', compact('log_aktivitas'));
         } else if ($pengguna === 'MAHASISWA') {
