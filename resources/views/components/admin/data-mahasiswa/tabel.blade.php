@@ -18,6 +18,9 @@
         </a>
     </div>
 </section>
+
+@include('components.admin.data-mahasiswa.filter')
+
 <x-table
     :headers="['No', 'Mahasiswa', 'NIM', 'Program Studi', 'Angkatan', 'Semester', 'Status', 'Aksi']"
     :sortable="['Mahasiswa', 'Status']"

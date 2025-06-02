@@ -8,7 +8,16 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     const search = document.getElementById("search") as HTMLInputElement | null;
+    const rows = document.querySelectorAll(".data-row"); // sesuaikan dengan class/item yang ingin difilter
     if (!search) return;
 
-    // TODO: Tambahkan logika pencarian (misalnya event input, debounce, filter data, dll)
+    search.addEventListener("input", () => {
+        const keyword = search.value.toLowerCase();
+
+        rows.forEach((row) => {
+            const element = row as HTMLElement;
+            const text = element.textContent?.toLowerCase() || "";
+            element.style.display = text.includes(keyword) ? "" : "none";
+        });
+    });
 });

@@ -17,14 +17,24 @@ interface Student {
     status: string;
 }
 
-interface Pengguna {
+interface User {
     nama_pengguna: string;
     email: string;
 }
 
+interface Prodi {
+    nama: string;
+}
+
+interface Status {
+    status: string;
+}
+
 interface Modal {
     mahasiswa: Student;
-    pengguna: Pengguna;
+    pengguna: User;
+    prodi: Prodi;
+    status: Status;
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -36,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const nama_pengguna = document.getElementById("nama_pengguna");
     const email = document.getElementById("email");
     const nim = document.getElementById("nim");
-    const nama_lengkap = document.getElementById(   "nama_lengkap");
+    const nama_lengkap = document.getElementById("nama_lengkap");
     const angkatan = document.getElementById("angkatan");
     const semester = document.getElementById("semester");
     const nama_prodi = document.getElementById("nama_prodi");
@@ -59,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (!data.ok) return;
             const response = (await data.json()) as Modal;
-            console.log(response.mahasiswa.nama_lengkap);
+            console.log(response.mahasiswa.angkatan);
 
             nama_pengguna.textContent = response.pengguna.nama_pengguna;
             email.textContent = response.pengguna.email;
@@ -67,9 +77,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             nama_lengkap.textContent = response.mahasiswa.nama_lengkap;
             angkatan.textContent = response.mahasiswa.angkatan;
             semester.textContent = response.mahasiswa.semester;
-            nama_prodi.textContent = response.mahasiswa.nama_prodi;
+            nama_prodi.textContent = response.prodi.nama;
             ipk.textContent = response.mahasiswa.ipk;
-            status.textContent = response.mahasiswa.status;
+            status.textContent = response.status.status;
         });
     });
 

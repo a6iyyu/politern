@@ -24,3 +24,4 @@ import "./modal";
 import "./search";
 import "./sorting";
 import "./student-guidance-data-modal";
+import "./detail-student"

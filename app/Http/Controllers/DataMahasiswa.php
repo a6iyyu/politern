@@ -7,8 +7,8 @@ namespace App\Http\Controllers;
 use App\Models\Magang;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanMagang;
-use App\Models\ProgramStudi;
 use App\Models\Pengguna;
+use App\Models\ProgramStudi;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -33,6 +33,10 @@ class DataMahasiswa extends Controller
             $mahasiswa_sedang_magang = Magang::where('status', 'AKTIF')->count();
             $mahasiswa_selesai_magang = Magang::where('status', 'SELESAI')->count();
             $program_studi = ProgramStudi::all();
+            $status_aktivitas = array_unique(array_merge(
+                Magang::pluck('status')->toArray(),
+                ['BELUM MAGANG']
+            ));
 
             /** @var LengthAwarePaginator $paginasi */
             $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', default: 10));
@@ -48,7 +52,7 @@ class DataMahasiswa extends Controller
                 $mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG',
                 view('components.admin.data-mahasiswa.aksi', compact('mhs'))->render(),
             ])->toArray();
-            return view('pages.admin.data-mahasiswa', compact('data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi'));
+            return view('pages.admin.data-mahasiswa', compact('data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi', 'status_aktivitas'));
         } else if ($pengguna === "DOSEN") {
             return view('pages.lecturer.data-mahasiswa');
         } else {
@@ -99,34 +103,34 @@ class DataMahasiswa extends Controller
         }
     }
 
-    public function show(string $id)
-    {
-        try {
-            $mahasiswa = Mahasiswa::with('pengguna')->findOrFail($id); 
-
-            return response()->json([
-                'mahasiswa' => [
-                    'nim' => $mahasiswa->nim,
-                    'nama_lengkap' => $mahasiswa->nama_lengkap,
-                    'angkatan' => $mahasiswa->angkatan,
-                    'semester' => $mahasiswa->semester,
-                    'nama_prodi' => $mahasiswa->program_studi->nama ?? '-',
-                    'ipk' => $mahasiswa->ipk,
-                    'status' => $mahasiswa->status,
-                ],
-                'pengguna' => [
-                    'nama_pengguna' => $mahasiswa->pengguna->nama_pengguna ?? '-',
-                    'email' => $mahasiswa->pengguna->email ?? '-',
-                ]
-            ]);
-        } catch (ModelNotFoundException $exception) {
-            report($exception);
-            return response()->json(['message' => 'Data mahasiswa tidak ditemukan.'], 404);
-        } catch (Exception $exception) {
-            report($exception);
-            return response()->json(['message' => 'Terjadi kesalahan pada server.'], 500);
-        }
+    public function show($id): array {
+        $mahasiswa = Mahasiswa::findOrFail($id);
+        $pengguna = $mahasiswa->pengguna;
+        $prodi = $mahasiswa->program_studi->nama;
+        $status = $mahasiswa->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG';
+    
+        return [
+            'mahasiswa' => [
+                'nim' => $mahasiswa->nim,
+                'nama_lengkap' => $mahasiswa->nama_lengkap,
+                'angkatan' => $mahasiswa->angkatan,
+                'semester' => $mahasiswa->semester,
+                'ipk' => $mahasiswa->ipk,
+                'status' => $mahasiswa->status,
+            ],
+            'pengguna' => [
+                'nama_pengguna' => $pengguna->nama_pengguna,
+                'email' => $pengguna->email,
+            ],
+            'prodi' => [
+                'nama' => $prodi
+            ],
+            'status' => [
+                'status' => $status
+            ]
+        ];
     }
+    
 
     public function destroy(string $id): RedirectResponse
     {
