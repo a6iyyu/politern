@@ -22,3 +22,4 @@ import "./search";
 import "./sorting";
 import "./student-guidance-data-modal";
 import "./detail-lecturer";
+import "./detail-student"

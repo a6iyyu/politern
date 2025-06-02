@@ -8,10 +8,16 @@ use App\Models\Magang;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanMagang;
 use App\Models\ProgramStudi;
+use App\Models\Pengguna;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\ModelNotFoundException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
@@ -50,7 +56,77 @@ class DataMahasiswa extends Controller
         }
     }
 
-    public function create() {}
+    public function create(Request $request)
+    {
+        try {
+            Log::info('Data Mahasiswa mau divalidasi');
+            $request->validate([
+                'nama_pengguna' => 'required|string|max:100|unique:pengguna,nama_pengguna',
+                'kata_sandi' => 'required|string|min:6',
+                'email' => 'required|email|unique:pengguna,email',
+                'nama_lengkap' => 'required|string|max:255',
+                'nim' => 'required|numeric|unique:mahasiswa,nim',
+                'semester' => 'required|numeric',
+                'program_studi' => 'required|exists:program_studi,id_prodi',
+                'angkatan' => 'required|numeric',
+                'ipk' => 'required|numeric',
+            ]);
+            Log::info('Data Mahasiswa sudah divalidasi');
+
+            $pengguna = Pengguna::create([
+                'nama_pengguna' => $request->nama_pengguna,
+                'email' => $request->email,
+                'kata_sandi' => bcrypt($request->kata_sandi),
+                'tipe' => 'MAHASISWA',
+            ]);
+
+            Mahasiswa::create([
+                'id_pengguna' => $pengguna->id_pengguna,
+                'nama_lengkap' => $request->nama_lengkap,
+                'nim' => $request->nim,
+                'semester' => $request->semester,
+                'id_prodi' => $request->program_studi,
+                'angkatan' => $request->angkatan,
+                'ipk' => $request->ipk,
+                'status' => 'BELUM MAGANG',
+            ]);
+
+            return to_route('admin.data-mahasiswa')->with('success', 'Data mahasiswa berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            report($e);
+            Log::error($e->getMessage());
+            return back()->withErrors($e->getMessage());
+        }
+    }
+
+    public function show(string $id)
+    {
+        try {
+            $mahasiswa = Mahasiswa::with('pengguna')->findOrFail($id); 
+
+            return response()->json([
+                'mahasiswa' => [
+                    'nim' => $mahasiswa->nim,
+                    'nama_lengkap' => $mahasiswa->nama_lengkap,
+                    'angkatan' => $mahasiswa->angkatan,
+                    'semester' => $mahasiswa->semester,
+                    'nama_prodi' => $mahasiswa->program_studi->nama ?? '-',
+                    'ipk' => $mahasiswa->ipk,
+                    'status' => $mahasiswa->status,
+                ],
+                'pengguna' => [
+                    'nama_pengguna' => $mahasiswa->pengguna->nama_pengguna ?? '-',
+                    'email' => $mahasiswa->pengguna->email ?? '-',
+                ]
+            ]);
+        } catch (ModelNotFoundException $exception) {
+            report($exception);
+            return response()->json(['message' => 'Data mahasiswa tidak ditemukan.'], 404);
+        } catch (Exception $exception) {
+            report($exception);
+            return response()->json(['message' => 'Terjadi kesalahan pada server.'], 500);
+        }
+    }
 
     public function destroy(string $id): RedirectResponse
     {

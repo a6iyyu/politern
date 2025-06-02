@@ -15,5 +15,6 @@
             @include('components.admin.data-mahasiswa.tabel')
         </section>
         @include('components.admin.data-mahasiswa.tambah')
+        @include('components.admin.data-mahasiswa.detail')
     </main>
 @endsection

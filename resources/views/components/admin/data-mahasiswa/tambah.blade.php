@@ -1,12 +1,12 @@
 <section class="modal modal-tambah-mahasiswa fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="min-h-screen flex items-center justify-center w-full px-4">
-        <form action="" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+        <form action="{{ route('admin.data-mahasiswa.tambah') }}" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white py-7 px-10 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('POST')
-            <h2 class="cursor-default mb-3 font-semibold text-lg text-center text-gray-800">
+            <h2 class="cursor-default mb-3 font-semibold text-sm text-[var(--primary)]">
                 Tambah Mahasiswa
             </h2>
-            <hr class="mb-3 border border-[var(--stroke)]" />
+            <hr class="mb-3 border border-1 border-[var(--primary)] rounded-xl" />
             @if ($errors->any())
                 <ul class="p-4 cursor-default rounded-lg bg-red-50 border border-red-500 list-disc list-inside text-sm text-red-500">
                     @foreach ($errors->all() as $error)
@@ -14,7 +14,7 @@
                     @endforeach
                 </ul>
             @endif
-            <h5 class="cursor-default mt-6 px-6 py-4 rounded-md text-sm bg-[var(--secondary)] text-white">
+            <h5 class="cursor-default mt-6 px-5 py-3 rounded-md text-sm bg-[var(--secondary)] text-white">
                 Data Pengguna
             </h5>
             <span class="mb-3 mt-6 flex items-center justify-between gap-4">
@@ -43,7 +43,7 @@
                 type="email"
                 :required="true"
             />
-            <h5 class="cursor-default my-6 px-6 py-4 rounded-md text-sm bg-[var(--secondary)] text-white">
+            <h5 class="cursor-default my-6 px-5 py-3 rounded-md text-sm bg-[var(--secondary)] text-white">
                 Data Mahasiswa
             </h5>
             <x-input
@@ -60,7 +60,7 @@
                     label="NIM"
                     name="nim"
                     placeholder="NIM"
-                    type="text"
+                    type="number"
                     :required="true"
                 />
                 <x-input
@@ -74,19 +74,11 @@
             </span>
             <span class="mb-3 mt-6 flex items-center justify-between gap-4">
                 <x-select
-                    label="Program Studi"
-                    name="prodi"
-                    placeholder="-- Semua Program Studi --"
-                    :options="['TI' => 'Teknik Informatika', 'SI' => 'Sistem Informasi']"
-                    :required="true"
-                    :selected="old('id_dosen', $mahasiswa->id_dosen ?? '')"
-                />
-                <x-select
                     label="Pilih Program Studi"
                     name="program_studi"
                     placeholder="-- Semua Program Studi --"
-                    :options="['' => '-- Semua Program Studi --'] + $program_studi->pluck('nama', 'id_prodi')->toArray()"
-                    :required="false"
+                    :options="$program_studi->pluck('nama', 'id_prodi')->toArray()"
+                    :required="true"
                     :selected="old('program_studi', '')"
                 />
                 <x-select
@@ -95,6 +87,17 @@
                     placeholder="-- Semua Angkatan --"
                     :selected="old('angkatan', $mahasiswa->angkatan ?? '')"
                     :options="['2023' => '2023', '2024' => '2024']"
+                    :required="true"
+                />
+            </span>
+            <span class="mb-3 mt-6 flex items-center justify-between gap-4">
+                <x-input
+                    icon="fa-solid fa-calculator"
+                    label="IPK"
+                    name="ipk"
+                    placeholder="IPK"
+                    type="number"
+                    step="0.01"
                     :required="true"
                 />
             </span>

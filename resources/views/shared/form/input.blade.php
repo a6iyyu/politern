@@ -20,10 +20,10 @@
             class="appearance-none w-full rounded-lg border-1 text-sm transition-all duration-200 border-[var(--stroke)]
                 @if ($type !== 'file') pl-12 py-2.5 @endif
                 {{ $type === 'password' ? 'pr-12' : 'pr-4' }}
-                lg:focus:outline-none lg:focus:border-[#5955b2]
+                lg:focus:outline-none lg:focus:border-[var(--primary)]
                 @if ($type === 'file') file:mr-4 file:py-2 file:px-4 file:border-0 file:rounded file:bg-[var(--green-tertiary)] file:text-white file:cursor-pointer @endif"
             value="{{ $type !== 'file' ? $value : '' }}"
-            @if ($type === 'number') oninput="this.value = this.value.replace(/[^0-9]/g, '')" onwheel="this.blur()" @endif
+            @if ($type === 'number') oninput="this.value = this.value.replace(/[^0-9.]/g, '')" onwheel="this.blur()" @endif
             @if ($type === 'text') oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" @endif
             @if (!empty($required)) required @endif
             {{ $attributes ?? '' }}
