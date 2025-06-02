@@ -103,43 +103,30 @@ class DataDosen extends Controller
 
     public function update(Request $request, $id) {
 
-    try {
-        $dosen = Dosen::with('pengguna')->findOrFail($id);
+        try {
+            $dosen = Dosen::with('pengguna')->findOrFail($id);
 
-        $request->validate([
-            'nama_pengguna' => 'required|string|max:100|unique:pengguna,nama_pengguna,' . $dosen->pengguna->id_pengguna . ',id_pengguna',
-            'email'         => 'required|email|unique:pengguna,email,' . $dosen->pengguna->id_pengguna . ',id_pengguna',
-            'kata_sandi'    => 'nullable|string|min:6',
-            'nama'          => 'required|string|max:255',
-            'nip'           => 'required|digits:18',
-            'nomor_telepon' => 'required|numeric|digits_between:10,15',
-        ]);
+            $pengguna = $dosen->pengguna;
+            $pengguna->nama_pengguna = $request->nama_pengguna;
+            $pengguna->email = $request->email;
+            if ($request->filled('kata_sandi')) {
+                $pengguna->kata_sandi = bcrypt($request->kata_sandi);
+            }
+            $pengguna->save();
 
-        $dosen->pengguna->nama_pengguna = $request->nama_pengguna;
-        $dosen->pengguna->email = $request->email;
+            $dosen->nama = $request->nama;
+            $dosen->nip = $request->nip;
+            $dosen->nomor_telepon = $request->nomor_telepon;
+            $dosen->save();
+        return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil diubah');
 
-        if ($request->filled('kata_sandi')) {
-            $dosen->pengguna->kata_sandi = bcrypt($request->kata_sandi);
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors($exception->getMessage());
         }
-
-        $dosen->pengguna->save();
-
-        $dosen->nama = $request->nama;
-        $dosen->nip = $request->nip;
-        $dosen->nomor_telepon = $request->nomor_telepon;
-        $dosen->save();
-
-        DB::commit();
-        return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil diubah.');
-            } catch (Exception $exception) {
-        DB::rollBack();
-        report($exception);
-        Log::error($exception->getMessage());
-        return back()->withErrors($exception->getMessage());    
-    }
 }
     
-
     public function export_excel(): never
     {
         $dosen = Dosen::select('id_dosen', 'nama', 'nip', 'nomor_telepon')->get();
