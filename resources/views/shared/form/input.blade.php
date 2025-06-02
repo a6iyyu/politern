@@ -23,7 +23,7 @@
                 @if ($type === 'file') file:mr-4 file:py-2 file:px-4 file:border-0 file:rounded file:bg-[var(--green-tertiary)] file:text-white file:cursor-pointer @endif"
             value="{{ $type !== 'file' ? $value : '' }}"
             @if ($type === 'number') oninput="this.value = this.value.replace(/[^0-9]/g, '')" onwheel="this.blur()" @endif
-            @if ($type === 'text') oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" @endif
+            @if ($type === 'text') oninput="this.value = this.value.replace(/[^a-zA-Z0-9\s.,?!:;'\-&quot;\-\()\/]/g, '')" @endif
             @if (!empty($required)) required @endif
             {{ $attributes ?? '' }}
         />

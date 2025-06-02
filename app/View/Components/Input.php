@@ -11,13 +11,13 @@ use Illuminate\Contracts\View\View;
 class Input extends Component
 {
     public ?bool $required;
-    public string $icon, $name;
-    public ?string $info, $label, $type, $value;
+    public string $name;
+    public ?string $info, $icon, $label, $type, $value;
 
-    public function __construct(?bool $required, string $icon, string $name, ?string $info = null, ?string $label = null, ?string $type = null, ?string $value = null)
+    public function __construct(?bool $required,  string $name, ?string $icon = null, ?string $info = null, ?string $label = null, ?string $type = null, ?string $value = null)
     {
-        $this->icon = $icon;
         $this->info = $info;
+        $this->icon = $icon;
         $this->label = $label;
         $this->name = $name;
         $this->required = $required;

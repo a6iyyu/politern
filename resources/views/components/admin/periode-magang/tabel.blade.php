@@ -7,14 +7,15 @@
             class="text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
             <i class="fa fa-file-excel mr-2"></i> Ekspor Data
         </a>
-        <button data-target="periode" class="open text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
+        <button href="javascript:void(0)" data-target="tambah-periode" 
+            class="open text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
             Tambah Periode
         </button>
     </div>
 </section>
 @include('livewire.periode-magang')
 <x-table
-    :headers="['No', 'Nama Periode', 'Durasi', 'Tanggal Mulai', 'Tanggal Selesai', 'Status', 'Aksi']"
+    :headers="['Nama Periode', 'Durasi', 'Tanggal Mulai', 'Tanggal Selesai', 'Status', 'Aksi']"
     :sortable="['Nama Periode']"
     :rows="$data"
 />

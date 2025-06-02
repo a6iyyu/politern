@@ -69,10 +69,10 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('periode-magang')->group(function () {
             Route::get('/', [PeriodeMagang::class, 'index'])->name('admin.periode-magang');
-            Route::get('/{id}/detail', [PeriodeMagang::class, 'detail'])->name('admin.periode-magang.detail');
+            Route::post('/tambah', [PeriodeMagang::class, 'create'])->name('admin.periode-magang.tambah');
+            Route::get('/{id}/detail', [PeriodeMagang::class, 'show'])->name('admin.periode-magang.detail');
             Route::get('/{id}/edit', [PeriodeMagang::class, 'edit'])->name('admin.periode-magang.edit');
-            Route::get('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
-            Route::get('/tambah', [PeriodeMagang::class, 'create'])->name('admin.periode-magang.tambah');
+            Route::delete('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
             Route::get('/ekspor-excel', [PeriodeMagang::class, 'export_excel'])->name('admin.periode-magang.ekspor-excel');
         });
 
