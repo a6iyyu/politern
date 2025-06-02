@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/edit', [DataDosen::class, 'edit'])->name('admin.data-dosen.edit');
             Route::get('/ekspor-excel', [DataDosen::class, 'export_excel'])->name('admin.data-dosen.ekspor-excel');
             Route::post('/tambah', [DataDosen::class, 'create'])->name('admin.data-dosen.tambah');
+            Route::put('/{id}/update', [DataDosen::class, 'update'])->name('admin.data-dosen.update');
             Route::delete('/{id}/hapus', [DataDosen::class, 'destroy'])->name('admin.data-dosen.hapus');
         });
 

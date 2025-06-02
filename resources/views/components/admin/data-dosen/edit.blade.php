@@ -1,6 +1,6 @@
 <section class="modal modal-edit-dosen fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="min-h-screen flex items-center justify-center w-full px-4">
-        <form action="" method="POST"
+        <form action="#" method="POST" id="form-edit-dosen"
             class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('PUT')
@@ -19,7 +19,7 @@
                     name="nama_pengguna"
                     placeholder="Masukkan Nama Pengguna"
                     :required="true"
-                    :value="''"
+                    :value="$dosen->pengguna->nama_pengguna ??''"
                 />
                 <x-input
                     icon="fa-solid fa-key"
@@ -28,7 +28,7 @@
                     name="kata_sandi"
                     placeholder="Masukkan Kata Sandi"
                     :required="true"
-                    :value="''"
+                    disabled
                 />
             </span>
             <x-input
@@ -38,10 +38,10 @@
                 name="email"
                 placeholder="Masukkan Email"
                 :required="true"
-                :value="''"
+                :value="$dosen->pengguna->email ??''"
             />
             <h5 class="cursor-default my-6 px-6 py-4 rounded-md text-sm bg-[var(--secondary)] text-white">
-                Data Pengguna
+                Data Dosen
             </h5>
             <div class="my-6 flex flex-col gap-3">
                 <x-input
@@ -51,7 +51,7 @@
                     name="nama"
                     placeholder="Masukkan nama lengkap"
                     :required="true"
-                    :value="''"
+                    :value="$dosen->nama ??''"
                 />
                 <x-input
                     icon="fa-solid fa-id-card"
@@ -60,7 +60,16 @@
                     name="nip"
                     placeholder="Masukkan NIP"
                     :required="true"
-                    :value="''"
+                    :value="$dosen->nip ??''"
+                />
+                <x-input
+                    icon="fa-solid fa-phone"
+                    label="Nomor Telepon"
+                    type="number"
+                    name="nomor_telepon"
+                    placeholder="Masukkan Nomor Telepon"
+                    :required="true"
+                    :value="$dosen->nomor_telepon ??''"
                 />
             </div>
             <span class="flex justify-end gap-3 items-center mt-6">

@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class DataDosen extends Controller
 {
@@ -83,24 +84,61 @@ class DataDosen extends Controller
         return compact('dosen', 'pengguna');
     }
 
-    public function edit($id): View
+    public function edit($id)
     {
-        $dosen = Dosen::findOrFail($id);
-        return view('components.admin.data-dosen.edit', compact('dosen'));
-    }
+        $dosen = Dosen::with('pengguna')->findOrFail($id);
+        
+        return response()->json([
+        'dosen' => [
+            'nama' => $dosen->nama,
+            'nip' => $dosen->nip,
+            'nomor_telepon' => $dosen->nomor_telepon,
+        ],
+        'pengguna' => [
+            'nama_pengguna' => $dosen->pengguna->nama_pengguna,
+            'email' => $dosen->pengguna->email,
+        ]
+    ]);
+}
 
-    public function destroy($id): RedirectResponse
-    {
-        try {
-            $dosen = Dosen::findOrFail($id);
-            $dosen->delete();
-            return to_route('admin.data-dosen')->with('success', 'Data Dosen berhasil dihapus.');
-        } catch (Exception $exception) {
-            report($exception);
-            Log::error($exception->getMessage());
-            return back()->withErrors('Terjadi kesalahan pada server.');
+    public function update(Request $request, $id) {
+
+    try {
+        $dosen = Dosen::with('pengguna')->findOrFail($id);
+
+        $request->validate([
+            'nama_pengguna' => 'required|string|max:100|unique:pengguna,nama_pengguna,' . $dosen->pengguna->id_pengguna . ',id_pengguna',
+            'email'         => 'required|email|unique:pengguna,email,' . $dosen->pengguna->id_pengguna . ',id_pengguna',
+            'kata_sandi'    => 'nullable|string|min:6',
+            'nama'          => 'required|string|max:255',
+            'nip'           => 'required|digits:18',
+            'nomor_telepon' => 'required|numeric|digits_between:10,15',
+        ]);
+
+        $dosen->pengguna->nama_pengguna = $request->nama_pengguna;
+        $dosen->pengguna->email = $request->email;
+
+        if ($request->filled('kata_sandi')) {
+            $dosen->pengguna->kata_sandi = bcrypt($request->kata_sandi);
         }
+
+        $dosen->pengguna->save();
+
+        $dosen->nama = $request->nama;
+        $dosen->nip = $request->nip;
+        $dosen->nomor_telepon = $request->nomor_telepon;
+        $dosen->save();
+
+        DB::commit();
+        return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil diubah.');
+            } catch (Exception $exception) {
+        DB::rollBack();
+        report($exception);
+        Log::error($exception->getMessage());
+        return back()->withErrors($exception->getMessage());    
     }
+}
+    
 
     public function export_excel(): never
     {
