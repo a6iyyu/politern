@@ -1,6 +1,6 @@
 <section class="modal modal-tambah-dosen fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="min-h-screen flex items-center justify-center w-full px-4">
-        <form action="" method="POST"
+        <form action="{{ route('admin.data-dosen.tambah') }}" method="POST"
             class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('POST')
@@ -55,6 +55,14 @@
                     type="number"
                     name="nip"
                     placeholder="Masukkan NIP"
+                    :required="true"
+                />
+                <x-input
+                    icon="fa-solid fa-phone"
+                    label="Nomor Telepon"
+                    type="number"
+                    name="nomor_telepon"
+                    placeholder="Masukkan Nomor Telepon"
                     :required="true"
                 />
             </div>

@@ -41,10 +41,10 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('data-dosen')->group(function () {
             Route::get('/', [DataDosen::class, 'index'])->name('admin.data-dosen');
-            Route::get('/tambah', [DataDosen::class, 'create'])->name('admin.data-dosen.tambah');
             Route::get('/{id}/detail', [DataDosen::class, 'show'])->name('admin.data-dosen.detail');
             Route::get('/{id}/edit', [DataDosen::class, 'edit'])->name('admin.data-dosen.edit');
             Route::get('/ekspor-excel', [DataDosen::class, 'export_excel'])->name('admin.data-dosen.ekspor-excel');
+            Route::post('/tambah', [DataDosen::class, 'create'])->name('admin.data-dosen.tambah');
             Route::delete('/{id}/hapus', [DataDosen::class, 'destroy'])->name('admin.data-dosen.hapus');
         });
 

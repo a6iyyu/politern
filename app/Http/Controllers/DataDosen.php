@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengguna;
 use App\Models\Dosen;
 use App\Models\DosenPembimbing;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class DataDosen extends Controller
 {
@@ -37,8 +42,40 @@ class DataDosen extends Controller
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
     }
+    
+    public function create(Request $request)
+    {
+        try {
+            $request->validate([
+                'nama' => 'required|string|max:255',
+                'nip' => 'required|string|max:18',
+                'nama_pengguna' => 'required|string|max:100|unique:pengguna,nama_pengguna',
+                'email' => 'required|email|unique:pengguna,email',
+                'kata_sandi' => 'required|string|min:6',
+                'nomor_telepon'     => 'required|string|max:15',
+            ]);
 
-    public function create() {}
+            $pengguna = Pengguna::create([
+                'nama_pengguna' => $request->nama_pengguna, 
+                'email' => $request->email,
+                'kata_sandi' => Hash::make($request->kata_sandi),
+                'tipe'      => 'DOSEN',
+            ]);
+
+            Dosen::create([
+                '' ,
+                'nama' => $request->nama,
+                'nip' => $request->nip,
+                'nomor_telepon' => $request->nomor_telepon,
+                'id_pengguna' => $pengguna->id,
+            ]);
+
+            return to_route('admin.data-dosen')->with('Success', 'Data dosen berhasil ditambahkan');
+        } catch (Exception $exception) {
+            report($exception);
+            return back()->withErrors('Terjadi kesalahan pada server.');
+        }
+    }
 
     public function show($id): array
     {
