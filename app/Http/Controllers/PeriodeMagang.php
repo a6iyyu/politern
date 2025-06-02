@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
+use Exception;
+use Illuminate\Contracts\View\Factory;
 
 class PeriodeMagang extends Controller
 {
@@ -20,7 +25,6 @@ class PeriodeMagang extends Controller
             $total_periode = PeriodeMagangModel::count();
             $paginasi = PeriodeMagangModel::paginate(request('per_page', 10));
             $data = collect($paginasi->items())->map(fn(PeriodeMagangModel $periode): array => [
-                $periode->id_periode,
                 $periode->nama_periode,
                 $periode->durasi,
                 $periode->tanggal_mulai,
@@ -32,6 +36,61 @@ class PeriodeMagang extends Controller
             return view('pages.admin.periode-magang', compact('data', 'paginasi', 'total_periode'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
+        }
+    }
+
+    public function create(Request $request): RedirectResponse
+    {
+        Log::info('mulai');
+        try {
+            Log::info('Mulai validasi');
+            $request->validate([
+                'nama_periode'      => 'required|string|max:200|unique:periode_magang,nama_periode',
+                'durasi'            => 'required|string|min:1|max:3',
+                'tanggal_mulai'     => 'required|date',
+                'tanggal_selesai'   => 'required|date|after_or_equal:tanggal_mulai',
+                'status'            => 'required|in:aktif,nonaktif',
+            ]);
+
+            Log::info("selesai validasi");
+            PeriodeMagangModel::create([
+                'nama_periode'      => $request->nama_periode,
+                'durasi'            => $request->durasi,
+                'tanggal_mulai'     => $request->tanggal_mulai,
+                'tanggal_selesai'   => $request->tanggal_selesai,
+            ]);
+            Log::info('selesai membuat periode');
+            return to_route('admin.periode-magang')->with('success', 'Periode Magang berhasil ditambahkan');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors($exception->getMessage());
+        }
+    }
+
+    public function show($id): array
+    {
+        $periode = PeriodeMagangModel::findOrFail($id);
+        return compact('periode');
+    }
+
+
+    public function edit($id): View
+    {
+        $periode = PeriodeMagangModel::findOrFail($id);
+        return view('components.admin.periode-magang.edit', compact('periode'));
+    }
+
+    public function destroy($id): RedirectResponse
+    {
+        try {
+            $periode = PeriodeMagangModel::findOrFail($id);
+            $periode->delete();
+            return to_route('admin.periode-magang')->with('success', 'Periode Magang berhasil dihapus.');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors('Terjadi kesalahan pada server.');
         }
     }
 

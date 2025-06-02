@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Perusahaan;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class DataPerusahaan extends Controller
@@ -16,7 +18,7 @@ class DataPerusahaan extends Controller
         return view('pages.admin.data-perusahaan', compact('perusahaan'));
     }
 
-    public function create(Request $request)
+    public function create(Request $request): RedirectResponse
     {
         try {
             $request->validate([
@@ -39,19 +41,33 @@ class DataPerusahaan extends Controller
                 'logo'          => $request->logo,
                 'status'        => $request->status
             ]);
+
+            return to_route('admin.data-perusahaan')->with('success', 'Berhasil menambahkan data perusahaan.');
         } catch (Exception $exception) {
             report($exception);
-            abort(500, "Terjadi kesalahan pada server.");
+            Log::error($exception->getMessage());
+            return back()->withErrors('Terjadi kesalahan pada server.');
         }
     }
 
-    public function destroy() {}
+    public function destroy(string $id)
+    {
+        try {
+            $dosen = Perusahaan::findOrFail($id);
+            $dosen->delete();
+            return to_route('admin.data-perusahaan')->with('success', 'Data Dosen berhasil dihapus.');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors('Terjadi kesalahan pada server.');
+        }
+    }
 
     public function edit(): View
     {
         try {
             $perusahaan = Perusahaan::with('lokasi')->get();
-            return view('pages.admin.edit-data-perusahaan', compact('perusahaan'));
+            return view('components.admin.data-perusahaan.edit', compact('perusahaan'));
         } catch (ModelNotFoundException $exception) {
             report($exception);
             abort(404, 'Data perusahaan yang Anda cari tidak ditemukan.');
@@ -61,16 +77,26 @@ class DataPerusahaan extends Controller
         }
     }
 
-    public function show(Request $request, string $id): View
+    public function show(Request $request, string $id): array
     {
         try {
             $perusahaan = Perusahaan::findOrFail($id);
-            return view('pages.admin.detail-data-perusahaan', compact('perusahaan'));
+            return compact('perusahaan');
         } catch (Exception $exception) {
             report($exception);
+            Log::warning($exception->getMessage());
             abort(500, "Terjadi kesalahan pada server.");
         }
     }
 
-    public function update() {}
+    public function update()
+    {
+        try {
+            
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors('Terjadi kesalahan pada server.');
+        }
+    }
 }

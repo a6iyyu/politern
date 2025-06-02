@@ -14,5 +14,6 @@
             @include('components.admin.lowongan-magang.tabel')
         </section>
         @include('components.admin.lowongan-magang.tambah')
+        @include('components.admin.lowongan-magang.detail')
     </main>
 @endsection

@@ -12,7 +12,7 @@
 </div>
 <x-table
     :headers="['Judul Lowongan', 'Perusahaan', 'Kuota', 'Periode', 'Status', 'Aksi']"
-    :sortable="['Lowongan']"
+    :sortable="['Judul Lowongan', 'Status']"
     :rows="$data"
 />
 @if ($paginasi->hasPages())

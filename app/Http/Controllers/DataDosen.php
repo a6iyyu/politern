@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengguna;
 use App\Models\Dosen;
 use App\Models\DosenPembimbing;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class DataDosen extends Controller
 {
@@ -37,8 +42,40 @@ class DataDosen extends Controller
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
     }
+    
+    public function create(Request $request): RedirectResponse
+    {
+        try {
+            $request->validate([
+                'nama_pengguna'     => 'required|string|max:100|unique:pengguna,nama_pengguna',
+                'kata_sandi'        => 'required|string|min:6',
+                'email'             => 'required|email|unique:pengguna,email',
+                'nama'              => 'required|string|max:255',
+                'nip'               => 'required|numeric|digits:18',
+                'nomor_telepon'     => 'required|numeric|digits_between:10,15',
+            ]);
 
-    public function create() {}
+            $pengguna = Pengguna::create([
+                'nama_pengguna' => $request->nama_pengguna, 
+                'email'         => $request->email,
+                'kata_sandi'    => bcrypt($request->kata_sandi),
+                'tipe'          => 'DOSEN',
+            ]);
+
+            Dosen::create([
+                'nama'          => $request->nama,
+                'nip'           => $request->nip,
+                'nomor_telepon' => $request->nomor_telepon,
+                'id_pengguna'   => $pengguna->id_pengguna,
+            ]);
+
+            return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil ditambahkan');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors($exception->getMessage());
+        }
+    }
 
     public function show($id): array
     {
@@ -47,18 +84,61 @@ class DataDosen extends Controller
         return compact('dosen', 'pengguna');
     }
 
-    public function edit($id): View
+    public function edit($id)
     {
-        $dosen = Dosen::findOrFail($id);
-        return view('pages.admin.edit-data-dosen', compact('dosen'));
-    }
+        $dosen = Dosen::with('pengguna')->findOrFail($id);
+        
+        return response()->json([
+        'dosen' => [
+            'nama' => $dosen->nama,
+            'nip' => $dosen->nip,
+            'nomor_telepon' => $dosen->nomor_telepon,
+        ],
+        'pengguna' => [
+            'nama_pengguna' => $dosen->pengguna->nama_pengguna,
+            'email' => $dosen->pengguna->email,
+        ]
+    ]);
+}
 
-    public function destroy($id): RedirectResponse
-    {
-        $dosen = Dosen::findOrFail($id);
-        $dosen->delete();
-        return redirect()->route('admin.data-dosen')->with('success', 'Data Dosen berhasil dihapus.');
+    public function update(Request $request, $id) {
+
+    try {
+        $dosen = Dosen::with('pengguna')->findOrFail($id);
+
+        $request->validate([
+            'nama_pengguna' => 'required|string|max:100|unique:pengguna,nama_pengguna,' . $dosen->pengguna->id_pengguna . ',id_pengguna',
+            'email'         => 'required|email|unique:pengguna,email,' . $dosen->pengguna->id_pengguna . ',id_pengguna',
+            'kata_sandi'    => 'nullable|string|min:6',
+            'nama'          => 'required|string|max:255',
+            'nip'           => 'required|digits:18',
+            'nomor_telepon' => 'required|numeric|digits_between:10,15',
+        ]);
+
+        $dosen->pengguna->nama_pengguna = $request->nama_pengguna;
+        $dosen->pengguna->email = $request->email;
+
+        if ($request->filled('kata_sandi')) {
+            $dosen->pengguna->kata_sandi = bcrypt($request->kata_sandi);
+        }
+
+        $dosen->pengguna->save();
+
+        $dosen->nama = $request->nama;
+        $dosen->nip = $request->nip;
+        $dosen->nomor_telepon = $request->nomor_telepon;
+        $dosen->save();
+
+        DB::commit();
+        return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil diubah.');
+            } catch (Exception $exception) {
+        DB::rollBack();
+        report($exception);
+        Log::error($exception->getMessage());
+        return back()->withErrors($exception->getMessage());    
     }
+}
+    
 
     public function export_excel(): never
     {
@@ -83,9 +163,7 @@ class DataDosen extends Controller
             $nomor++;
         }
 
-        foreach (range('A', 'D') as $columnID) {
-            $sheet->getColumnDimension($columnID)->setAutoSize(true);
-        }
+        foreach (range('A', 'D') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
 
         $sheet->setTitle("Data Dosen");
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');

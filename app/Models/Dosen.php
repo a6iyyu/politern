@@ -16,7 +16,7 @@ class Dosen extends Model
     protected $table = 'dosen';
     protected $primaryKey = 'id_dosen';
     public $timestamps = true;
-    protected $fillable = ['nip', 'nama', 'nomor_telepon'];
+    protected $fillable = ['id_pengguna', 'nip', 'nama', 'nomor_telepon'];
 
     public function pembimbing(): HasOne
     {

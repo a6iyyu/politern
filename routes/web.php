@@ -39,14 +39,15 @@
                 Route::get('/{id}/detail', [LogAktivitas::class, 'detail'])->name('admin.aktivitas-magang.detail');
             });
 
-            Route::prefix('data-dosen')->group(function () {
-                Route::get('/', [DataDosen::class, 'index'])->name('admin.data-dosen');
-                Route::get('/tambah', [DataDosen::class, 'create'])->name('admin.data-dosen.tambah');
-                Route::get('/{id}/detail', [DataDosen::class, 'show'])->name('admin.data-dosen.detail');
-                Route::get('/{id}/edit', [DataDosen::class, 'edit'])->name('admin.data-dosen.edit');
-                Route::get('/ekspor-excel', [DataDosen::class, 'export_excel'])->name('admin.data-dosen.ekspor-excel');
-                Route::delete('/{id}/hapus', [DataDosen::class, 'destroy'])->name('admin.data-dosen.hapus');
-            });
+        Route::prefix('data-dosen')->group(function () {
+            Route::get('/', [DataDosen::class, 'index'])->name('admin.data-dosen');
+            Route::get('/{id}/detail', [DataDosen::class, 'show'])->name('admin.data-dosen.detail');
+            Route::get('/{id}/edit', [DataDosen::class, 'edit'])->name('admin.data-dosen.edit');
+            Route::get('/ekspor-excel', [DataDosen::class, 'export_excel'])->name('admin.data-dosen.ekspor-excel');
+            Route::post('/tambah', [DataDosen::class, 'create'])->name('admin.data-dosen.tambah');
+            Route::put('/{id}/update', [DataDosen::class, 'update'])->name('admin.data-dosen.update');
+            Route::delete('/{id}/hapus', [DataDosen::class, 'destroy'])->name('admin.data-dosen.hapus');
+        });
 
             Route::prefix('data-mahasiswa')->group(function () {
                 Route::get('/', [DataMahasiswa::class, 'index'])->name('admin.data-mahasiswa');
@@ -65,14 +66,14 @@
                 Route::delete('/uri: {id}/edit', [DataPerusahaan::class, 'destroy'])->name('admin.data-perusahaan.hapus');
             });
 
-            Route::prefix('periode-magang')->group(function () {
-                Route::get('/', [PeriodeMagang::class, 'index'])->name('admin.periode-magang');
-                Route::get('/{id}/detail', [PeriodeMagang::class, 'detail'])->name('admin.periode-magang.detail');
-                Route::get('/{id}/edit', [PeriodeMagang::class, 'edit'])->name('admin.periode-magang.edit');
-                Route::get('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
-                Route::get('/tambah', [PeriodeMagang::class, 'create'])->name('admin.periode-magang.tambah');
-                Route::get('/ekspor-excel', [PeriodeMagang::class, 'export_excel'])->name('admin.periode-magang.ekspor-excel');
-            });
+        Route::prefix('periode-magang')->group(function () {
+            Route::get('/', [PeriodeMagang::class, 'index'])->name('admin.periode-magang');
+            Route::post('/tambah', [PeriodeMagang::class, 'create'])->name('admin.periode-magang.tambah');
+            Route::get('/{id}/detail', [PeriodeMagang::class, 'show'])->name('admin.periode-magang.detail');
+            Route::get('/{id}/edit', [PeriodeMagang::class, 'edit'])->name('admin.periode-magang.edit');
+            Route::delete('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
+            Route::get('/ekspor-excel', [PeriodeMagang::class, 'export_excel'])->name('admin.periode-magang.ekspor-excel');
+        });
 
             Route::prefix('lowongan-magang')->group(function () {
                 Route::get('/', [Lowongan::class, 'index'])->name('admin.lowongan-magang');
