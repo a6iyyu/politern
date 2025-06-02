@@ -15,10 +15,12 @@
 
 import "./bootstrap";
 import "./chart";
+import "./detail-lecturer";
+import "./edit-lecturer";
+import "./fetch-intern-data";
 import "./form";
 import "./hamburger-menu";
 import "./modal";
 import "./search";
 import "./sorting";
 import "./student-guidance-data-modal";
-import "./detail-lecturer";

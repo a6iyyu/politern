@@ -34,5 +34,20 @@ class Lowongan extends Controller
         }
     }
 
-    public function create(){}
-}
+    public function create(){
+
+    }
+
+    public function detail(string $id): array
+    {
+        $lowongan = LowonganMagang::with([
+            'bidang', 
+            'perusahaan_mitra.lokasi', 
+            'jenis_lokasi', 
+            'periode_magang', 
+            'keahlian'
+        ])->findOrFail($id);
+
+        return compact('lowongan');
+    }
+}   
