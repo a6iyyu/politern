@@ -16,8 +16,10 @@
 import "./bootstrap";
 import "./chart";
 import "./detail-lecturer";
+import './detail-period';
 import "./detail-student";
 import "./edit-lecturer";
+import "./edit-period";
 import "./fetch-intern-data";
 import "./form";
 import "./hamburger-menu";

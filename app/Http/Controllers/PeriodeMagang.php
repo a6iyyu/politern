@@ -15,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Exception;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 
 class PeriodeMagang extends Controller
 {
@@ -75,11 +76,51 @@ class PeriodeMagang extends Controller
     }
 
 
-    public function edit($id): View
+    public function edit($id): JsonResponse
     {
         $periode = PeriodeMagangModel::findOrFail($id);
-        return view('components.admin.periode-magang.edit', compact('periode'));
+
+        return response()->json([
+            'periode' => [
+                'nama_periode'    => $periode->nama_periode,
+                'durasi'          => $periode->durasi,
+                'tanggal_mulai'   => $periode->tanggal_mulai,
+                'tanggal_selesai' => $periode->tanggal_selesai,
+                'status'          => $periode->status,
+                'created_at'      => $periode->created_at,
+            ],
+        ]);
     }
+
+    public function update(Request $request, $id): RedirectResponse
+{
+    try {
+        $periode = PeriodeMagangModel::findOrFail($id);
+
+        // Validasi input sesuai aturan yang sama dengan create
+        $request->validate([
+            'nama_periode'    => "required|string|max:200|unique:periode_magang,nama_periode,{$id}",
+            'durasi'          => 'required|string|min:1|max:3',
+            'tanggal_mulai'   => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'status'          => 'required|in:aktif,nonaktif',
+        ]);
+
+        // Update data periode
+        $periode->nama_periode    = $request->nama_periode;
+        $periode->durasi          = $request->durasi;
+        $periode->tanggal_mulai   = $request->tanggal_mulai;
+        $periode->tanggal_selesai = $request->tanggal_selesai;
+        $periode->status          = $request->status;
+        $periode->save();
+
+        return to_route('admin.periode-magang')->with('success', 'Data periode magang berhasil diubah');
+    } catch (Exception $exception) {
+        report($exception);
+        Log::error($exception->getMessage());
+        return back()->withErrors($exception->getMessage());
+    }
+}
 
     public function destroy($id): RedirectResponse
     {

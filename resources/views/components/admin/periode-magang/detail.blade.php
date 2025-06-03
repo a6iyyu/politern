@@ -7,42 +7,34 @@
                 </h2>
                 <i id="close-detail" class="fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>
             </span>
-            <hr class="mb-3 border border-[var(--primary)]" />
-            <figcaption class="mt-6 px-6 py-4 rounded-md bg-[#eeeeee]">
-                <span class="flex items-center gap-4 text-sm text-gray-800">
-                    <i class="fa-solid fa-user"></i>
-                    <h5>Informasi Pengguna</h5>
-                </span>
-                <span class="mt-3 flex items-center gap-2 text-sm">
-                    <strong>Nama Pengguna:</strong>
-                    <h6 id="nama_pengguna"></h6>
-                </span>
-                <span class="mt-1 flex items-center gap-2 text-sm">
-                    <strong>Surel:</strong>
-                    <h6 id="email"></h6>
-                </span>
-            </figcaption>
-            <figcaption class="cursor-default mt-6 px-6 py-4 rounded-md text-sm bg-[var(--secondary)] text-white">
-                Data Dosen
-            </figcaption>
+            <hr class="mb-4 border border-[var(--primary)]" />
+            <span class="mt-1 flex items-center gap-2 text-sm">
+                <strong>Nama Periode:</strong>
+                <h6 id="nama_periode"></h6>
+            </span>
             <figcaption class="mt-4 grid grid-cols-1 gap-2 md:grid-cols-2">
                 <span class="mt-1 flex items-center gap-2 text-sm">
-                    <strong>NIP:</strong>
-                    <h6 id="nip"></h6>
+                    <strong>Tanggal Mulai:</strong>
+                    <h6 id="tanggal_mulai"></h6>
                 </span>
                 <span class="mt-1 flex items-center gap-2 text-sm">
-                    <strong>Nomor Telepon:</strong>
-                    <h6 id="nomor_telepon"></h6>
+                    <strong>Tanggal Selesai:</strong>
+                    <h6 id="tanggal_selesai"></h6>
                 </span>
-                <span class="mt-1 flex items-center gap-2 text-sm">
-                    <strong>Nama:</strong>
-                    <h6 id="nama_dosen"></h6>
+                <span class="mt-2 flex items-center gap-2 text-sm">
+                    <strong>Durasi:</strong>
+                    <h6 id="durasi"></h6>
                 </span>
-                <span class="mt-1 flex items-center gap-2 text-sm">
-                    <strong>Jumlah Bimbingan:</strong>
-                    <h6 id="jumlah_bimbingan"></h6>
+                <span class="mt-2 flex items-center gap-2 text-sm">
+                    <strong>Status:</strong>
+                    <h6 id="status"></h6>
                 </span>
+                
             </figcaption>
+            <span class="mt-4 flex items-center gap-2 text-sm">
+                <strong>Tanggal Dibuat:</strong>
+                <h6 id="tanggal_dibuat"></h6>
+            </span>
         </figure>
     </div>
 </section>
