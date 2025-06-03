@@ -12,7 +12,7 @@
         id="nama_lengkap"
         icon="fa-solid fa-magnifying-glass"
         label="Cari nama dosen"
-        name="nama_lengkap"
+        name="nama"
         placeholder="Cari nama dosen"
         type="text"
         :required="false"
