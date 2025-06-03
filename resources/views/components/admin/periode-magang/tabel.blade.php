@@ -13,7 +13,6 @@
         </button>
     </div>
 </section>
-@include('livewire.periode-magang')
 <x-table
     :headers="['Nama Periode', 'Durasi', 'Tanggal Mulai', 'Tanggal Selesai', 'Status', 'Aksi']"
     :sortable="['Nama Periode']"

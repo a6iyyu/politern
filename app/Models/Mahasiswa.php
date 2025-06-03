@@ -32,19 +32,34 @@ class Mahasiswa extends Model
         return $this->belongsToMany(Bidang::class, 'bidang_mahasiswa', 'id_mahasiswa', 'id_bidang');
     }
 
-    public function lokasi(): BelongsToMany
-    {
-        return $this->belongsToMany(Lokasi::class, 'preferensi_lokasi_magang', 'id_mahasiswa', 'id_lokasi');
-    }
-
     public function keahlian(): BelongsToMany
     {
         return $this->belongsToMany(Keahlian::class, 'keahlian_mahasiswa', 'id_mahasiswa', 'id_keahlian');
     }
 
+    public function lokasi(): BelongsToMany
+    {
+        return $this->belongsToMany(Lokasi::class, 'preferensi_lokasi_magang', 'id_mahasiswa', 'id_lokasi');
+    }
+
+    public function magang(): HasMany
+    {
+        return $this->hasMany(Magang::class, 'id_magang', 'id_magang');
+    }
+
     public function pengajuan_magang(): HasMany
     {
-        return $this->hasMany(PengajuanMagang::class, 'id_mahasiswa', 'id_mahasiswa');
+        return $this->hasMany(PengajuanMagang::class, 'id_pengajuan_magang', 'id_pengajuan_magang');
+    }
+
+    public function pengalaman(): HasMany
+    {
+        return $this->hasMany(Pengalaman::class, 'id_pengalaman', 'id_pengalaman');
+    }
+
+    public function proyek(): HasMany
+    {
+        return $this->hasMany(Proyek::class, 'id_proyek', 'id_proyek');
     }
 
     public function pengguna(): BelongsTo
@@ -55,5 +70,10 @@ class Mahasiswa extends Model
     public function program_studi(): BelongsTo
     {
         return $this->belongsTo(ProgramStudi::class, 'id_prodi', 'id_prodi');
+    }
+
+    public function sertifikasi_pelatihan(): HasMany
+    {
+        return $this->hasMany(SertifikasiPelatihan::class, 'id_sertifikasi_pelatihan', 'id_sertifikasi_pelatihan');
     }
 }

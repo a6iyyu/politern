@@ -1,13 +1,13 @@
 @extends('layouts.main')
 
 @section('judul')
-    Data Perusahaan {{ $perusahaan->id_perusahaan_mitra }}
+    {{ $dosen->nama }}
 @endsection
 
 @section('deskripsi')
 @endsection
 
 @section('konten')
-    <x-header title="Data Perusahaan" />
+    <x-header :title="$dosen->nama" />
     <main class="flex flex-col pb-10 px-10 pl-84 transition-all duration-300"></main>
 @endsection

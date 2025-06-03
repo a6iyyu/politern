@@ -1,44 +1,45 @@
-    <?php
+<?php
 
-    use App\Http\Controllers\Autentikasi;
-    use App\Http\Controllers\Dasbor;
-    use App\Http\Controllers\DataDosen;
-    use App\Http\Controllers\DataMahasiswa;
-    use App\Http\Controllers\DataPerusahaan;
-    use App\Http\Controllers\DataProdi;
-    use App\Http\Controllers\LogAktivitas;
-    use App\Http\Controllers\Lowongan;
-    use App\Http\Controllers\PeriodeMagang;
-    use App\Http\Controllers\RekomendasiMagang;
-    use App\Http\Controllers\Pengajuan;
-    use Illuminate\Support\Facades\Redirect;
-    use Illuminate\Support\Facades\Route;
-    use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\Autentikasi;
+use App\Http\Controllers\Dasbor;
+use App\Http\Controllers\DataDosen;
+use App\Http\Controllers\DataMahasiswa;
+use App\Http\Controllers\DataPerusahaan;
+use App\Http\Controllers\DataProdi;
+use App\Http\Controllers\LogAktivitas;
+use App\Http\Controllers\Lowongan;
+use App\Http\Controllers\PeriodeMagang;
+use App\Http\Controllers\RekomendasiMagang;
+use App\Http\Controllers\Pengajuan;
+use App\Http\Controllers\Profil;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 
-    Route::middleware('guest')->group(function () {
-        Route::get('/lupa-kata-sandi', fn() => view('pages.auth.lupa-kata-sandi'))->name('lupa-kata-sandi')->withoutMiddleware('auth');
-        Route::get('/masuk', fn() => view('pages.auth.masuk'))->name('masuk')->withoutMiddleware('auth');
-        Route::post('/masuk', [Autentikasi::class, 'masuk'])->name('login')->withoutMiddleware('auth');
-    });
+Route::middleware('guest')->group(function () {
+    Route::get('/lupa-kata-sandi', fn() => view('pages.auth.lupa-kata-sandi'))->name('lupa-kata-sandi')->withoutMiddleware('auth');
+    Route::get('/masuk', fn() => view('pages.auth.masuk'))->name('masuk')->withoutMiddleware('auth');
+    Route::post('/masuk', [Autentikasi::class, 'masuk'])->name('login')->withoutMiddleware('auth');
+});
 
-    Route::middleware('auth')->group(function () {
-        Route::get('/', function () {
-            $tipe = strtolower(Session::get('tipe'));
-            if (!in_array($tipe, ['admin', 'mahasiswa', 'dosen'])) return Redirect::route('keluar');
-            return Redirect::route("{$tipe}.dasbor");
-        })->name('beranda');
+Route::middleware('auth')->group(function () {
+    Route::get('/', function () {
+        $tipe = strtolower(Session::get('tipe'));
+        if (!in_array($tipe, ['admin', 'mahasiswa', 'dosen'])) return Redirect::route('keluar');
+        return Redirect::route("{$tipe}.dasbor");
+    })->name('beranda');
 
-        Route::middleware(['authorize:ADMIN'])->prefix('admin')->group(function () {
-            Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
-            Route::get('/grafik', [Dasbor::class, 'grafik'])->name('admin.dasbor.grafik');
+    Route::middleware(['authorize:ADMIN'])->prefix('admin')->group(function () {
+        Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
+        Route::get('/grafik', [Dasbor::class, 'grafik'])->name('admin.dasbor.grafik');
 
-            Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
-            Route::get('/pengajuan-magang', [Pengajuan::class, 'index'])->name('admin.pengajuan-magang');
+        Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
+        Route::get('/pengajuan-magang', [Pengajuan::class, 'index'])->name('admin.pengajuan-magang');
 
-            Route::prefix('aktivitas-magang')->group(function () {
-                Route::get('/', [LogAktivitas::class, 'index'])->name('admin.aktivitas-magang');
-                Route::get('/{id}/detail', [LogAktivitas::class, 'detail'])->name('admin.aktivitas-magang.detail');
-            });
+        Route::prefix('aktivitas-magang')->group(function () {
+            Route::get('/', [LogAktivitas::class, 'index'])->name('admin.aktivitas-magang');
+            Route::get('/{id}/detail', [LogAktivitas::class, 'detail'])->name('admin.aktivitas-magang.detail');
+        });
 
         Route::prefix('data-dosen')->group(function () {
             Route::get('/', [DataDosen::class, 'index'])->name('admin.data-dosen');
@@ -84,9 +85,9 @@
             Route::post('/tambah', [PeriodeMagang::class, 'create'])->name('admin.periode-magang.tambah');
             Route::get('/{id}/detail', [PeriodeMagang::class, 'show'])->name('admin.periode-magang.detail');
             Route::get('/{id}/edit', [PeriodeMagang::class, 'edit'])->name('admin.periode-magang.edit');
-            Route::delete('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
-            Route::put('/{id}/perbarui', [PeriodeMagang::class, 'update'])->name('admin.data-dosen.perbarui');
             Route::get('/ekspor-excel', [PeriodeMagang::class, 'export_excel'])->name('admin.periode-magang.ekspor-excel');
+            Route::put('/{id}/perbarui', [PeriodeMagang::class, 'update'])->name('admin.data-dosen.perbarui');
+            Route::delete('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
         });
 
         Route::prefix('lowongan-magang')->group(function () {
@@ -104,6 +105,12 @@
             Route::get('/{id}/edit', [Pengajuan::class, 'edit'])->name('admin.pengajuan-magang.edit');
             Route::post('/{id}/edit', [Pengajuan::class, 'update'])->name('admin.pengajuan-magang.perbarui');
             Route::delete('/{id}/hapus', [Pengajuan::class, 'destroy'])->name('admin.pengajuan-magang.hapus');
+        });
+
+        Route::prefix('profil')->group(function () {
+            Route::get('/', [Profil::class, 'index'])->name('admin.profil');
+            Route::get('/edit', [Profil::class, 'edit'])->name('admin.profil.edit');
+            Route::post('/edit', [Profil::class, 'update'])->name('admin.profil.perbarui');
         });
     });
 
@@ -129,6 +136,12 @@
             Route::delete('/{id}/hapus', [LogAktivitas::class, 'destroy'])->name('mahasiswa.log-aktivitas.hapus');
         });
 
+        Route::prefix('profil')->group(function () {
+            Route::get('/', [Profil::class, 'index'])->name('mahasiswa.profil');
+            Route::get('/edit', [Profil::class, 'edit'])->name('mahasiswa.profil.edit');
+            Route::post('/edit', [Profil::class, 'update'])->name('mahasiswa.profil.perbarui');
+        });
+
         Route::prefix('rekomendasi-magang')->group(function () {
             Route::get('/{id}/detail', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang');
             Route::get('/{id}/lamar', [RekomendasiMagang::class, 'store'])->name('mahasiswa.rekomendasi-magang.lamar');
@@ -142,6 +155,12 @@
         Route::get('/data-mahasiswa/{id}', [DataMahasiswa::class, 'show'])->name('dosen.data-mahasiswa.detail');
         Route::get('/log-aktivitas', [LogAktivitas::class, 'index'])->name('dosen.log-aktivitas');
         Route::get('/log-aktivitas/{id}', [LogAktivitas::class, 'show'])->name('dosen.log-aktivitas.detail');
+
+        Route::prefix('profil')->group(function () {
+            Route::get('/', [Profil::class, 'index'])->name('dosen.profil');
+            Route::get('/edit', [Profil::class, 'edit'])->name('dosen.profil.edit');
+            Route::post('/edit', [Profil::class, 'update'])->name('dosen.profil.perbarui');
+        });
     });
 
     Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\BidangMahasiswa;
+use App\Models\KeahlianMahasiswa;
 use App\Models\Magang;
 use App\Models\Mahasiswa;
-use App\Models\PengajuanMagang;
 use App\Models\Pengguna;
 use App\Models\ProgramStudi;
 use Exception;
@@ -16,9 +17,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Crypt;                                                                 
+use Illuminate\Support\Facades\Crypt;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
@@ -61,7 +61,6 @@ class DataMahasiswa extends Controller
     public function create(Request $request): RedirectResponse
     {
         try {
-            Log::info('Data Mahasiswa mau divalidasi');
             $request->validate([
                 'nama_pengguna'     => 'required|string|max:100|unique:pengguna,nama_pengguna',
                 'kata_sandi'        => 'required|string|min:6',
@@ -73,12 +72,11 @@ class DataMahasiswa extends Controller
                 'angkatan'          => 'required|numeric',
                 'ipk'               => 'required|numeric',
             ]);
-            Log::info('Data Mahasiswa sudah divalidasi');
 
             $pengguna = Pengguna::create([
                 'nama_pengguna' => $request->nama_pengguna,
                 'email'         => $request->email,
-                'kata_sandi'    => bcrypt($request->kata_sandi),
+                'kata_sandi'    => Crypt::encrypt($request->kata_sandi),
                 'tipe'          => 'MAHASISWA',
             ]);
 
@@ -104,24 +102,21 @@ class DataMahasiswa extends Controller
     public function edit($id): JsonResponse
     {
         $mahasiswa = Mahasiswa::with(['pengguna', 'program_studi'])->findOrFail($id);
-        Log::info(json_encode($mahasiswa));
-
-        // Log::info(Crypt::decrypt($mahasiswa->pengguna->kata_sandi));
 
         return response()->json([
             'mahasiswa' => [
-                'nama_lengkap' => $mahasiswa->nama_lengkap,
-                'nim' => $mahasiswa->nim,
-                'semester' => $mahasiswa->semester,
-                'angkatan' => $mahasiswa->angkatan,
-                'ipk' => $mahasiswa->ipk,
-                'nama_prodi' => $mahasiswa->program_studi?->id_prodi ?? '-',
-                'status' => $mahasiswa->status,
+                'nama_lengkap'  => $mahasiswa->nama_lengkap,
+                'nim'           => $mahasiswa->nim,
+                'semester'      => $mahasiswa->semester,
+                'angkatan'      => $mahasiswa->angkatan,
+                'ipk'           => $mahasiswa->ipk,
+                'nama_prodi'    => $mahasiswa->program_studi?->id_prodi ?? '-',
+                'status'        => $mahasiswa->status,
             ],
             'pengguna' => [
                 'nama_pengguna' => $mahasiswa->pengguna->nama_pengguna,
-                'email' => $mahasiswa->pengguna->email,
-                // 'kata_sandi' => Crypt::decrypt($mahasiswa->pengguna->kata_sandi)
+                'email'         => $mahasiswa->pengguna->email,
+                'kata_sandi'    => Crypt::decrypt($mahasiswa->pengguna->kata_sandi),
             ],
         ]);
     }
@@ -134,7 +129,7 @@ class DataMahasiswa extends Controller
             $pengguna = $mahasiswa->pengguna;
             $pengguna->nama_pengguna = $request->nama_pengguna;
             $pengguna->email = $request->email;
-            // if ($request->filled('kata_sandi')) $pengguna->kata_sandi = bcrypt($request->kata_sandi);
+            if ($request->filled('kata_sandi')) $pengguna->kata_sandi = Crypt::encrypt($request->kata_sandi);
             $pengguna->save();
 
             $mahasiswa->nama_lengkap = $request->nama_lengkap;
@@ -152,7 +147,8 @@ class DataMahasiswa extends Controller
         }
     }
 
-    public function show($id): array {
+    public function show($id): array
+    {
         $mahasiswa = Mahasiswa::findOrFail($id);
         $pengguna = $mahasiswa->pengguna;
         $prodi = $mahasiswa->program_studi->nama;
@@ -160,27 +156,43 @@ class DataMahasiswa extends Controller
 
         return [
             'mahasiswa' => [
-                'nim' => $mahasiswa->nim,
-                'nama_lengkap' => $mahasiswa->nama_lengkap,
-                'angkatan' => $mahasiswa->angkatan,
-                'semester' => $mahasiswa->semester,
-                'ipk' => $mahasiswa->ipk,
-                'status' => $mahasiswa->status,
+                'nim'           => $mahasiswa->nim,
+                'nama_lengkap'  => $mahasiswa->nama_lengkap,
+                'angkatan'      => $mahasiswa->angkatan,
+                'semester'      => $mahasiswa->semester,
+                'ipk'           => $mahasiswa->ipk,
+                'status'        => $mahasiswa->status,
             ],
             'pengguna' => [
                 'nama_pengguna' => $pengguna->nama_pengguna,
-                'email' => $pengguna->email,
+                'email'         => $pengguna->email,
             ],
             'prodi' => ['nama' => $prodi],
             'status' => ['status' => $status],
         ];
     }
 
+    /**
+     * @param string $id
+     * @return RedirectResponse
+     *
+     * TODO: Memperbaiki logika penghapusan data mahasiswa karena
+     * memiliki banyak relasi terhadap tabel lain.
+     */
     public function destroy(string $id): RedirectResponse
     {
-        $mahasiswa = Mahasiswa::findOrFail($id);
-        $mahasiswa->delete();
-        return to_route('admin.data-mahasiswa')->with('success', 'Data mahasiswa berhasil dihapus');
+        try {
+            BidangMahasiswa::where('id_mahasiswa', $id)->delete();
+            KeahlianMahasiswa::where('id_mahasiswa', $id)->delete();
+            $mahasiswa = Mahasiswa::findOrFail($id);
+            $mahasiswa->delete();
+            Pengguna::findOrFail($mahasiswa->id_pengguna)->delete();
+            return to_route('admin.data-mahasiswa')->with('success', 'Data mahasiswa berhasil dihapus.');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors(['errors' => 'Gagal menghapus data mahasiswa karena kesalahan pada server.']);
+        }
     }
 
     public function export_excel(): void
@@ -222,20 +234,12 @@ class DataMahasiswa extends Controller
             $nomor++;
         }
 
-        foreach (range('A', 'J') as $id) {
-            $sheet->getColumnDimension($id)->setAutoSize(true);
-        }
+        foreach (range('A', 'J') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
 
         $sheet->setTitle("Data Mahasiswa");
-
-        // Bersihkan output buffer sebelumnya
-        if (ob_get_length()) {
-            ob_end_clean();
-        }
-        // Format tanggal untuk nama file agar aman (tidak ada spasi dan karakter ilegal)
+        if (ob_get_length()) ob_end_clean();
         $filename = 'Data Mahasiswa ' . date("Y-m-d_H-i-s") . '.xlsx';
 
-        // Header untuk download file excel
         header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         header("Content-Disposition: attachment; filename=\"$filename\"");
         header("Cache-Control: max-age=0");
@@ -248,5 +252,4 @@ class DataMahasiswa extends Controller
         $writer->save('php://output');
         exit;
     }
-
 }
