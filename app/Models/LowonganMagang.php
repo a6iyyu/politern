@@ -17,7 +17,10 @@ class LowonganMagang extends Model
     protected $primaryKey = 'id_lowongan';
     protected $fillable = [
         'id_perusahaan_mitra',
+        'id_keahlian',
+        'id_bidang',
         'id_periode',
+        'id_jenis_lokasi',
         'judul',
         'deskripsi',
         'kategori',
@@ -27,7 +30,16 @@ class LowonganMagang extends Model
         'tanggal_mulai_pendaftaran',
         'tanggal_selesai_pendaftaran',
         'tanggal_posting',
-        'status'
+        'status',
+        'nama',
+        'nama_bidang',
+        'nama_keahlian',
+        'durasi',
+        'nama_jenis_lokasi',
+        'dekripsi',
+        'gaji',
+        'nilai_minimal',
+        'kuota'
     ];
 
     public function bidang(): BelongsTo
@@ -45,7 +57,7 @@ class LowonganMagang extends Model
         return $this->belongsTo(PeriodeMagang::class, 'id_periode', 'id_periode');
     }
 
-    public function perusahaan(): BelongsTo
+    public function perusahaan_mitra(): BelongsTo
     {
         return $this->belongsTo(Perusahaan::class, 'id_perusahaan_mitra', 'id_perusahaan_mitra');
     }
@@ -53,4 +65,6 @@ class LowonganMagang extends Model
     public function keahlian(): BelongsTo {
         return $this->belongsTo(Keahlian::class, 'id_keahlian', 'id_keahlian');
     }
+
+    
 }
