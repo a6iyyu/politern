@@ -1,6 +1,6 @@
 <fieldset class="flex w-full flex-col justify-between space-y-4 text-sm">
     @if ($label)
-        <label for="{{ $name }}" class="font-medium">
+        <label for="{{ $name }}" class="font-medium text-[var(--primary-text)]">
             @if ($required)
                 {{ $label }} <span class="text-red-500">*</span>
             @endif

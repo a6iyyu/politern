@@ -27,3 +27,5 @@ import "./sorting";
 import "./student-guidance-data-modal";
 import "./detail-student";
 import "./edit-student";
+import "./detail-prodi";
+import "./edit-prodi";

@@ -5,14 +5,14 @@
     <div class="flex items-center gap-4">
         <a
             href="{{ route('admin.data-prodi.ekspor-excel') }}" 
-            class="text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
+            class="text-xs bg-[var(--primary)] text-white font-medium px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
         >
             <i class="fa fa-file-excel mr-2"></i> Ekspor Data
         </a>
         <a
             href="javascript:void(0)"
             data-target="tambah-prodi"
-            class="open text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
+            class="open text-xs bg-[var(--primary)] text-white font-medium px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors"
         >
             Tambah Data Prodi
         </a>
@@ -22,7 +22,7 @@
 @include('components.admin.data-prodi.filter')
 
 <x-table
-    :headers="['No', 'Nama Prodi', 'Jenjang', 'Jurusan', 'Jumlah Mahasiswa', 'Aksi']"
+    :headers="['No', 'Nama Prodi', 'Jenjang', 'Jurusan', 'Total Mahasiswa', 'Aksi']"
     :sortable="['Nama Prodi', 'Jenjang']"
     :rows="$data"
 />

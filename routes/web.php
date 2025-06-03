@@ -64,9 +64,10 @@
             Route::get('/', [DataProdi::class, 'index'])->name('admin.data-prodi');
             Route::get('/{id}/detail', [DataProdi::class, 'show'])->name('admin.data-prodi.detail');
             Route::get('/{id}/edit', [DataProdi::class, 'edit'])->name('admin.data-prodi.edit');
-            Route::post('/{id}/edit', [DataProdi::class, 'update'])->name('admin.data-prodi.perbarui');
-            Route::delete('/{id}/hapus', [DataProdi::class, 'destroy'])->name('admin.data-prodi.hapus');
             Route::get('/ekspor-excel', [DataProdi::class, 'export_excel'])->name('admin.data-prodi.ekspor-excel');
+            Route::post('/tambah', [DataProdi::class, 'create'])->name('admin.data-prodi.tambah');
+            Route::put('/{id}/perbarui', [DataProdi::class, 'update'])->name('admin.data-prodi.perbarui');
+            Route::delete('/{id}/hapus', [DataProdi::class, 'destroy'])->name('admin.data-prodi.hapus');
         });
 
         Route::prefix('data-perusahaan')->group(function () {

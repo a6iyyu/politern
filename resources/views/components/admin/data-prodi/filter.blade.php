@@ -1,6 +1,6 @@
 <div class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-4">
     <x-input
-        id="nama_lengkap"
+        id="nama_prodi"
         icon="fa-solid fa-magnifying-glass"
         label="Cari Prodi"
         name="nama_prodi"
@@ -10,10 +10,10 @@
     />
 
     <x-select
-        id="jenjang"
+        id="jenjang_prodi"
         label="Jenjang"
         name="jenjang"
-        :options="['' => '-- Semua Jenjang --', 'D3' => 'D3', 'S1' => 'S1', 'S2' => 'S2', 'S3' => 'S3']"
+        :options="['' => '-- Semua Jenjang --'] + ($jenjang ?? [])"
         :required="false"
     />
 

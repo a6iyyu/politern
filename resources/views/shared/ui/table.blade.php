@@ -18,7 +18,7 @@
             @foreach ($rows as $row)
                 <tr class="border-b border-[var(--stroke)] text-sm text-[var(--primary-text)] transition-all duration-200">
                     @foreach ($row as $index => $cell)
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-3 whitespace-nowrap">
                             <section class="flex cursor-default space-x-3 text-[10pt]">
                                 {!! $cell !!}
                             </section>

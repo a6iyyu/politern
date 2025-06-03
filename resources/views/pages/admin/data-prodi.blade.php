@@ -13,5 +13,8 @@
         <section class="py-6 px-12 mt-2 rounded-lg overflow-hidden bg-white border border-[var(--stroke)]">
             @include('components.admin.data-prodi.tabel')
         </section>
+        @include('components.admin.data-prodi.tambah')
+        @include('components.admin.data-prodi.edit')
+        @include('components.admin.data-prodi.detail')
     </main>
 @endsection
