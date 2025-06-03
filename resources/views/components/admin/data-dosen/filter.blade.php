@@ -9,7 +9,7 @@
     />
     
     <x-input
-        id="nama_lengkap"
+        id="nama"
         icon="fa-solid fa-magnifying-glass"
         label="Cari nama dosen"
         name="nama"
