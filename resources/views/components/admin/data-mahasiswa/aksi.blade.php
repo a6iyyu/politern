@@ -1,6 +1,9 @@
 <a href="javascript:void(0)" data-id="{{ $mhs->id_mahasiswa }}" class="detail inline-flex items-center rounded px-4 py-2 text-white text-xs font-medium bg-[var(--blue-tertiary)] hover:bg-blue-700 mr-2">
     Detail
 </a>
+<a href="javascript:void(0)" data-target="edit-mahasiswa" data-id="{{ $mhs->id_mahasiswa }}" class="open edit inline-flex items-center rounded px-4 py-2 text-white text-xs font-medium bg-[var(--yellow-tertiary)] hover:bg-yellow-500 mr-2">
+    Edit
+</a>
 <form action="{{ route('admin.data-mahasiswa.hapus', ['id' => $mhs->id_mahasiswa]) }}" method="POST" class="inline-block">
     @csrf
     @method('DELETE')

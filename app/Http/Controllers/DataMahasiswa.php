@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Crypt;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
@@ -100,6 +102,54 @@ class DataMahasiswa extends Controller
             report($e);
             Log::error($e->getMessage());
             return back()->withErrors($e->getMessage());
+        }
+    }
+
+    public function edit($id): JsonResponse
+    {
+        $mahasiswa = Mahasiswa::with(['pengguna', 'program_studi'])->findOrFail($id);
+
+        return response()->json([
+            'mahasiswa' => [
+                'nama_lengkap' => $mahasiswa->nama_lengkap,
+                'nim' => $mahasiswa->nim,
+                'semester' => $mahasiswa->semester,
+                'angkatan' => $mahasiswa->angkatan,
+                'ipk' => $mahasiswa->ipk,
+                'nama_prodi' => $mahasiswa->program_studi?->nama ?? '-',
+                'status' => $mahasiswa->status,
+            ],
+            'pengguna' => [
+                'nama_pengguna' => $mahasiswa->pengguna->nama_pengguna,
+                'email' => $mahasiswa->pengguna->email,
+                'kata_sandi' => Crypt::decrypt($mahasiswa->pengguna->kata_sandi),
+            ],
+        ]);
+    }
+
+    public function update(Request $request, $id): RedirectResponse
+    {
+        try {
+            $mahasiswa = Mahasiswa::with('pengguna')->findOrFail($id);
+
+            $pengguna = $mahasiswa->pengguna;
+            $pengguna->nama_pengguna = $request->nama_pengguna;
+            $pengguna->email = $request->email;
+            if ($request->filled('kata_sandi')) $pengguna->kata_sandi = bcrypt($request->kata_sandi);
+            $pengguna->save();
+
+            $mahasiswa->nama_lengkap = $request->nama_lengkap;
+            $mahasiswa->nim = $request->nim;
+            $mahasiswa->semester = $request->semester;
+            $mahasiswa->id_prodi = $request->program_studi;
+            $mahasiswa->angkatan = $request->angkatan;
+            $mahasiswa->ipk = $request->ipk;
+            $mahasiswa->save();
+            return to_route('admin.data-mahasiswa')->with('success', 'Data mahasiswa berhasil diubah');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors($exception->getMessage());
         }
     }
 

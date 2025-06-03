@@ -89,17 +89,17 @@ class DataDosen extends Controller
         $dosen = Dosen::with('pengguna')->findOrFail($id);
         
         return response()->json([
-        'dosen' => [
-            'nama' => $dosen->nama,
-            'nip' => $dosen->nip,
-            'nomor_telepon' => $dosen->nomor_telepon,
-        ],
-        'pengguna' => [
-            'nama_pengguna' => $dosen->pengguna->nama_pengguna,
-            'email' => $dosen->pengguna->email,
-        ]
-    ]);
-}
+            'dosen' => [
+                'nama' => $dosen->nama,
+                'nip' => $dosen->nip,
+                'nomor_telepon' => $dosen->nomor_telepon,
+            ],
+            'pengguna' => [
+                'nama_pengguna' => $dosen->pengguna->nama_pengguna,
+                'email' => $dosen->pengguna->email,
+            ]
+        ]);
+    }
 
     public function update(Request $request, $id) {
 

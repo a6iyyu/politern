@@ -53,6 +53,8 @@
                 Route::get('/', [DataMahasiswa::class, 'index'])->name('admin.data-mahasiswa');
                 Route::post('/tambah', [DataMahasiswa::class, 'create'])->name('admin.data-mahasiswa.tambah');
                 Route::get('/{id}/detail', [DataMahasiswa::class, 'show'])->name('admin.data-mahasiswa.detail');
+                Route::get('/{id}/edit', [DataMahasiswa::class, 'edit'])->name('admin.data-mahasiswa.edit');
+                Route::post('/{id}/edit', [DataMahasiswa::class, 'update'])->name('admin.data-mahasiswa.perbarui');
                 Route::delete('/{id}/hapus', [DataMahasiswa::class, 'destroy'])->name('admin.data-mahasiswa.hapus');
                 Route::get('/ekspor-excel', [DataMahasiswa::class, 'export_excel'])->name('admin.data-mahasiswa.ekspor-excel');
             });

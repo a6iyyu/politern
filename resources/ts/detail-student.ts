@@ -46,12 +46,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const nama_pengguna = document.getElementById("nama_pengguna");
     const email = document.getElementById("email");
     const nim = document.getElementById("nim");
-    const nama_lengkap = document.getElementById("nama_lengkap");
-    const angkatan = document.getElementById("angkatan");
-    const semester = document.getElementById("semester");
+    const nama_lengkap = document.getElementById("detail_nama_lengkap");
+    const angkatan = document.getElementById("detail_angkatan");
+    const semester = document.getElementById("detail_semester");
     const nama_prodi = document.getElementById("nama_prodi");
     const ipk = document.getElementById("ipk");
-    const status = document.getElementById("status");
+    const status = document.getElementById("detail_status");
     if (!nama_pengguna || !email || !nim || !nama_lengkap || !angkatan || !semester || !nama_prodi || !ipk || !status) return;
 
     buttons.forEach((button) => {
@@ -70,6 +70,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!data.ok) return;
             const response = (await data.json()) as Modal;
             console.log(response.mahasiswa.angkatan);
+            console.log("Angkatan: ", response.mahasiswa.angkatan);
+            console.log("Element:", angkatan);
+            console.log("Angkatan innerText:", angkatan.innerText);
 
             nama_pengguna.textContent = response.pengguna.nama_pengguna;
             email.textContent = response.pengguna.email;
