@@ -16,6 +16,7 @@
 import "./bootstrap";
 import "./chart";
 import "./detail-lecturer";
+import "./detail-student";
 import "./edit-lecturer";
 import "./fetch-intern-data";
 import "./form";

@@ -9,13 +9,12 @@ use App\Models\Mahasiswa;
 use App\Models\PengajuanMagang;
 use App\Models\Pengguna;
 use App\Models\ProgramStudi;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -35,10 +34,7 @@ class DataMahasiswa extends Controller
             $mahasiswa_sedang_magang = Magang::where('status', 'AKTIF')->count();
             $mahasiswa_selesai_magang = Magang::where('status', 'SELESAI')->count();
             $program_studi = ProgramStudi::all();
-            $status_aktivitas = array_unique(array_merge(
-                Magang::pluck('status')->toArray(),
-                ['BELUM MAGANG']
-            ));
+            $status_aktivitas = array_unique(array_merge(Magang::pluck('status')->toArray(), ['BELUM MAGANG']));
 
             /** @var LengthAwarePaginator $paginasi */
             $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', default: 10));
@@ -62,43 +58,43 @@ class DataMahasiswa extends Controller
         }
     }
 
-    public function create(Request $request)
+    public function create(Request $request): RedirectResponse
     {
         try {
             Log::info('Data Mahasiswa mau divalidasi');
             $request->validate([
-                'nama_pengguna' => 'required|string|max:100|unique:pengguna,nama_pengguna',
-                'kata_sandi' => 'required|string|min:6',
-                'email' => 'required|email|unique:pengguna,email',
-                'nama_lengkap' => 'required|string|max:255',
-                'nim' => 'required|numeric|unique:mahasiswa,nim',
-                'semester' => 'required|numeric',
-                'program_studi' => 'required|exists:program_studi,id_prodi',
-                'angkatan' => 'required|numeric',
-                'ipk' => 'required|numeric',
+                'nama_pengguna'     => 'required|string|max:100|unique:pengguna,nama_pengguna',
+                'kata_sandi'        => 'required|string|min:6',
+                'email'             => 'required|email|unique:pengguna,email',
+                'nama_lengkap'      => 'required|string|max:255',
+                'nim'               => 'required|numeric|unique:mahasiswa,nim',
+                'semester'          => 'required|numeric',
+                'program_studi'     => 'required|exists:program_studi,id_prodi',
+                'angkatan'          => 'required|numeric',
+                'ipk'               => 'required|numeric',
             ]);
             Log::info('Data Mahasiswa sudah divalidasi');
 
             $pengguna = Pengguna::create([
                 'nama_pengguna' => $request->nama_pengguna,
-                'email' => $request->email,
-                'kata_sandi' => bcrypt($request->kata_sandi),
-                'tipe' => 'MAHASISWA',
+                'email'         => $request->email,
+                'kata_sandi'    => bcrypt($request->kata_sandi),
+                'tipe'          => 'MAHASISWA',
             ]);
 
             Mahasiswa::create([
-                'id_pengguna' => $pengguna->id_pengguna,
-                'nama_lengkap' => $request->nama_lengkap,
-                'nim' => $request->nim,
-                'semester' => $request->semester,
-                'id_prodi' => $request->program_studi,
-                'angkatan' => $request->angkatan,
-                'ipk' => $request->ipk,
-                'status' => 'BELUM MAGANG',
+                'id_pengguna'   => $pengguna->id_pengguna,
+                'nama_lengkap'  => $request->nama_lengkap,
+                'nim'           => $request->nim,
+                'semester'      => $request->semester,
+                'id_prodi'      => $request->program_studi,
+                'angkatan'      => $request->angkatan,
+                'ipk'           => $request->ipk,
+                'status'        => 'BELUM MAGANG',
             ]);
 
             return to_route('admin.data-mahasiswa')->with('success', 'Data mahasiswa berhasil ditambahkan.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             report($e);
             Log::error($e->getMessage());
             return back()->withErrors($e->getMessage());
@@ -158,7 +154,7 @@ class DataMahasiswa extends Controller
         $pengguna = $mahasiswa->pengguna;
         $prodi = $mahasiswa->program_studi->nama;
         $status = $mahasiswa->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG';
-    
+
         return [
             'mahasiswa' => [
                 'nim' => $mahasiswa->nim,
@@ -172,15 +168,10 @@ class DataMahasiswa extends Controller
                 'nama_pengguna' => $pengguna->nama_pengguna,
                 'email' => $pengguna->email,
             ],
-            'prodi' => [
-                'nama' => $prodi
-            ],
-            'status' => [
-                'status' => $status
-            ]
+            'prodi' => ['nama' => $prodi],
+            'status' => ['status' => $status],
         ];
     }
-    
 
     public function destroy(string $id): RedirectResponse
     {
@@ -206,19 +197,17 @@ class DataMahasiswa extends Controller
         $nomor = 1;
         $baris = 2;
         foreach ($mahasiswa as $key => $value) {
-            $sheet->setCellValue('A' . $baris, $nomor);
-            $sheet->setCellValue('B' . $baris, $value->nama_lengkap);
-            $sheet->setCellValue('C' . $baris, $value->nim);
-            $sheet->setCellValue('D' . $baris, $value->program_studi->nama);
-            $sheet->setCellValue('E' . $baris, $value->angkatan);
-            $sheet->setCellValue('F' . $baris, $value->semester);
+            $sheet->setCellValue("A$baris", $nomor);
+            $sheet->setCellValue("B$baris", $value->nama_lengkap);
+            $sheet->setCellValue("C$baris", $value->nim);
+            $sheet->setCellValue("D$baris", $value->program_studi->nama);
+            $sheet->setCellValue("E$baris", $value->angkatan);
+            $sheet->setCellValue("F$baris", $value->semester);
             $baris++;
             $nomor++;
         }
 
-        foreach (range('A', 'F') as $columnID) {
-            $sheet->getColumnDimension($columnID)->setAutoSize(true);
-        }
+        foreach (range('A', 'F') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
 
         $sheet->setTitle("Data Mahasiswa");
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');

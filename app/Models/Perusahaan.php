@@ -12,6 +12,8 @@ class Perusahaan extends Model
     protected $table = 'perusahaan_mitra';
     protected $primaryKey = 'id_perusahaan_mitra';
 
+    protected $fillable = ['id_lokasi', 'nama', 'nib', 'nomor_telepon'];
+
     public function lokasi(): BelongsTo
     {
         return $this->belongsTo(Lokasi::class, 'id_lokasi', 'id_lokasi');

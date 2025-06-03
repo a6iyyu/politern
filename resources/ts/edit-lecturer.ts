@@ -1,77 +1,77 @@
 interface Lecturer {
-    nomor_telepon: string;
-    nip: string;
-    nama: string;
+  nomor_telepon: string;
+  nip: string;
+  nama: string;
 }
 
 interface User {
-    nama_pengguna: string;
-    email: string;
-    kata_sandi: string;
+  nama_pengguna: string;
+  email: string;
+  kata_sandi: string;
 }
 
 interface Modal {
-    dosen: Lecturer;
-    pengguna: User;
+  dosen: Lecturer;
+  pengguna: User;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const editButtons = document.querySelectorAll<HTMLAnchorElement>(".edit[data-id]");
-    const editModal = document.querySelector<HTMLElement>(".modal-edit-dosen");
-    const closeEditButton = editModal?.querySelector(".close");
-    const editForm = editModal?.querySelector("form");
+document.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll<HTMLAnchorElement>('.edit[data-id]');
+  const modal = document.querySelector<HTMLElement>('.modal-edit-dosen');
+  if (!buttons || !modal) return;
 
-    const inputNamaPengguna = editForm?.querySelector<HTMLInputElement>("input[name='nama_pengguna']");
-    const inputKataSandi = editForm?.querySelector<HTMLInputElement>("input[name='kata_sandi']");
-    const inputEmail = editForm?.querySelector<HTMLInputElement>("input[name='email']");
-    const inputNama = editForm?.querySelector<HTMLInputElement>("input[name='nama']");
-    const inputNip = editForm?.querySelector<HTMLInputElement>("input[name='nip']");
-    const inputNomorTelepon = editForm?.querySelector<HTMLInputElement>("input[name='nomor_telepon']");
+  const close = modal.querySelector('.close') as HTMLElement;
+  const form = modal.querySelector('form') as HTMLFormElement;
+  if (!close || !form) return;
 
-    const fetchDosenData = async (id: string): Promise<Modal | null> => {
-        try {
-            const response = await fetch(`/admin/data-dosen/${id}/edit`, {
-                headers: {
-                    Accept: "application/json",
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-            });
-            if (!response.ok) throw new Error("Gagal mengambil data dosen.");
-            return (await response.json()) as Modal;
-        } catch (error) {
-            console.error(error);
-            return null;
-        }
-    };
+  const nama_pengguna = form.querySelector<HTMLInputElement>("input[name='nama_pengguna']");
+  const kata_sandi = form.querySelector<HTMLInputElement>("input[name='kata_sandi']");
+  const email = form.querySelector<HTMLInputElement>("input[name='email']");
+  const nama = form.querySelector<HTMLInputElement>("input[name='nama']");
+  const nip = form.querySelector<HTMLInputElement>("input[name='nip']");
+  const nomor_telepon = form.querySelector<HTMLInputElement>("input[name='nomor_telepon']");
 
-    editButtons.forEach((btn) => {
-        btn.addEventListener("click", async () => {
-            const id = btn.dataset.id;
-            if (!id || !editModal || !editForm) return;
+  const fetchDosenData = async (id: string): Promise<Modal | null> => {
+    try {
+      const response = await fetch(`/admin/data-dosen/${id}/edit`, {
+        headers: {
+          Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      });
 
-            const data = await fetchDosenData(id);
-            if (!data) return;
+      if (!response.ok) throw new Error('Gagal mengambil data dosen.');
+      return (await response.json()) as Modal;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
 
-            editModal.classList.remove("hidden");
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      if (!id || !modal || !form) return;
 
-            if(inputNamaPengguna) inputNamaPengguna.value = data.pengguna.nama_pengguna;
-            if(inputKataSandi) inputKataSandi.value = ""; 
-            if(inputEmail) inputEmail.value = data.pengguna.email;
-            if(inputNama) inputNama.value = data.dosen.nama;
-            if(inputNip) inputNip.value = data.dosen.nip;
-            if(inputNomorTelepon) inputNomorTelepon.value = data.dosen.nomor_telepon;
+      const data = await fetchDosenData(id);
+      if (!data) return;
 
-            editForm.action = `/admin/data-dosen/${id}/update`;
-        });
+      modal.classList.remove('hidden');
+
+      if (nama_pengguna) nama_pengguna.value = data.pengguna.nama_pengguna;
+      if (kata_sandi) kata_sandi.value = data.pengguna.kata_sandi;
+      if (email) email.value = data.pengguna.email;
+      if (nama) nama.value = data.dosen.nama;
+      if (nip) nip.value = data.dosen.nip;
+      if (nomor_telepon) nomor_telepon.value = data.dosen.nomor_telepon;
+
+      form.action = `/admin/data-dosen/${id}/update`;
     });
+  });
 
-    closeEditButton?.addEventListener("click", () => {
-        editModal?.classList.add("hidden");
-    });
+  close.addEventListener('click', () => modal.classList.add('hidden'));
 
-    editModal?.addEventListener("click", (event) => {
-        if (event.target === editModal) {
-            editModal.classList.add("hidden");
-        }
-    });
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) modal.classList.add('hidden');
+  });
 });
