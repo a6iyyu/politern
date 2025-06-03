@@ -12,7 +12,7 @@
                 <img src="{{ Request::is('admin') ? asset('icons/dasbor-biru.svg') : asset('icons/dasbor-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
                 <h4 class="ml-7 text-sm tracking-wider">Dasbor</h4>
             </a>
-            <h4 class="cursor-default mb-1 mt-2 pl-5 text-sm tracking-wider text-white/80 font-light">Data Pengguna</h4>
+            <h4 class="cursor-default mb-1 mt-2 pl-5 text-sm tracking-wider text-white/80 font-light">Akademik</h4>
             <a href="{{ route('admin.data-mahasiswa') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('admin/data-mahasiswa*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('admin/data-mahasiswa*') ? asset('icons/data-mahasiswa-biru.svg') : asset('icons/data-mahasiswa-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
                 <h4 class="ml-7 text-sm tracking-wider">Data Mahasiswa</h4>
@@ -20,6 +20,10 @@
             <a href="{{ route('admin.data-dosen') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('admin/data-dosen*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('admin/data-dosen*') ? asset('icons/data-dosen-biru.svg') : asset('icons/data-dosen-putih.svg') }}" alt="Dasbor" class="h-4 w-4" />
                 <h4 class="ml-8 text-sm tracking-wider">Data Dosen</h4>
+            </a>
+            <a href="{{ route('admin.data-prodi') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('admin/data-prodi*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
+                <img src="{{ Request::is('admin/data-prodi*') ? asset('icons/data-prodi-biru.svg') : asset('icons/data-prodi-putih.svg') }}" alt="Dasbor" class="h-4 w-4" />
+                <h4 class="ml-8 text-sm tracking-wider">Data Program Studi</h4>
             </a>
             <h4 class="cursor-default mb-1 mt-2 pl-5 text-sm tracking-wider text-white/80 font-light">Data Perusahaan</h4>
             <a href="{{ route('admin.data-perusahaan') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('admin/data-perusahaan*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
