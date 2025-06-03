@@ -19,9 +19,9 @@
             <section class="p-6 mt-8 rounded-lg overflow-hidden bg-white border border-[var(--stroke)]">
                 @include('components.admin.periode-magang.tabel')
             </section>
-            @include('components.admin.data-dosen.edit')
-            @include('components.admin.data-dosen.tambah')
-            @include('components.admin.data-dosen.detail')
+            @include('components.admin.periode-magang.edit')
+            @include('components.admin.periode-magang.tambah')
+            @include('components.admin.periode-magang.detail')
         </section>
     </main>
 @endsection

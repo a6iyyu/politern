@@ -132,44 +132,65 @@ class DataDosen extends Controller
         return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil dihapus.');
     }
 
-    public function export_excel(): never
-    {
-        $dosen = Dosen::select('id_dosen', 'nama', 'nip', 'nomor_telepon')->get();
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+    public function export_excel(): void
+{
+    // Ambil data dosen beserta relasi pengguna
+    $dosen = Dosen::select('id_dosen', 'nama', 'nip', 'nomor_telepon', 'id_pengguna')
+        ->with('pengguna:id_pengguna,nama_pengguna,email')
+        ->get();
 
-        $sheet->setCellValue('A1', 'No');
-        $sheet->setCellValue('B1', 'Nama');
-        $sheet->setCellValue('C1', 'NIP');
-        $sheet->setCellValue('D1', 'Nomor Telepon');
-        $sheet->getStyle("A1:D1")->getFont()->setBold(true);
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
 
-        $nomor = 1;
-        $baris = 2;
-        foreach ($dosen as $key => $value) {
-            $sheet->setCellValue("A$baris", $nomor);
-            $sheet->setCellValue("B$baris", $value->nama);
-            $sheet->setCellValueExplicit("C$baris", $value->nip, DataType::TYPE_STRING);
-            $sheet->setCellValue("D$baris", $value->nomor_telepon);
-            $baris++;
-            $nomor++;
-        }
+    // Header kolom
+    $sheet->setCellValue('A1', 'No');
+    $sheet->setCellValue('B1', 'Nama Pengguna');
+    $sheet->setCellValue('C1', 'Email');
+    $sheet->setCellValue('D1', 'Nama Dosen');
+    $sheet->setCellValue('E1', 'NIP');
+    $sheet->setCellValue('F1', 'Nomor Telepon');
+    $sheet->getStyle("A1:F1")->getFont()->setBold(true);
 
-        foreach (range('A', 'D') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
-
-        $sheet->setTitle("Data Dosen");
-        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-
-        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        header('Content-Disposition: attachment; filename="' . 'Data Dosen ' . date("Y-m-d H:i:s") . '.xlsx' . '"');
-        header("Cache-Control: max-age=0");
-        header("Cache-Control: max-age=1");
-        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-        header("Last-Modified: " . gmdate('D, d M Y H:i:s') . ' GMT');
-        header("Cache-Control: cache, must-revalidate");
-        header("Pragma: public");
-
-        $writer->save('php://output');
-        exit;
+    $nomor = 1;
+    $baris = 2;
+    foreach ($dosen as $value) {
+        $sheet->setCellValue("A$baris", $nomor);
+        $sheet->setCellValue("B$baris", $value->pengguna ? $value->pengguna->nama_pengguna : '-');
+        $sheet->setCellValue("C$baris", $value->pengguna ? $value->pengguna->email : '-');
+        $sheet->setCellValue("D$baris", $value->nama);
+        // Pakai setCellValueExplicit untuk nip agar tetap string (menghindari hilang angka 0 di depan)
+        $sheet->setCellValueExplicit("E$baris", $value->nip, DataType::TYPE_STRING);
+        $sheet->setCellValue("F$baris", $value->nomor_telepon);
+        $baris++;
+        $nomor++;
     }
+
+    // Auto ukuran kolom A-F
+    foreach (range('A', 'F') as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    $sheet->setTitle("Data Dosen");
+
+    // Bersihkan buffer output jika ada
+    if (ob_get_length()) {
+        ob_end_clean();
+    }
+
+    // Format tanggal untuk nama file agar aman (tidak ada spasi dan karakter ilegal)
+    $filename = 'Data Dosen ' . date("Y-m-d_H-i-s") . '.xlsx';
+
+    // Header untuk download file excel
+    header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    header("Content-Disposition: attachment; filename=\"$filename\"");
+    header("Cache-Control: max-age=0");
+    header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+    header("Last-Modified: " . gmdate('D, d M Y H:i:s') . ' GMT');
+    header("Cache-Control: cache, must-revalidate");
+    header("Pragma: public");
+
+    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+    $writer->save('php://output');
+    exit;
+}
 }

@@ -6,6 +6,7 @@ use App\Models\Pengguna as Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model as TModel;
+use Illuminate\Support\Facades\Crypt;
 
 class Pengguna extends Factory
 {
@@ -16,7 +17,7 @@ class Pengguna extends Factory
         return [
             'nama_pengguna'     => $this->faker->userName(),
             'email'             => $this->faker->safeEmail(),
-            'kata_sandi'        => bcrypt('BocchiMainGitar123!'),
+            'kata_sandi'        => Crypt::encrypt('BocchiMainGitar123!'),
             'tipe'              => $this->faker->randomElement(['ADMIN', 'MAHASISWA', 'DOSEN']),
         ];
     }

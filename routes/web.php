@@ -85,6 +85,7 @@
             Route::get('/{id}/detail', [PeriodeMagang::class, 'show'])->name('admin.periode-magang.detail');
             Route::get('/{id}/edit', [PeriodeMagang::class, 'edit'])->name('admin.periode-magang.edit');
             Route::delete('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
+            Route::put('/{id}/perbarui', [PeriodeMagang::class, 'update'])->name('admin.data-dosen.perbarui');
             Route::get('/ekspor-excel', [PeriodeMagang::class, 'export_excel'])->name('admin.periode-magang.ekspor-excel');
         });
 
