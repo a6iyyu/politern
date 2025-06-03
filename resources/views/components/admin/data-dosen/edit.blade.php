@@ -1,7 +1,7 @@
 <section class="modal modal-edit-dosen fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="min-h-screen flex items-center justify-center w-full px-4">
         <form action="#" method="POST" id="form-edit-dosen"
-            class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+            class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]" method="POST">
             @csrf
             @method('PUT')
             <h2 class="text-lg font-semibold text-center text-gray-800 mb-3">
@@ -28,7 +28,7 @@
                     name="kata_sandi"
                     placeholder="Masukkan Kata Sandi"
                     :required="true"
-                    disabled
+                    :value="$dosen->pengguna->kata_sandi ?? ''"
                 />
             </span>
             <x-input
@@ -73,10 +73,10 @@
                 />
             </div>
             <span class="flex justify-end gap-3 items-center mt-6">
-                <button type="button" class="close cursor-pointer bg-red-500 text-white px-5 py-2 rounded transition-all duration-300 lg:hover:bg-red-600">
+                <button type="button" class="close cursor-pointer bg-red-500 text-sm text-white px-5 py-2 rounded transition-all duration-300 lg:hover:bg-red-600">
                     Tutup
                 </button>
-                <button type="submit" class="cursor-pointer bg-[var(--blue-tertiary)] text-white px-5 py-2 rounded transition-all duration-300 lg:hover:bg-[var(--blue-tertiary)]/80">
+                <button type="submit" class="cursor-pointer bg-[var(--blue-tertiary)] text-sm text-white px-5 py-2 rounded transition-all duration-300 lg:hover:bg-[var(--blue-tertiary)]/80">
                     Edit
                 </button>
             </span>

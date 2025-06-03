@@ -16,6 +16,7 @@
 import "./bootstrap";
 import "./chart";
 import "./detail-lecturer";
+import "./detail-student";
 import "./edit-lecturer";
 import "./fetch-intern-data";
 import "./form";
@@ -24,4 +25,3 @@ import "./modal";
 import "./search";
 import "./sorting";
 import "./student-guidance-data-modal";
-import "./detail-student"

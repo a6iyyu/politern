@@ -17,7 +17,14 @@ class Mahasiswa extends Model
     protected $table = 'mahasiswa';
     protected $primaryKey = 'id_mahasiswa';
     protected $fillable = [
-        'id_pengguna', 'nama_lengkap', 'nim', 'semester', 'id_prodi', 'angkatan', 'ipk', 'status'
+        'id_pengguna',
+        'nama_lengkap',
+        'nim',
+        'semester',
+        'id_prodi',
+        'angkatan',
+        'ipk',
+        'status'
     ];
 
     public function bidang(): BelongsToMany

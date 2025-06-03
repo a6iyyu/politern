@@ -68,7 +68,7 @@ class LogAktivitas extends Controller
                 'magang.pengajuan_magang.lowongan'
             ])->findOrFail($id);
 
-            return Response::json([
+            return response()->json([
                 'nama'          => $log_aktivitas->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? 'N/A',
                 'program_studi' => $log_aktivitas->magang->pengajuan_magang->mahasiswa->program_studi->nama ?? 'N/A',
                 'judul'         => $log_aktivitas->judul ?? 'N/A',
@@ -77,10 +77,10 @@ class LogAktivitas extends Controller
             ]);
         } catch (ModelNotFoundException $e) {
             report($e);
-            return Response::json(['error' => 'Log aktivitas tidak ditemukan.'], 404);
+            return response()->json(['error' => 'Log aktivitas tidak ditemukan.'], 404);
         } catch (Exception $e) {
             report($e);
-            return Response::json(['error' => 'Terjadi kesalahan pada server.'], 500);
+            return response()->json(['error' => 'Terjadi kesalahan pada server.'], 500);
         }
     }
 

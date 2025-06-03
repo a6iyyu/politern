@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -57,7 +58,12 @@ class Autentikasi extends Controller
 
             $pengguna = Pengguna::where('nama_pengguna', $request->nama_pengguna)->first();
 
-            if (!$pengguna || !Hash::check($request->kata_sandi, $pengguna->kata_sandi)) {
+            if (!$pengguna) {
+                Log::warning('Upaya masuk gagal dilakukan: ', ['nama_pengguna' => $request->nama_pengguna]);
+                return back()->withErrors(['errors' => 'Nama pengguna atau kata sandi salah.'])->withInput($request->except('kata_sandi'));
+            }
+
+            if ($request->kata_sandi !== Crypt::decrypt($pengguna->kata_sandi)) {
                 Log::warning('Upaya masuk gagal dilakukan: ', ['nama_pengguna' => $request->nama_pengguna]);
                 return back()->withErrors(['errors' => 'Nama pengguna atau kata sandi salah.'])->withInput($request->except('kata_sandi'));
             }

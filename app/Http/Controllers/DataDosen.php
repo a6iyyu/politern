@@ -8,6 +8,7 @@ use App\Models\Pengguna;
 use App\Models\Dosen;
 use App\Models\DosenPembimbing;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -15,8 +16,8 @@ use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 
 class DataDosen extends Controller
 {
@@ -42,7 +43,7 @@ class DataDosen extends Controller
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
     }
-    
+
     public function create(Request $request): RedirectResponse
     {
         try {
@@ -56,7 +57,7 @@ class DataDosen extends Controller
             ]);
 
             $pengguna = Pengguna::create([
-                'nama_pengguna' => $request->nama_pengguna, 
+                'nama_pengguna' => $request->nama_pengguna,
                 'email'         => $request->email,
                 'kata_sandi'    => bcrypt($request->kata_sandi),
                 'tipe'          => 'DOSEN',
@@ -84,49 +85,46 @@ class DataDosen extends Controller
         return compact('dosen', 'pengguna');
     }
 
-    public function edit($id)
+    public function edit($id): JsonResponse
     {
         $dosen = Dosen::with('pengguna')->findOrFail($id);
-        
+
         return response()->json([
-        'dosen' => [
-            'nama' => $dosen->nama,
-            'nip' => $dosen->nip,
-            'nomor_telepon' => $dosen->nomor_telepon,
-        ],
-        'pengguna' => [
-            'nama_pengguna' => $dosen->pengguna->nama_pengguna,
-            'email' => $dosen->pengguna->email,
-        ]
-    ]);
-}
+            'dosen' => ['nama' => $dosen->nama, 'nip' => $dosen->nip, 'nomor_telepon' => $dosen->nomor_telepon],
+            'pengguna' => ['nama_pengguna' => $dosen->pengguna->nama_pengguna, 'email' => $dosen->pengguna->email, 'kata_sandi' => Crypt::decrypt($dosen->pengguna->kata_sandi)],
+        ]);
+    }
 
-    public function update(Request $request, $id) {
-
+    public function update(Request $request, $id): RedirectResponse
+    {
         try {
             $dosen = Dosen::with('pengguna')->findOrFail($id);
 
             $pengguna = $dosen->pengguna;
             $pengguna->nama_pengguna = $request->nama_pengguna;
             $pengguna->email = $request->email;
-            if ($request->filled('kata_sandi')) {
-                $pengguna->kata_sandi = bcrypt($request->kata_sandi);
-            }
+            if ($request->filled('kata_sandi')) $pengguna->kata_sandi = bcrypt($request->kata_sandi);
             $pengguna->save();
 
             $dosen->nama = $request->nama;
             $dosen->nip = $request->nip;
             $dosen->nomor_telepon = $request->nomor_telepon;
             $dosen->save();
-        return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil diubah');
-
+            return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil diubah');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
             return back()->withErrors($exception->getMessage());
         }
-}
-    
+    }
+
+    public function destroy(string $id): RedirectResponse
+    {
+        $dosen = Dosen::findOrFail($id);
+        $dosen->delete();
+        return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil dihapus.');
+    }
+
     public function export_excel(): never
     {
         $dosen = Dosen::select('id_dosen', 'nama', 'nip', 'nomor_telepon')->get();
