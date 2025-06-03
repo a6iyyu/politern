@@ -18,6 +18,9 @@
         </a>
     </div>
 </section>
+
+@include('components.admin.data-dosen.filter')
+
 <x-table :headers="['No', 'Dosen', 'NIP', 'Nomor Telepon', 'Aksi']" :sortable="['Dosen']" :rows="$data" />
 @if ($paginasi->hasPages())
     <div class="mt-4">
