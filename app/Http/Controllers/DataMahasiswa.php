@@ -18,7 +18,7 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Crypt;                                                                 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
@@ -44,7 +44,7 @@ class DataMahasiswa extends Controller
                     <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($mhs->nama_lengkap) . '
                 </div>',
                 $mhs->nim,
-                $mhs->program_studi->nama,
+                $mhs->program_studi->kode,
                 $mhs->angkatan,
                 $mhs->semester,
                 $mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG',
