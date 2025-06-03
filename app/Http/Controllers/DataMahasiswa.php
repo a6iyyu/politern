@@ -104,6 +104,9 @@ class DataMahasiswa extends Controller
     public function edit($id): JsonResponse
     {
         $mahasiswa = Mahasiswa::with(['pengguna', 'program_studi'])->findOrFail($id);
+        Log::info(json_encode($mahasiswa));
+
+        // Log::info(Crypt::decrypt($mahasiswa->pengguna->kata_sandi));
 
         return response()->json([
             'mahasiswa' => [
@@ -112,13 +115,13 @@ class DataMahasiswa extends Controller
                 'semester' => $mahasiswa->semester,
                 'angkatan' => $mahasiswa->angkatan,
                 'ipk' => $mahasiswa->ipk,
-                'nama_prodi' => $mahasiswa->program_studi?->nama ?? '-',
+                'nama_prodi' => $mahasiswa->program_studi?->id_prodi ?? '-',
                 'status' => $mahasiswa->status,
             ],
             'pengguna' => [
                 'nama_pengguna' => $mahasiswa->pengguna->nama_pengguna,
                 'email' => $mahasiswa->pengguna->email,
-                'kata_sandi' => Crypt::decrypt($mahasiswa->pengguna->kata_sandi),
+                // 'kata_sandi' => Crypt::decrypt($mahasiswa->pengguna->kata_sandi)
             ],
         ]);
     }
@@ -131,7 +134,7 @@ class DataMahasiswa extends Controller
             $pengguna = $mahasiswa->pengguna;
             $pengguna->nama_pengguna = $request->nama_pengguna;
             $pengguna->email = $request->email;
-            if ($request->filled('kata_sandi')) $pengguna->kata_sandi = bcrypt($request->kata_sandi);
+            // if ($request->filled('kata_sandi')) $pengguna->kata_sandi = bcrypt($request->kata_sandi);
             $pengguna->save();
 
             $mahasiswa->nama_lengkap = $request->nama_lengkap;

@@ -23,7 +23,7 @@
                     :required="true"
                     :value="$mahasiswa->pengguna->nama_pengguna ?? ''"
                 />
-                <x-input
+                <!-- <x-input
                     icon="fa-solid fa-key"
                     label="Kata Sandi"
                     type="password"
@@ -31,7 +31,7 @@
                     placeholder="Masukkan Kata Sandi"
                     :required="true"
                     :value="$mahasiswa->pengguna->kata_sandi ?? ''"
-                />
+                /> -->
             </span>
             <x-input
                 icon="fa-solid fa-envelope"

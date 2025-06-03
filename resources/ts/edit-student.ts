@@ -13,6 +13,7 @@ interface Student {
   interface User {
     nama_pengguna: string;
     email: string;
+    kata_sandi: string;
   }
   
   interface Prodi {
@@ -40,15 +41,19 @@ interface Student {
     if (!close || !form) return;
   
     const nama_pengguna = form.querySelector<HTMLInputElement>("input[name='nama_pengguna']");
+    // const kata_sandi = form.querySelector<HTMLInputElement>("input[name='kata_sandi']");
     const email = form.querySelector<HTMLInputElement>("input[name='email']");
     const nim = form.querySelector<HTMLInputElement>("input[name='nim']");
     const nama_lengkap = form.querySelector<HTMLInputElement>("input[name='nama_lengkap']");
-    const angkatan = form.querySelector<HTMLInputElement>("input[name='angkatan']");
+    const angkatan = form.querySelector<HTMLSelectElement>("select[name='angkatan']");
     const semester = form.querySelector<HTMLInputElement>("input[name='semester']");
-    const nama_prodi = form.querySelector<HTMLSelectElement>("select[name='nama_prodi']");
+    const nama_prodi = form.querySelector<HTMLSelectElement>("select[name='program_studi']");
     const ipk = form.querySelector<HTMLInputElement>("input[name='ipk']");
     const status = form.querySelector<HTMLSelectElement>("select[name='status']");
   
+    console.log('angkatan', angkatan)
+    console.log('program', nama_prodi)
+
     const fetchMahasiswaData = async (id: string): Promise<Modal | null> => {
       try {
         console.log(id);
@@ -72,7 +77,7 @@ interface Student {
         const id = btn.dataset.id;
         if (!id || !modal || !form) return;
 
-        form.action = `/admin/data-mahasiswa/${id}/update`;
+        form.action = `/admin/data-mahasiswa/${id}/perbarui`;
   
         const data = await fetchMahasiswaData(id);
         if (!data) return;
@@ -80,15 +85,16 @@ interface Student {
   
         modal.classList.remove('hidden');
   
-        if (nama_pengguna) nama_pengguna.value = data.pengguna?.nama_pengguna || '';
-        if (email) email.value = data.pengguna?.email || '';
+        if (nama_pengguna) nama_pengguna.value = data.pengguna.nama_pengguna;
+        if (email) email.value = data.pengguna.email;
+        // if (kata_sandi) kata_sandi.value = data.pengguna.kata_sandi;
         if (nim) nim.value = data.mahasiswa.nim;
         if (nama_lengkap) nama_lengkap.value = data.mahasiswa.nama_lengkap;
         if (angkatan) angkatan.value = data.mahasiswa.angkatan;
         if (semester) semester.value = data.mahasiswa.semester;
-        if (nama_prodi) nama_prodi.value = data.prodi?.nama || '';
+        if (nama_prodi) nama_prodi.value = data.mahasiswa.nama_prodi;
         if (ipk) ipk.value = data.mahasiswa.ipk;
-        if (status) status.value = data.status?.status || '';
+        if (status) status.value = data.status.status;
   
       });
     });
