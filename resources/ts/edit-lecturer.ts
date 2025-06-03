@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (nip) nip.value = data.dosen.nip;
       if (nomor_telepon) nomor_telepon.value = data.dosen.nomor_telepon;
 
-      form.action = `/admin/data-dosen/${id}/update`;
+      form.action = `/admin/data-dosen/${id}/perbarui`;
     });
   });
 
