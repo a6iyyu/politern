@@ -22,14 +22,21 @@ class DataProdi extends Controller
             $jenjang = ProgramStudi::distinct()->pluck('jenjang')->toArray();
 
             $paginasi = ProgramStudi::paginate(request('per_page', 10));
-            $data = collect($paginasi->items())->map(fn(ProgramStudi $prodi): array => [
-                $prodi->id_prodi,
-                $prodi->nama,
-                $prodi->jenjang,
-                $prodi->jurusan,
-                Mahasiswa::where('id_prodi', $prodi->id_prodi)->count(),
-                view('components.admin.data-prodi.aksi', compact('prodi'))->render(),
-            ])->toArray();
+            $data = collect($paginasi->items())->map(function (ProgramStudi $prodi): array {
+                $status = match ($prodi->status) {
+                    'AKTIF' => 'bg-green-200 text-green-800',
+                    'NONAKTIF'  => 'bg-red-200 text-yellow-800',
+                };
+                return [
+                    $prodi->id_prodi,
+                    $prodi->nama,
+                    $prodi->jenjang,
+                    $prodi->jurusan,
+                    Mahasiswa::where('id_prodi', $prodi->id_prodi)->count(),
+                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($prodi->status ?? "N/A") . '</div>',
+                    view('components.admin.data-prodi.aksi', compact('prodi'))->render(),
+                ];
+            })->toArray();
             return view('pages.admin.data-prodi', compact('data', 'paginasi', 'total_prodi', 'jenjang'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");

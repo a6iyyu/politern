@@ -100,6 +100,7 @@
 
         Route::prefix('pengajuan-magang')->group(function () {
             Route::get('/', [Pengajuan::class, 'index'])->name('admin.pengajuan-magang');
+            Route::put('/{id}/status', [Pengajuan::class, 'updateStatus'])->name('admin.pengajuan-magang.update-status');
             Route::get('/{id}/detail', [Pengajuan::class, 'detail'])->name('admin.pengajuan-magang.detail');
             Route::get('/{id}/edit', [Pengajuan::class, 'edit'])->name('admin.pengajuan-magang.edit');
             Route::post('/{id}/edit', [Pengajuan::class, 'update'])->name('admin.pengajuan-magang.perbarui');

@@ -38,7 +38,13 @@ class DataMahasiswa extends Controller
 
             /** @var LengthAwarePaginator $paginasi */
             $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', default: 10));
-            $data = $paginasi->getCollection()->map(fn(Mahasiswa $mhs) => [
+            $data = $paginasi->getCollection()->map(function(Mahasiswa $mhs) {
+                $status = match ($mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') {
+                    'AKTIF' => 'bg-green-200 text-green-800',
+                    'SELESAI'  => 'bg-yellow-200 text-yellow-800',
+                    'BELUM MAGANG' => 'bg-red-200 text-red-800',
+                };
+                return [
                 $mhs->id_mahasiswa,
                 '<div class="flex items-center gap-2">
                     <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($mhs->nama_lengkap) . '
@@ -47,9 +53,10 @@ class DataMahasiswa extends Controller
                 $mhs->program_studi->kode,
                 $mhs->angkatan,
                 $mhs->semester,
-                $mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG',
+                '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') . '</div>',
                 view('components.admin.data-mahasiswa.aksi', compact('mhs'))->render(),
-            ])->toArray();
+            ];
+            })->toArray();
             return view('pages.admin.data-mahasiswa', compact('data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi', 'status_aktivitas'));
         } else if ($pengguna === "DOSEN") {
             return view('pages.lecturer.data-mahasiswa');

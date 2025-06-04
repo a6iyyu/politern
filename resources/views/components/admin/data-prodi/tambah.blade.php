@@ -3,10 +3,13 @@
         <form action="{{ route('admin.data-prodi.tambah') }}" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white py-7 px-10 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('POST')
-            <h2 class="cursor-default mb-3 font-semibold text-sm text-[var(--primary)]">
-                Tambah Program Studi
-            </h2>
-            <hr class="mb-3 border border-1 border-[var(--primary)] rounded-xl" />
+            <span class="mb-3 flex items-center justify-between">
+                <h2 class="cursor-default text-sm font-semibold text-[var(--primary)]">
+                    Tambah Program Studi
+                </h2>
+                <i class="close fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>
+            </span>
+            <hr class="mb-6 border border-[var(--primary)]" />
             @if ($errors->any())
                 <ul class="p-4 cursor-default rounded-lg bg-red-50 border border-red-500 list-disc list-inside text-sm text-red-500">
                     @foreach ($errors->all() as $error)

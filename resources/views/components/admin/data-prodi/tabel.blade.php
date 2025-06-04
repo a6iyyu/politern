@@ -22,7 +22,7 @@
 @include('components.admin.data-prodi.filter')
 
 <x-table
-    :headers="['No', 'Nama Prodi', 'Jenjang', 'Jurusan', 'Total Mahasiswa', 'Aksi']"
+    :headers="['No', 'Nama Prodi', 'Jenjang', 'Jurusan', 'Total Mahasiswa', 'Status', 'Aksi']"
     :sortable="['Nama Prodi', 'Jenjang']"
     :rows="$data"
 />
