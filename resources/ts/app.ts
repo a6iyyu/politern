@@ -13,21 +13,21 @@
  * - ./student-guidance-data-modal: Logic for student guidance data modal.
  */
 
-import "./bootstrap";
-import "./chart";
-import "./detail-lecturer";
+import './bootstrap';
+import './chart';
+import './detail-lecturer';
+import './detail-major';
 import './detail-period';
-import "./detail-student";
-import "./edit-lecturer";
-import "./edit-period";
-import "./fetch-intern-data";
-import "./form";
-import "./hamburger-menu";
-import "./modal";
-import "./search";
-import "./sorting";
-import "./student-guidance-data-modal";
-import "./detail-student";
-import "./edit-student";
-import "./detail-prodi";
-import "./edit-prodi";
+import './detail-student';
+import './edit-lecturer';
+import './edit-major';
+import './edit-period';
+import './edit-student';
+import './fetch-intern-data';
+import './form';
+import './hamburger-menu';
+import './modal';
+import './search';
+import './sorting';
+import './student-guidance-data-modal';
+import './toggle-profile-photo-menu';

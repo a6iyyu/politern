@@ -48,10 +48,10 @@
                 />
             </div>
             <div class="mt-5 flex items-center justify-between text-sm">
-                <span class="flex items-center gap-2 text-[#a5a5a5]">
+                <fieldset class="flex items-center gap-2 text-[#a5a5a5]">
                     <input type="checkbox" name="" id="" />
                     <label for="">Ingat Saya?</label>
-                </span>
+                </fieldset>
                 <a href="{{ route('lupa-kata-sandi') }}"
                     class="text-[#5955b2] lg:hover:underline transition-all duration-300 lg:hover:text-[#4f4bad]">
                     Lupa Kata Sandi?

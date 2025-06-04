@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Mahasiswa;
 use App\Models\ProgramStudi;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
 class DataProdi extends Controller
 {
@@ -48,15 +48,17 @@ class DataProdi extends Controller
         try {
             $request->validate([
                 'kode_prodi'      => 'required|string|max:10|unique:program_studi,kode',
-                'nama'      => 'required|string|max:100|unique:program_studi,nama',
-                'jenjang_prodi'   => 'required|string',
+                'nama'            => 'required|string|max:100|unique:program_studi,nama',
+                'jenjang_prodi'   => 'required|string|in:D2,D3,D4,S2',
                 'jurusan_prodi'   => 'required|string|max:255',
             ]);
 
             $jenjang = match ($request->jenjang_prodi) {
-                'D2' => 'D2',
-                'D3' => 'D3',
-                'D4' => 'D4',
+                'D2'    => 'D2',
+                'D3'    => 'D3',
+                'D4'    => 'D4',
+                'S2'    => 'S2',
+                default => 'D4',
             };
 
             ProgramStudi::create([
@@ -67,10 +69,11 @@ class DataProdi extends Controller
                 'status'  => 'AKTIF'
             ]);
 
-            return to_route('admin.data-prodi')->with('success', 'Data prodi berhasil ditambahkan.');
-        } catch (Exception $e) {
-            report($e);
-            return back()->withErrors($e->getMessage());
+            return to_route('admin.data-prodi')->with('success', 'Data program studi berhasil ditambahkan.');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors(['errors' => 'Gagal menambahkan data program studi karena kesalahan pada server.']);
         }
     }
 
@@ -80,11 +83,11 @@ class DataProdi extends Controller
 
         return response()->json([
             'prodi' => [
-                'nama' => $prodi->nama,
-                'kode_prodi' => $prodi->kode,
+                'nama'               => $prodi->nama,
+                'kode_prodi'         => $prodi->kode,
                 'jenjang_prodi_edit' => $prodi->jenjang,
-                'jurusan_prodi' => $prodi->jurusan,
-                'status_prodi_edit' => $prodi->status,
+                'jurusan_prodi'      => $prodi->jurusan,
+                'status_prodi_edit'  => $prodi->status,
             ],
         ]);
     }
@@ -93,32 +96,35 @@ class DataProdi extends Controller
     {
         try {
             $prodi = ProgramStudi::findOrFail($id);
-
-            Log::info($request->all());
-            Log::info($prodi);
-
             $prodi->nama = $request->nama;
             $prodi->kode = $request->kode_prodi;
             $prodi->jenjang = $request->jenjang_prodi;
             $prodi->jurusan = $request->jurusan_prodi;
             $prodi->status = $request->status_prodi;
             $prodi->save();
-            return to_route('admin.data-prodi')->with('success', 'Data prodi berhasil diubah');
+            return to_route('admin.data-prodi')->with('success', 'Data program studi berhasil diubah.');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
-            return back()->withErrors($exception->getMessage());
+            return back()->withErrors(['errors' => 'Gagal mengubah data program studi karena kesalahan pada server.']);
         }
     }
 
     public function destroy(string $id): RedirectResponse
     {
-        $prodi = ProgramStudi::findOrFail($id);
-        $prodi->delete();
-        return to_route('admin.data-prodi')->with('success', 'Data prodi berhasil dihapus');
+        try {
+            $prodi = ProgramStudi::findOrFail($id);
+            $prodi->delete();
+            return to_route('admin.data-prodi')->with('success', 'Data program studi berhasil dihapus.');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors(['errors' => 'Gagal menghapus data program studi karena kesalahan pada server.']);
+        }
     }
 
-    public function show(string $id): array {
+    public function show(string $id): array
+    {
         $prodi = ProgramStudi::findOrFail($id);
 
         return [

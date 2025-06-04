@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'X-Requested-With': 'XMLHttpRequest',
         },
       });
+      console.log(response);
 
       if (!response.ok) throw new Error('Gagal mengambil data dosen.');
       return (await response.json()) as Modal;

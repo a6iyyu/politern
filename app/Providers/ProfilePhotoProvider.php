@@ -16,9 +16,10 @@ class ProfilePhotoProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        View::composer('shared.ui.profile-photo', function ($views): RedirectResponse|Views {
+        View::composer('shared.ui.profile-photo', function ($views): RedirectResponse|Views
+        {
             $pengguna = Auth::user();
-            if (!$pengguna) return Redirect::route('masuk');
+            if (!$pengguna) return back()->withErrors(['errors' => 'Terjadi kesalahan pada server.']);
 
             $nama = '';
             $nim = '';

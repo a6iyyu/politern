@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html
-    lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    lang="{{ str_replace('_', '-', App::getLocale()) }}"
     class="max-[8192px]:opacity-0 max-[3120px]:opacity-100 max-[3120px]:m-0 max-[3120px]:p-0 max-[3120px]:box-border max-[3120px]:[font-family:'Plus_Jakarta_Sans',Times,sans-serif,serif] max-[324px]:hidden"
 >
 
@@ -31,9 +31,9 @@
         @include('shared.navigation.sidebar')
     @endauth
     @yield('konten')
-    @stack('skrip')
+    @yield('skrip')
     <div id="overlay" class="hidden fixed inset-0 z-40 lg:hidden"></div>
-    <script src="{{ asset('vendor/livewire/livewire.js') }}"></script>
+    @livewireScripts
 </body>
 
 </html>

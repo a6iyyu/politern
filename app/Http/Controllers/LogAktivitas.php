@@ -29,24 +29,25 @@ class LogAktivitas extends Controller
         $periode_magang = PeriodeMagang::pluck('nama_periode', 'id_periode')->toArray();
         $status_aktivitas = EvaluasiMagang::pluck('status', 'id_evaluasi')->toArray();
 
-        if ($pengguna === 'ADMIN') {
-            return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
-        } else if ($pengguna === 'DOSEN') {
-            return view('pages.lecturer.log-aktivitas', compact('log_aktivitas'));
-        } else if ($pengguna === 'MAHASISWA') {
-            $status_magang = Magang::where('id_pengajuan_magang', Auth::user()->id)->first();
-            if (!$status_magang || $status_magang->status !== 'AKTIF') return view('pages.student.log-aktivitas');
+        switch ($pengguna) {
+            case 'ADMIN':
+                return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
+            case 'DOSEN':
+                return view('pages.lecturer.log-aktivitas', compact('log_aktivitas'));
+            case 'MAHASISWA':
+                $status_magang = Magang::where('id_pengajuan_magang', Auth::user()->id)->first();
+                if (!$status_magang || $status_magang->status !== 'AKTIF') return view('pages.student.log-aktivitas');
 
-            $dospem = $this->dospem();
-            $periode = $this->periode();
-            $perusahaan = $this->perusahaan();
-            $posisi = $this->posisi();
-            $status = $this->status();
+                $dospem = $this->dospem();
+                $periode = $this->periode();
+                $perusahaan = $this->perusahaan();
+                $posisi = $this->posisi();
+                $status = $this->status();
 
-            return view('pages.student.log-aktivitas', compact('dospem', 'periode', 'perusahaan', 'posisi', 'status'));
+                return view('pages.student.log-aktivitas', compact('dospem', 'periode', 'perusahaan', 'posisi', 'status'));
+            default:
+                abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
-
-        abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
     }
 
     public function create(Request $request) {}

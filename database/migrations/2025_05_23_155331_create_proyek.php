@@ -12,8 +12,8 @@ return new class extends Migration {
             $table->string('nama_proyek');
             $table->string('peran')->nullable();
             $table->string('deskripsi')->nullable();
-            $table->string('url')->nullable();
-            $table->string('tools')->nullable();
+            $table->string('tautan')->nullable();
+            $table->json('alat')->nullable();
             $table->date('tanggal_mulai')->nullable();
             $table->date('tanggal_selesai')->nullable();
             $table->string('bukti_pendukung')->nullable();

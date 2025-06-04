@@ -59,7 +59,7 @@ class DataDosen extends Controller
             $pengguna = Pengguna::create([
                 'nama_pengguna' => $request->nama_pengguna,
                 'email'         => $request->email,
-                'kata_sandi'    => bcrypt($request->kata_sandi),
+                'kata_sandi'    => Crypt::encrypt($request->kata_sandi),
                 'tipe'          => 'DOSEN',
             ]);
 
@@ -91,13 +91,14 @@ class DataDosen extends Controller
 
         return response()->json([
             'dosen' => [
-                'nama' => $dosen->nama,
-                'nip' => $dosen->nip,
+                'nama'          => $dosen->nama,
+                'nip'           => $dosen->nip,
                 'nomor_telepon' => $dosen->nomor_telepon,
             ],
             'pengguna' => [
                 'nama_pengguna' => $dosen->pengguna->nama_pengguna,
-                'email' => $dosen->pengguna->email,
+                'email'         => $dosen->pengguna->email,
+                'kata_sandi'    => Crypt::decrypt($dosen->pengguna->kata_sandi),
             ]
         ]);
     }
@@ -110,7 +111,7 @@ class DataDosen extends Controller
             $pengguna = $dosen->pengguna;
             $pengguna->nama_pengguna = $request->nama_pengguna;
             $pengguna->email = $request->email;
-            if ($request->filled('kata_sandi')) $pengguna->kata_sandi = bcrypt($request->kata_sandi);
+            if ($request->filled('kata_sandi')) $pengguna->kata_sandi = Crypt::encrypt($request->kata_sandi);
             $pengguna->save();
 
             $dosen->nama = $request->nama;
@@ -127,70 +128,64 @@ class DataDosen extends Controller
 
     public function destroy(string $id): RedirectResponse
     {
-        $dosen = Dosen::findOrFail($id);
-        $dosen->delete();
-        return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil dihapus.');
+        try {
+            $dosen = Dosen::findOrFail($id);
+            $dosen->delete();
+            Pengguna::findOrFail($dosen->id_pengguna)->delete();
+            return to_route('admin.data-dosen')->with('success', 'Data dosen berhasil dihapus.');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors(['errors' => 'Gagal menghapus data dosen karena kesalahan pada server.']);
+        }
     }
 
     public function export_excel(): void
-{
-    // Ambil data dosen beserta relasi pengguna
-    $dosen = Dosen::select('id_dosen', 'nama', 'nip', 'nomor_telepon', 'id_pengguna')
-        ->with('pengguna:id_pengguna,nama_pengguna,email')
-        ->get();
+    {
+        $dosen = Dosen::select('id_dosen', 'nama', 'nip', 'nomor_telepon', 'id_pengguna')
+            ->with('pengguna:id_pengguna,nama_pengguna,email')
+            ->get();
 
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-    // Header kolom
-    $sheet->setCellValue('A1', 'No');
-    $sheet->setCellValue('B1', 'Nama Pengguna');
-    $sheet->setCellValue('C1', 'Email');
-    $sheet->setCellValue('D1', 'Nama Dosen');
-    $sheet->setCellValue('E1', 'NIP');
-    $sheet->setCellValue('F1', 'Nomor Telepon');
-    $sheet->getStyle("A1:F1")->getFont()->setBold(true);
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Nama Pengguna');
+        $sheet->setCellValue('C1', 'Email');
+        $sheet->setCellValue('D1', 'Nama Dosen');
+        $sheet->setCellValue('E1', 'NIP');
+        $sheet->setCellValue('F1', 'Nomor Telepon');
+        $sheet->getStyle("A1:F1")->getFont()->setBold(true);
 
-    $nomor = 1;
-    $baris = 2;
-    foreach ($dosen as $value) {
-        $sheet->setCellValue("A$baris", $nomor);
-        $sheet->setCellValue("B$baris", $value->pengguna ? $value->pengguna->nama_pengguna : '-');
-        $sheet->setCellValue("C$baris", $value->pengguna ? $value->pengguna->email : '-');
-        $sheet->setCellValue("D$baris", $value->nama);
-        // Pakai setCellValueExplicit untuk nip agar tetap string (menghindari hilang angka 0 di depan)
-        $sheet->setCellValueExplicit("E$baris", $value->nip, DataType::TYPE_STRING);
-        $sheet->setCellValue("F$baris", $value->nomor_telepon);
-        $baris++;
-        $nomor++;
+        $nomor = 1;
+        $baris = 2;
+        foreach ($dosen as $value) {
+            $sheet->setCellValue("A$baris", $nomor);
+            $sheet->setCellValue("B$baris", $value->pengguna ? $value->pengguna->nama_pengguna : '-');
+            $sheet->setCellValue("C$baris", $value->pengguna ? $value->pengguna->email : '-');
+            $sheet->setCellValue("D$baris", $value->nama);
+            $sheet->setCellValueExplicit("E$baris", $value->nip, DataType::TYPE_STRING);
+            $sheet->setCellValue("F$baris", $value->nomor_telepon);
+            $baris++;
+            $nomor++;
+        }
+
+        foreach (range('A', 'F') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
+
+        $sheet->setTitle("Data Dosen");
+        if (ob_get_length()) ob_end_clean();
+        $filename = 'Data Dosen ' . date("Y-m-d_H-i-s") . '.xlsx';
+
+        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header("Cache-Control: max-age=0");
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate('D, d M Y H:i:s') . ' GMT');
+        header("Cache-Control: cache, must-revalidate");
+        header("Pragma: public");
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+        exit;
     }
-
-    // Auto ukuran kolom A-F
-    foreach (range('A', 'F') as $col) {
-        $sheet->getColumnDimension($col)->setAutoSize(true);
-    }
-
-    $sheet->setTitle("Data Dosen");
-
-    // Bersihkan buffer output jika ada
-    if (ob_get_length()) {
-        ob_end_clean();
-    }
-
-    // Format tanggal untuk nama file agar aman (tidak ada spasi dan karakter ilegal)
-    $filename = 'Data Dosen ' . date("Y-m-d_H-i-s") . '.xlsx';
-
-    // Header untuk download file excel
-    header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    header("Content-Disposition: attachment; filename=\"$filename\"");
-    header("Cache-Control: max-age=0");
-    header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-    header("Last-Modified: " . gmdate('D, d M Y H:i:s') . ' GMT');
-    header("Cache-Control: cache, must-revalidate");
-    header("Pragma: public");
-
-    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-    $writer->save('php://output');
-    exit;
-}
 }
