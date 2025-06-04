@@ -6,7 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class SertifikasiPelatihan extends Model
 {
@@ -16,8 +16,8 @@ class SertifikasiPelatihan extends Model
     protected $primaryKey = 'id_sertifikasi_pelatihan';
     protected $fillable = ['nama_sertifikasi_pelatihan', 'nama_lembaga', 'deskripsi', 'tanggal_diterbitkan', 'tanggal_kedaluwarsa', 'bukti_pendukung'];
 
-    public function mahasiswa(): BelongsTo
+    public function mahasiswa(): BelongsToMany
     {
-        return $this->belongsTo(Mahasiswa::class, 'id_mahasiswa', 'id_mahasiswa');
+        return $this->belongsToMany(Mahasiswa::class, 'sertifikasi_pelatihan_mahasiswa', 'id_sertifikasi_pelatihan', 'id_mahasiswa');
     }
 }

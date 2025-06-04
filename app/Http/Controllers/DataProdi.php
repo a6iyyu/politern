@@ -42,14 +42,16 @@ class DataProdi extends Controller
             $request->validate([
                 'kode_prodi'      => 'required|string|max:10|unique:program_studi,kode',
                 'nama'            => 'required|string|max:100|unique:program_studi,nama',
-                'jenjang_prodi'   => 'required|string',
+                'jenjang_prodi'   => 'required|string|in:D2,D3,D4,S2',
                 'jurusan_prodi'   => 'required|string|max:255',
             ]);
 
             $jenjang = match ($request->jenjang_prodi) {
-                'D2' => 'D2',
-                'D3' => 'D3',
-                'D4' => 'D4',
+                'D2'    => 'D2',
+                'D3'    => 'D3',
+                'D4'    => 'D4',
+                'S2'    => 'S2',
+                default => 'D4',
             };
 
             ProgramStudi::create([

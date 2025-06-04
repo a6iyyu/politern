@@ -31,10 +31,22 @@
     Preferensi Bidang Minat Magang
 </h5>
 <span class="mt-3 flex flex-wrap gap-3">
-    @if ($mahasiswa->bidang)
-        @foreach ($mahasiswa->bidang as $bidang)
+    @if (isset($mahasiswa->bidang))
+        @foreach ($mahasiswa->bidang()->get() as $bidang)
             <h5 class="cursor-pointer w-fit text-xs font-semibold px-5 py-2 border border-[var(--secondary)] text-[var(--secondary)] rounded-full transition-all duration-300 ease-in-out hover:bg-[var(--secondary)] hover:text-white">
                 {{ $bidang->nama_bidang ?? 'N/A' }}
+            </h5>
+        @endforeach
+    @endif
+</span>
+<h5 class="cursor-default mt-6 font-semibold text-sm">
+    Keahlian
+</h5>
+<span class="mt-3 flex flex-wrap gap-3">
+    @if (isset($mahasiswa->keahlian))
+        @foreach ($mahasiswa->keahlian()->get() as $keahlian)
+            <h5 class="cursor-pointer w-fit text-xs font-semibold px-5 py-2 border border-[var(--secondary)] text-[var(--secondary)] rounded-full transition-all duration-300 ease-in-out hover:bg-[var(--secondary)] hover:text-white">
+                {{ $keahlian->nama_keahlian ?? 'N/A' }}
             </h5>
         @endforeach
     @endif

@@ -89,10 +89,31 @@ class DataPerusahaan extends Controller
         }
     }
 
-    public function update()
+    public function update(Request $request): RedirectResponse
     {
         try {
-            
+            $request->validate([
+                'nama'          => 'required|string|max:50',
+                'nib'           => 'required|string|max:13',
+                'nomor_telepon' => 'required|string|max:15',
+                'email'         => 'required|email',
+                'website'       => 'required|url',
+                'logo'          => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'status'        => 'required|in:AKTIF,TIDAK AKTIF',
+            ]);
+
+            $perusahaan = Perusahaan::findOrFail($request->id_perusahaan);
+            $perusahaan->update([
+                'id_lokasi'     => $request->id_lokasi,
+                'nama'          => $request->nama,
+                'nib'           => $request->nib,
+                'nomor_telepon' => $request->nomor_telepon,
+                'email'         => $request->email,
+                'website'       => $request->website,
+                'logo'          => $request->logo,
+                'status'        => $request->status
+            ]);
+            return to_route('admin.data-perusahaan')->with('success', 'Berhasil memperbarui data perusahaan.');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());

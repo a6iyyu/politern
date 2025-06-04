@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function () {
         return Redirect::route("{$tipe}.dasbor");
     })->name('beranda');
 
+    Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');
+
     Route::middleware(['authorize:ADMIN'])->prefix('admin')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
         Route::get('/grafik', [Dasbor::class, 'grafik'])->name('admin.dasbor.grafik');
@@ -162,6 +164,4 @@ Route::middleware('auth')->group(function () {
             Route::post('/edit', [Profil::class, 'update'])->name('dosen.profil.perbarui');
         });
     });
-
-    Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');
 });

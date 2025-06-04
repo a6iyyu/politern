@@ -52,14 +52,14 @@ class Mahasiswa extends Model
         return $this->hasMany(PengajuanMagang::class, 'id_pengajuan_magang', 'id_pengajuan_magang');
     }
 
-    public function pengalaman(): HasMany
+    public function pengalaman(): BelongsToMany
     {
-        return $this->hasMany(Pengalaman::class, 'id_pengalaman', 'id_pengalaman');
+        return $this->belongsToMany(Pengalaman::class, 'pengalaman_mahasiswa', 'id_mahasiswa', 'id_pengalaman');
     }
 
-    public function proyek(): HasMany
+    public function proyek(): BelongsToMany
     {
-        return $this->hasMany(Proyek::class, 'id_proyek', 'id_proyek');
+        return $this->belongsToMany(Proyek::class, 'proyek_mahasiswa', 'id_mahasiswa', 'id_proyek');
     }
 
     public function pengguna(): BelongsTo
@@ -72,8 +72,8 @@ class Mahasiswa extends Model
         return $this->belongsTo(ProgramStudi::class, 'id_prodi', 'id_prodi');
     }
 
-    public function sertifikasi_pelatihan(): HasMany
+    public function sertifikasi_pelatihan(): BelongsToMany
     {
-        return $this->hasMany(SertifikasiPelatihan::class, 'id_sertifikasi_pelatihan', 'id_sertifikasi_pelatihan');
+        return $this->belongsToMany(SertifikasiPelatihan::class,'sertifikasi_pelatihan_mahasiswa', 'id_mahasiswa', 'id_sertifikasi_pelatihan');
     }
 }
