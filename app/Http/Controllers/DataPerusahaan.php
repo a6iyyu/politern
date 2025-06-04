@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Perusahaan;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,9 +14,28 @@ use Illuminate\View\View;
 class DataPerusahaan extends Controller
 {
     public function index(): View
-    {
+    {   
+          $pengguna = Auth::user()->tipe;
+        if ($pengguna === "ADMIN") {
+            $total_perusahaan = Perusahaan::count();
+            $paginasi = Perusahaan::paginate(request('per_page', 10));
+            $data = collect($paginasi->items())->map(fn(Perusahaan $perusahaan): array => [
+                $perusahaan->id_perusahaan_mitra,
+                '<div class="flex items-center gap-2">
+                    <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($perusahaan->nama) . '
+                </div>',
+                $perusahaan->nib,
+                $perusahaan->email,
+                $perusahaan->lokasi->nama_lokasi,
+                $perusahaan->status == 'AKTIF' ? '<span class= "rounded px-4 py-2 text-white text-xs font-medium bg-[var(--green-tertiary)]">AKTIF</span>'
+                : '<span class="rounded px-4 py-2 text-white text-xs font-medium bg-[var(--red-tertiary)]">' . e($perusahaan->status) . '</span>',
+                view('components.admin.data-perusahaan.aksi', compact('perusahaan'))->render(),
+            ])->toArray();
         $perusahaan = Perusahaan::with('lokasi')->get();
-        return view('pages.admin.data-perusahaan', compact('perusahaan'));
+        return view('pages.admin.data-perusahaan', compact('perusahaan' ,'data', 'total_perusahaan', 'paginasi'));
+            } else {
+                abort (403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
+            }
     }
 
     public function create(Request $request): RedirectResponse
