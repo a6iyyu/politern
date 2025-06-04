@@ -11,9 +11,23 @@
 
 @if ($mahasiswa->proyek)
     @foreach ($mahasiswa->proyek()->get() as $proyek)
-        <h5 class="cursor-default text-sm font-semibold text-[var(--primary)]">
-            {{ ucfirst($proyek->nama_proyek) }}
-        </h5>
+        <div class="flex flex-col items-center justify-between lg:flex-row">
+            <h5 class="cursor-default text-sm font-semibold text-[var(--primary)]">
+                {{ ucfirst($proyek->nama_proyek) }}
+            </h5>
+            <span class="flex gap-3">
+                <button class="edit cursor-pointer w-fit text-xs bg-[var(--green-tertiary)] text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
+                    Edit
+                </button>
+                <form action="" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button class="delete cursor-pointer w-fit text-xs bg-red-500 text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out hover:bg-red-600">
+                        Hapus
+                    </button>
+                </form>
+            </span>
+        </div>
         <h5 class="cursor-default text-sm text-[var(--primary)]">
             Peran: <strong>{{ $proyek->peran }}</strong>
         </h5>

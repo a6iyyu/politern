@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ProgramStudi extends Model
 {
@@ -16,7 +17,7 @@ class ProgramStudi extends Model
         'status',
     ];
 
-    public function mahasiswa()
+    public function mahasiswa(): HasOne
     {
         return $this->hasOne(Mahasiswa::class, 'id_prodi', 'id_prodi');
     }

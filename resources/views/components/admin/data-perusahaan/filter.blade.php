@@ -1,43 +1,26 @@
 <section class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-3">
-    <fieldset class="relative">
-        <label for="" class="sr-only">Nama Perusahaan</label>
-        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-        <input
-            type="search"
-            class="w-full pl-12 text-sm border border-[var(--stroke)] rounded-md pr-3 py-3 placeholder-[var(--secondary-text)] text-[var(--secondary-text)]"
-            placeholder="Cth. PT. Pertamina"
-        />
-    </fieldset>
-    <fieldset class="relative">
-        <label for="" class="sr-only">Bidang</label>
-        <i class="fa-solid fa-building absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-        <select name="" id="" class="appearance-none w-full pl-12 text-sm border border-[var(--stroke)] rounded-md pr-3 py-3">
-            <option value="">Semua Bidang</option>
-            <option value="">BUMN</option>
-            <option value="">Industri</option>
-            <option value="">Sipil</option>
-            <option value="">Rintisan</option>
-        </select>
-        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 text-xs -translate-y-1/2 text-slate-400"></i>
-    </fieldset>
-    <fieldset class="relative">
-        <label for="" class="sr-only">Lokasi</label>
-        <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-        <select name="" id="" class="appearance-none w-full pl-12 text-sm border border-[var(--stroke)] rounded-md pr-3 py-3">
-            <option value="">Dimana saja</option>
-            <option value="">Malang</option>
-            <option value="">Surabaya</option>
-            <option value="">Jakarta</option>
-            <option value="">Medan</option>
-        </select>
-        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 text-xs -translate-y-1/2 text-slate-400"></i>
-    </fieldset>
+    <livewire:search
+        icon="fa-solid fa-magnifying-glass"
+        label="Cari nama perusahaan"
+        name="nama"
+        placeholder="Cth. PT. Pertamina"
+        :model="\App\Models\Perusahaan::class"
+        :required="false"
+    />
+    <x-select
+        icon="fa-solid fa-building"
+        label="Bidang"
+        name="bidang"
+        placeholder="Cth. BUMN"
+        :options="$bidang ?? ['Tidak ada data.']"
+        :required="false"
+    />
+    <x-select
+        icon="fa-solid fa-location-dot"
+        label="Kota"
+        name="kota"
+        placeholder="Cth. Malang"
+        :options="$kota ?? ['Tidak ada data.']"
+        :required="false"
+    />
 </section>
-{{-- <section class="mt-4 flex gap-4">
-    <button type="button" class="cursor-pointer text-sm font-medium px-5 py-2.5 rounded-full border border-[var(--primary)] text-[var(--primary)] transition-all duration-300 ease-in-out lg:hover:bg-[#6965b7] lg:hover:text-white focus:bg-[var(--primary)] focus:text-[var(--background)]">
-        Aktif
-    </button>
-    <button type="button" class="cursor-pointer text-sm font-medium px-5 py-2.5 rounded-full border border-[var(--primary)] text-[var(--primary)] transition-all duration-300 ease-in-out lg:hover:bg-[#6965b7] lg:hover:text-white focus:bg-[var(--primary)] focus:text-[var(--background)]">
-        Tidak Aktif
-    </button>
-</section>  --}}

@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id('id_prodi');
             $table->string('kode');
             $table->string('nama');
-            $table->enum('jenjang', ['D2', 'D3', 'D4']);
+            $table->enum('jenjang', ['D1', 'D2', 'D3', 'D4', 'S2', 'S3']);
             $table->string('jurusan');
             $table->enum('status', ['AKTIF', 'NONAKTIF']);
             $table->timestamps();

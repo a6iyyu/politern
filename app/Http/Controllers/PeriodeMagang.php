@@ -40,9 +40,7 @@ class PeriodeMagang extends Controller
 
     public function create(Request $request): RedirectResponse
     {
-        Log::info('mulai');
         try {
-            Log::info('Mulai validasi');
             $request->validate([
                 'nama_periode'      => 'required|string|max:200|unique:periode_magang,nama_periode',
                 'durasi'            => 'required|string|min:1|max:3',
@@ -51,14 +49,13 @@ class PeriodeMagang extends Controller
                 'status'            => 'required|in:aktif,nonaktif',
             ]);
 
-            Log::info("selesai validasi");
             PeriodeMagangModel::create([
                 'nama_periode'      => $request->nama_periode,
                 'durasi'            => $request->durasi,
                 'tanggal_mulai'     => $request->tanggal_mulai,
                 'tanggal_selesai'   => $request->tanggal_selesai,
             ]);
-            Log::info('selesai membuat periode');
+
             return to_route('admin.periode-magang')->with('success', 'Periode Magang berhasil ditambahkan');
         } catch (Exception $exception) {
             report($exception);

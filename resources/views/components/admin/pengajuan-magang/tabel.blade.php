@@ -1,8 +1,4 @@
-<x-table
-    :headers="['Tanggal Pengajuan', 'Mahasiswa', 'Perusahaan', 'Posisi', 'Status', 'Aksi', 'Konfirmasi']"
-    :sortable="['Tanggal Pengajuan', 'Mahasiswa']"
-    :rows="$data"
-/>
+<x-table :headers="['Tanggal Pengajuan', 'Mahasiswa', 'Perusahaan', 'Posisi', 'Status', 'Aksi', 'Konfirmasi']" :sortable="['Tanggal Pengajuan', 'Mahasiswa']" :rows="$data" />
 @if ($paginasi->hasPages())
     <div class="mt-4">
         {{ $paginasi->links() }}

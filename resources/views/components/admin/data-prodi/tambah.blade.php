@@ -10,13 +10,6 @@
                 <i class="close fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>
             </span>
             <hr class="mb-6 border border-[var(--primary)]" />
-            @if ($errors->any())
-                <ul class="p-4 cursor-default rounded-lg bg-red-50 border border-red-500 list-disc list-inside text-sm text-red-500">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            @endif
             <x-input
                 icon="fa-solid fa-user-group"
                 label="Nama Program Studi"
@@ -29,31 +22,30 @@
                 <x-input
                     icon="fa-solid fa-lock"
                     label="Kode Program Studi"
-                    name="kode_prodi"
+                    name="kode"
                     placeholder="Kode Program Studi"
                     type="text"
                     :required="true"
                 />
                 <x-select
                     label="Jenjang"
-                    name="jenjang_prodi"
+                    name="jenjang"
                     placeholder="-- Jenjang --"
-                    :options="['D2' => 'D2', 'D3' => 'D3', 'D4' => 'D4']"
+                    :options="['D1' => 'D1', 'D2' => 'D2', 'D3' => 'D3', 'D4' => 'D4', 'S2' => 'S2', 'S3' => 'S3']"
                     :required="true"
-                    :selected="old('jenjang_prodi', '')"
+                    :selected="old('jenjang', '')"
                 />
             </span>
             <span class="mb-3 mt-6 flex items-center justify-between gap-4">
                 <x-input
                     icon="fa-solid fa-calendar"
                     label="Jurusan"
-                    name="jurusan_prodi"
+                    name="jurusan"
                     placeholder="Jurusan"
                     type="text"
                     :required="true"
                 />
             </span>
-
             <button type="submit" class="mt-4 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">
                 Simpan
             </button>

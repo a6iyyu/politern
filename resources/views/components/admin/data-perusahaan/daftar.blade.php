@@ -1,5 +1,3 @@
-TODO: Membuat komponen ini menjadi dinamis menggunakan foreach.
-
 <section class="mt-6 flex flex-col justify-between lg:items-center lg:flex-row">
     <h5 class="cursor-default mt-4 font-medium text-sm text-[var(--secondary-text)]">
         {{ $mitra ?? "N/A" }} Perusahaan Mitra Ditemukan

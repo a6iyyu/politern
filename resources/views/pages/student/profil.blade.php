@@ -27,22 +27,36 @@
                 <h5 class="font-semibold text-[var(--primary)]">
                     Kompetensi Mahasiswa
                 </h5>
-                <h6 class="font-medium text-sm text-[var(--secondary-text)]">
-                    Pengalaman
-                </h6>
+                <div class="flex flex-col items-center justify-between lg:flex-row">
+                    <h6 class="cursor-default font-semibold text-[var(--secondary-text)]">
+                        Pengalaman
+                    </h6>
+                    <button type="button" class="add-experience cursor-pointer w-fit text-xs bg-[var(--green-tertiary)] text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
+                        Tambah
+                    </button>
+                </div>
                 <figure class="flex flex-col p-6 rounded-lg gap-4 border border-[var(--stroke)]">
                     @include('components.student.profil.pengalaman')
                 </figure>
-                <h6 class="font-medium text-sm text-[var(--secondary-text)]">
-                    Sertifikasi Pelatihan
-                </h6>
+                <div class="flex flex-col items-center justify-between lg:flex-row">
+                    <h6 class="cursor-default font-semibold text-[var(--secondary-text)]">
+                        Sertifikasi Pelatihan
+                    </h6>
+                    <button type="button" class="add-certification cursor-pointer w-fit text-xs bg-[var(--green-tertiary)] text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
+                        Tambah
+                    </button>
+                </div>
                 <figure class="flex flex-col p-6 rounded-lg gap-4 border border-[var(--stroke)]">
                     @include('components.student.profil.sertifikasi')
                 </figure>
-                </figure>
-                <h6 class="font-medium text-sm text-[var(--secondary-text)]">
-                    Proyek
-                </h6>
+                <div class="flex flex-col items-center justify-between lg:flex-row">
+                    <h6 class="cursor-default font-semibold text-[var(--secondary-text)]">
+                        Proyek
+                    </h6>
+                    <button type="button" class="add-project cursor-pointer w-fit text-xs bg-[var(--green-tertiary)] text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
+                        Tambah
+                    </button>
+                </div>
                 <figure class="flex flex-col p-6 rounded-lg gap-4 border border-[var(--stroke)]">
                     @include('components.student.profil.proyek')
                 </figure>

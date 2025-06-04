@@ -11,9 +11,23 @@
 
 @if ($mahasiswa->pengalaman)
     @foreach ($mahasiswa->pengalaman()->get() as $pengalaman)
-        <h5 class="cursor-default font-semibold text-[var(--primary)]">
-            {{ ucfirst($pengalaman->jenis_pengalaman) }}
-        </h5>
+        <div class="flex flex-col items-center justify-between lg:flex-row">
+            <h5 class="cursor-default font-semibold text-[var(--primary)]">
+                {{ ucfirst($pengalaman->jenis_pengalaman) }}
+            </h5>
+            <span class="flex gap-3">
+                <button class="edit cursor-pointer w-fit text-xs bg-[var(--green-tertiary)] text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
+                    Edit
+                </button>
+                <form action="" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button class="delete cursor-pointer w-fit text-xs bg-red-500 text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out hover:bg-red-600">
+                        Hapus
+                    </button>
+                </form>
+            </span>
+        </div>
         <div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
             <span class="flex flex-col gap-2">
                 <h5 class="cursor-default font-semibold text-[var(--primary)]">

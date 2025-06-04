@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:ADMIN'])->prefix('admin')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
-        Route::get('/grafik', [Dasbor::class, 'grafik'])->name('admin.dasbor.grafik');
+        Route::get('/grafik', [Dasbor::class, 'chart'])->name('admin.dasbor.grafik');
 
         Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
         Route::get('/pengajuan-magang', [Pengajuan::class, 'index'])->name('admin.pengajuan-magang');
@@ -103,9 +103,9 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('pengajuan-magang')->group(function () {
             Route::get('/', [Pengajuan::class, 'index'])->name('admin.pengajuan-magang');
-            Route::put('/{id}/status', [Pengajuan::class, 'updateStatus'])->name('admin.pengajuan-magang.update-status');
             Route::get('/{id}/detail', [Pengajuan::class, 'detail'])->name('admin.pengajuan-magang.detail');
             Route::get('/{id}/edit', [Pengajuan::class, 'edit'])->name('admin.pengajuan-magang.edit');
+            Route::put('/{id}/status', [Pengajuan::class, 'update_status'])->name('admin.pengajuan-magang.perbarui-status');
             Route::post('/{id}/edit', [Pengajuan::class, 'update'])->name('admin.pengajuan-magang.perbarui');
             Route::delete('/{id}/hapus', [Pengajuan::class, 'destroy'])->name('admin.pengajuan-magang.hapus');
         });

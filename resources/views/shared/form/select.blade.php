@@ -7,10 +7,15 @@
         </label>
     @endif
     <div class="relative">
+        @if (!empty($icon))
+            <span class="absolute inset-y-0 left-0 flex items-center pl-5 text-[var(--stroke)]">
+                <i class="{{ $icon }}"></i>
+            </span>
+        @endif
         <select
             name="{{ $name }}"
             id="{{ $name }}"
-            class="w-full appearance-none rounded-lg text-[var(--secondary-text)] border border-[var(--stroke)] bg-transparent pl-4 pr-10 py-2.5 focus:ring-1 focus:ring-[var(--primary)] focus:outline-none"
+            class="w-full appearance-none rounded-lg text-[var(--secondary-text)] border border-[var(--stroke)] bg-transparent pl-4 pr-10 py-2.5 focus:ring-1 focus:ring-[var(--primary)] focus:outline-none {{ $icon ? 'pl-12' : '' }}"
             {{ $required ? 'required' : '' }}
         >
             @if ($placeholder)

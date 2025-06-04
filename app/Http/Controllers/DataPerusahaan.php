@@ -14,8 +14,8 @@ use Illuminate\View\View;
 class DataPerusahaan extends Controller
 {
     public function index(): View
-    {   
-          $pengguna = Auth::user()->tipe;
+    {
+        $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
             $total_perusahaan = Perusahaan::count();
             $paginasi = Perusahaan::paginate(request('per_page', 10));
@@ -27,15 +27,14 @@ class DataPerusahaan extends Controller
                 $perusahaan->nib,
                 $perusahaan->email,
                 $perusahaan->lokasi->nama_lokasi,
-                $perusahaan->status == 'AKTIF' ? '<span class= "rounded px-4 py-2 text-white text-xs font-medium bg-[var(--green-tertiary)]">AKTIF</span>'
-                : '<span class="rounded px-4 py-2 text-white text-xs font-medium bg-[var(--red-tertiary)]">' . e($perusahaan->status) . '</span>',
+                $perusahaan->status == 'AKTIF' ? '<span class= "rounded px-4 py-2 text-white text-xs font-medium bg-[var(--green-tertiary)]">AKTIF</span>' : '<span class="rounded px-4 py-2 text-white text-xs font-medium bg-[var(--red-tertiary)]">' . e($perusahaan->status) . '</span>',
                 view('components.admin.data-perusahaan.aksi', compact('perusahaan'))->render(),
             ])->toArray();
-        $perusahaan = Perusahaan::with('lokasi')->get();
-        return view('pages.admin.data-perusahaan', compact('perusahaan' ,'data', 'total_perusahaan', 'paginasi'));
-            } else {
-                abort (403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
-            }
+            $perusahaan = Perusahaan::with('lokasi')->get();
+            return view('pages.admin.data-perusahaan', compact('perusahaan', 'data', 'total_perusahaan', 'paginasi'));
+        } else {
+            abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
+        }
     }
 
     public function create(Request $request): RedirectResponse
@@ -66,20 +65,20 @@ class DataPerusahaan extends Controller
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
-            return back()->withErrors('Terjadi kesalahan pada server.');
+            return back()->withErrors('Gagal dalam menambahkan data perusahaan karena kesalahan pada server.');
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): RedirectResponse
     {
         try {
             $dosen = Perusahaan::findOrFail($id);
             $dosen->delete();
-            return to_route('admin.data-perusahaan')->with('success', 'Data Dosen berhasil dihapus.');
+            return to_route('admin.data-perusahaan')->with('success', 'Data perusahaan berhasil dihapus.');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
-            return back()->withErrors('Terjadi kesalahan pada server.');
+            return back()->withErrors('Gagal dalam menghapus data perusahaan kesalahan pada server.');
         }
     }
 
@@ -93,7 +92,7 @@ class DataPerusahaan extends Controller
             abort(404, 'Data perusahaan yang Anda cari tidak ditemukan.');
         } catch (Exception $exception) {
             report($exception);
-            abort(500, 'Terjadi kesalahan pada sistem.');
+            abort(500, 'Gagal dalam mengambil informasi perusahaan karena kesalahan pada server.');
         }
     }
 
@@ -105,7 +104,7 @@ class DataPerusahaan extends Controller
         } catch (Exception $exception) {
             report($exception);
             Log::warning($exception->getMessage());
-            abort(500, "Terjadi kesalahan pada server.");
+            abort(500, "Gagal dalam mengambil informasi perusahaan karena kesalahan pada server.");
         }
     }
 
@@ -137,7 +136,7 @@ class DataPerusahaan extends Controller
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
-            return back()->withErrors('Terjadi kesalahan pada server.');
+            return back()->withErrors('Gagal memperbarui data perusahaan karena kesalahan pada server.');
         }
     }
 }

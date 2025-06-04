@@ -19,6 +19,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
 
@@ -128,7 +129,7 @@ class Dasbor extends Controller
      * Fungsi di bawah ini bertujuan untuk mengembalikan semua data-data
      * yang nantinya akan divisualisasikan dalam berbagai bentuk grafik. 
      */
-    public function grafik(): JsonResponse|View
+    public function chart(): JsonResponse|View
     {
         try {
             /** Mengembalikan semua data yang dibutuhkan pada grafik lingkaran */
@@ -144,9 +145,16 @@ class Dasbor extends Controller
                     'persentase'    => round($bidang->count() / $total * 100, 2),
                 ])
                 ->values();
+            
+            $progres_magang_mingguan = DB::table('evaluasi_magang')
+                ->select(DB::raw('DATE(tanggal_evaluasi) as tanggal'), DB::raw('COUNT(*) as jumlah'))
+                ->groupBy('tanggal')
+                ->orderBy('tanggal')
+                ->get();
 
             return Response::json([
                 'kategori_bidang_magang_terbanyak' => $kategori_bidang_magang_terbanyak,
+                'progres_magang_mingguan'          => $progres_magang_mingguan,
             ]);
         } catch (ModelNotFoundException $exception) {
             report($exception);

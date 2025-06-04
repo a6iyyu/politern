@@ -38,24 +38,24 @@ class DataMahasiswa extends Controller
 
             /** @var LengthAwarePaginator $paginasi */
             $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', default: 10));
-            $data = $paginasi->getCollection()->map(function(Mahasiswa $mhs) {
-                $status = match ($mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') {
-                    'AKTIF' => 'bg-green-200 text-green-800',
-                    'SELESAI'  => 'bg-yellow-200 text-yellow-800',
-                    'BELUM MAGANG' => 'bg-red-200 text-red-800',
+            $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) {
+                $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') {
+                    'AKTIF'         => 'bg-green-200 text-green-800',
+                    'SELESAI'       => 'bg-yellow-200 text-yellow-800',
+                    'BELUM MAGANG'  => 'bg-red-200 text-red-800',
                 };
                 return [
-                $mhs->id_mahasiswa,
-                '<div class="flex items-center gap-2">
-                    <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($mhs->nama_lengkap) . '
-                </div>',
-                $mhs->nim,
-                $mhs->program_studi->kode,
-                $mhs->angkatan,
-                $mhs->semester,
-                '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') . '</div>',
-                view('components.admin.data-mahasiswa.aksi', compact('mhs'))->render(),
-            ];
+                    $mhs->id_mahasiswa,
+                    '<div class="flex items-center gap-2">
+                        <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($mhs->nama_lengkap) . '
+                    </div>',
+                    $mhs->nim,
+                    $mhs->program_studi->kode,
+                    $mhs->angkatan,
+                    $mhs->semester,
+                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') . '</div>',
+                    view('components.admin.data-mahasiswa.aksi', compact('mhs'))->render(),
+                ];
             })->toArray();
             return view('pages.admin.data-mahasiswa', compact('data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi', 'status_aktivitas'));
         } else if ($pengguna === "DOSEN") {
@@ -205,7 +205,7 @@ class DataMahasiswa extends Controller
     public function export_excel(): void
     {
         $mahasiswa = Mahasiswa::select('id_pengguna', 'id_mahasiswa', 'nama_lengkap', 'nim', 'id_prodi', 'angkatan', 'semester', 'ipk', 'status')
-            ->with('pengguna:id_pengguna,nama_pengguna,email')  
+            ->with('pengguna:id_pengguna,nama_pengguna,email')
             ->with('program_studi:id_prodi,nama')
             ->get();
 
@@ -220,7 +220,7 @@ class DataMahasiswa extends Controller
         $sheet->setCellValue('F1', 'Program Studi');
         $sheet->setCellValue('G1', 'Angkatan');
         $sheet->setCellValue('H1', 'Semester');
-        $sheet->setCellValue('I1', 'IPK'); 
+        $sheet->setCellValue('I1', 'IPK');
         $sheet->setCellValue('J1', 'Status');
         $sheet->getStyle("A1:J1")->getFont()->setBold(true);
 

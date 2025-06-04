@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Mahasiswa;
 use App\Models\ProgramStudi;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
 
 class DataProdi extends Controller
@@ -47,13 +49,13 @@ class DataProdi extends Controller
     {
         try {
             $request->validate([
-                'kode_prodi'      => 'required|string|max:10|unique:program_studi,kode',
-                'nama'            => 'required|string|max:100|unique:program_studi,nama',
-                'jenjang_prodi'   => 'required|string|in:D2,D3,D4,S2',
-                'jurusan_prodi'   => 'required|string|max:255',
+                'kode'      => 'required|string|max:10|unique:program_studi,kode',
+                'nama'      => 'required|string|max:100|unique:program_studi,nama',
+                'jenjang'   => 'required|string|in:D2,D3,D4,S2',
+                'jurusan'   => 'required|string|max:255',
             ]);
 
-            $jenjang = match ($request->jenjang_prodi) {
+            $jenjang = match ($request->jenjang) {
                 'D2'    => 'D2',
                 'D3'    => 'D3',
                 'D4'    => 'D4',
@@ -62,10 +64,10 @@ class DataProdi extends Controller
             };
 
             ProgramStudi::create([
-                'kode'    => $request->kode_prodi,
+                'kode'    => $request->kode,
                 'nama'    => $request->nama,
                 'jenjang' => $jenjang,
-                'jurusan' => $request->jurusan_prodi,
+                'jurusan' => $request->jurusan,
                 'status'  => 'AKTIF'
             ]);
 
@@ -77,30 +79,31 @@ class DataProdi extends Controller
         }
     }
 
-    public function edit($id): JsonResponse
+    public function edit(string $id): JsonResponse|RedirectResponse
     {
-        $prodi = ProgramStudi::findOrFail($id);
-
-        return response()->json([
-            'prodi' => [
-                'nama'               => $prodi->nama,
-                'kode_prodi'         => $prodi->kode,
-                'jenjang_prodi_edit' => $prodi->jenjang,
-                'jurusan_prodi'      => $prodi->jurusan,
-                'status_prodi_edit'  => $prodi->status,
-            ],
-        ]);
+        try {
+            $prodi = ProgramStudi::findOrFail($id);
+            return Response::json($prodi);
+        } catch (ModelNotFoundException $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors(['errors' => 'Data program studi yang Anda cari tidak ditemukan.']);
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors(['errors' => 'Gagal mengambil data program studi karena kesalahan pada server.']);
+        }
     }
 
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, int $id): RedirectResponse
     {
         try {
             $prodi = ProgramStudi::findOrFail($id);
             $prodi->nama = $request->nama;
-            $prodi->kode = $request->kode_prodi;
-            $prodi->jenjang = $request->jenjang_prodi;
-            $prodi->jurusan = $request->jurusan_prodi;
-            $prodi->status = $request->status_prodi;
+            $prodi->kode = $request->kode;
+            $prodi->jenjang = $request->jenjang;
+            $prodi->jurusan = $request->jurusan;
+            $prodi->status = $request->status;
             $prodi->save();
             return to_route('admin.data-prodi')->with('success', 'Data program studi berhasil diubah.');
         } catch (Exception $exception) {

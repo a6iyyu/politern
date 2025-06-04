@@ -10,11 +10,12 @@ class Select extends Component
 {
     public array $options;
     public bool $required;
-    public string $label, $name ;
-    public ?string $selected, $placeholder;
+    public string $label, $name;
+    public ?string $icon, $placeholder, $selected;
 
-    public function __construct(string $label, string $name, ?string $placeholder = null, array $options = [], bool $required = false, ?string $selected = null)
+    public function __construct(string $label, string $name, ?string $icon = null, ?string $placeholder = null, array $options = [], bool $required = false, ?string $selected = null)
     {
+        $this->icon = $icon;
         $this->label = $label;
         $this->name = $name;
         $this->options = $options;
