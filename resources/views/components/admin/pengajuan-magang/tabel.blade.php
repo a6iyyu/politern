@@ -1,5 +1,5 @@
 <x-table
-    :headers="['Tanggal Pengajuan', 'Mahasiswa', 'Perusahaan', 'Posisi', 'Status', 'Konfirmasi', 'Aksi']"
+    :headers="['Tanggal Pengajuan', 'Mahasiswa', 'Perusahaan', 'Posisi', 'Status', 'Aksi', 'Konfirmasi']"
     :sortable="['Tanggal Pengajuan', 'Mahasiswa']"
     :rows="$data"
 />

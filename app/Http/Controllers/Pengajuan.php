@@ -37,24 +37,28 @@ class Pengajuan extends Controller
         $total_pengajuan_magang = PengajuanMagang::count();
 
         /** @var LengthAwarePaginator $paginasi */
-        $paginasi = PengajuanMagang::with('mahasiswa', 'lowongan.perusahaan_mitra', 'mahasiswa.program_studi')->paginate(request('per_page', default: 10));
+        $paginasi = PengajuanMagang::with('mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi')->paginate(request('per_page', default: 10));
         $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan): array {
             $keterangan = match ($pengajuan->status) {
-                'DISETUJUI' => 'bg-[var(--green-tertiary)]',
-                'MENUNGGU'  => 'bg-[var(--yellow-tertiary)]',
-                'DITOLAK'   => 'bg-[var(--red-tertiary)]',
+                'DISETUJUI' => 'bg-green-200 text-green-800',
+                'MENUNGGU'  => 'bg-yellow-200 text-yellow-800',
+                'DITOLAK'   => 'bg-red-200 text-red-800',
             };
-
+            
+            $konfirmasiView = '';
+            if ($pengajuan->status === 'MENUNGGU') {
+                $konfirmasiView = view('components.admin.pengajuan-magang.konfirmasi', compact('pengajuan'))->render(); 
+            }
             return [
                 $pengajuan->created_at->format('d/m/Y'),
-                $pengajuan->mahasiswa->nim,
                 $pengajuan->mahasiswa->nama_lengkap,
                 $pengajuan->lowongan->perusahaan->nama,
                 $pengajuan->lowongan->bidang->nama_bidang ?? '-',
-                '<div class="text-xs text-white font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
+                '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
                     . ($pengajuan->status ?? "N/A") .
                 '</div>',
                 view('components.admin.pengajuan-magang.aksi', compact('pengajuan'))->render(),
+                $konfirmasiView,
             ];
         })->toArray();
 
