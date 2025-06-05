@@ -18,6 +18,7 @@ import './chart';
 import './company-detail';
 import './edit-lecturer';
 import './edit-major';
+import './edit-company';
 import './edit-period';
 import './edit-student';
 import './fetch-intern-data';

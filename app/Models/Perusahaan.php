@@ -12,7 +12,7 @@ class Perusahaan extends Model
     protected $table = 'perusahaan_mitra';
     protected $primaryKey = 'id_perusahaan_mitra';
 
-    protected $fillable = ['id_lokasi', 'nama', 'nib', 'nomor_telepon'];
+    protected $fillable = ['id_lokasi', 'nama', 'nib', 'nomor_telepon', 'email', 'website', 'status', 'logo'];
 
     public function lokasi(): BelongsTo
     {

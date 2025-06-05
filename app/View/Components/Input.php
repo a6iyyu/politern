@@ -14,7 +14,7 @@ class Input extends Component
     public string $name;
     public ?string $info, $icon, $label, $type, $value;
 
-    public function __construct(?bool $required,  string $name, ?string $icon = null, ?string $info = null, ?string $label = null, ?string $type = null, ?string $value = null)
+    public function __construct(string $name, ?bool $required = null, ?string $icon = null, ?string $info = null, ?string $label = null, ?string $type = null, ?string $value = null)
     {
         $this->info = $info;
         $this->icon = $icon;
