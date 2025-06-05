@@ -19,7 +19,7 @@
         {{ $location ?? 'N/A' }}
     </h5>
     <h5 class="cursor-default mt-3 text-sm text-[#585858]">
-        {{ $formattedSalary() ?? 'N/A' }} per bulan
+        {{ $salary ?? 'N/A' }}
     </h5>
     <div class="flex flex-wrap gap-2 mt-4">
         <h5 class="cursor-pointer bg-[#fbecf1] text-xs text-[#585858] px-5 py-2 rounded-full border border-[#f9d4e2] transition-all duration-300 ease-in-out lg:hover:bg-[#f9d4e2]">

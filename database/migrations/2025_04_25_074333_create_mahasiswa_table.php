@@ -22,8 +22,7 @@ return new class extends Migration
             $table->string('alamat')->nullable();
             $table->string('nomor_telepon')->nullable();
             $table->text('cv')->nullable();
-            $table->decimal('nilai_tes')->nullable();
-            $table->decimal('gaji', 12, 2)->nullable();
+            $table->enum('gaji', ['PAID', 'UNPAID']);
             $table->enum('status', ['BELUM MAGANG', 'DALAM PROSES', 'SEDANG MAGANG', 'SELESAI'])->default('BELUM MAGANG');
             $table->timestamps();
 

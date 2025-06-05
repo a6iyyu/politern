@@ -13,10 +13,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('id_periode');
             $table->text('deskripsi');
             $table->integer('kuota');
-            $table->decimal('gaji', 12, 2)->nullable();
-            $table->decimal('nilai_minimal')->nullable();
-            $table->float('ipk_min')->default(0);
-            $table->float('nilai_test_min')->default(0);
+            $table->enum('gaji', ['PAID', 'UNPAID']);
             $table->date('tanggal_mulai_pendaftaran');
             $table->date('tanggal_selesai_pendaftaran');
             $table->enum('status', ['DIBUKA', 'DITUTUP']);
