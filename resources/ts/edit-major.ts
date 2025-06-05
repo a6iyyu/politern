@@ -9,7 +9,7 @@ interface Prodi {
 
 document.addEventListener('DOMContentLoaded', () => {
   const buttons = document.querySelectorAll<HTMLAnchorElement>('.edit[data-id]');
-  const modal = document.querySelector<HTMLElement>('#modal-edit-prodi');
+  const modal = document.querySelector<HTMLElement>('.modal-edit-prodi');
   const close = document.getElementById('close-edit');
   if (!buttons || !modal) return;
 

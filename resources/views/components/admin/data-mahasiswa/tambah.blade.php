@@ -1,12 +1,15 @@
-<section class="modal modal-tambah-mahasiswa fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
-    <div class="min-h-screen flex items-center justify-center w-full px-4">
+<section class="modal modal-tambah-mahasiswa fixed inset-0 z-50 hidden items-center justify-center bg-black/20 backdrop-blur-[1px]" aria-modal="true" role="dialog">
+    <div class="flex items-center justify-center min-h-screen px-4">
         <form action="{{ route('admin.data-mahasiswa.tambah') }}" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white py-7 px-10 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('POST')
-            <h2 class="cursor-default mb-3 font-semibold text-sm text-[var(--primary)]">
-                Tambah Mahasiswa
-            </h2>
-            <hr class="mb-3 border border-[var(--primary)] rounded-xl" />
+            <span class="mb-3 flex items-center justify-between">
+                <h2 class="cursor-default text-sm font-semibold text-[var(--primary)]">
+                    Tambah Mahasiswa
+                </h2>
+                <i class="close fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>
+            </span>
+            <hr class="mb-6 border border-[var(--primary)]"/>
             @if ($errors->any())
                 <ul class="p-4 cursor-default rounded-lg bg-red-50 border border-red-500 list-disc list-inside text-sm text-red-500">
                     @foreach ($errors->all() as $error)
@@ -64,6 +67,16 @@
                     :required="true"
                 />
                 <x-input
+                    icon="fa-solid fa-id-card"
+                    label="IPK"
+                    name="ipk"
+                    placeholder="IPK"
+                    type="number"
+                    :required="true"
+                />
+            </span>
+            <span class="mb-3 mt-6 flex items-center justify-between gap-4">
+                <x-input
                     icon="fa-solid fa-calendar"
                     label="Semester"
                     name="semester"
@@ -71,8 +84,16 @@
                     type="number"
                     :required="true"
                 />
+                <x-select
+                label="Angkatan"
+                name="angkatan"
+                placeholder="-- Semua Angkatan --"
+                :selected="old('angkatan', $mahasiswa->angkatan ?? '')"
+                :options="['2023' => '2023', '2024' => '2024']"
+                :required="true"
+                />
             </span>
-            <span class="mb-3 mt-6 flex items-center justify-between gap-4">
+            <span class="mb-3 mt-6 flex items-center">
                 <x-select
                     label="Pilih Program Studi"
                     name="program_studi"
@@ -81,34 +102,10 @@
                     :required="true"
                     :selected="old('program_studi', '')"
                 />
-                <x-select
-                    label="Angkatan"
-                    name="angkatan"
-                    placeholder="-- Semua Angkatan --"
-                    :selected="old('angkatan', $mahasiswa->angkatan ?? '')"
-                    :options="['2023' => '2023', '2024' => '2024']"
-                    :required="true"
-                />
             </span>
-            <span class="mb-3 mt-6 flex items-center justify-between gap-4">
-                <x-input
-                    icon="fa-solid fa-calculator"
-                    label="IPK"
-                    name="ipk"
-                    placeholder="IPK"
-                    type="number"
-                    step="0.01"
-                    :required="true"
-                />
-            </span>
-            <span class="flex justify-end gap-3 items-center mt-6 text-sm">
-                <button type="button" class="close cursor-pointer bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600 transition-all duration-300">
-                    Tutup
-                </button>
-                <button type="submit" class="cursor-pointer bg-[var(--blue-tertiary)] text-white px-5 py-2 rounded hover:bg-[var(--blue-tertiary)]/80 transition-all duration-300">
-                    Kirim
-                </button>
-            </span>
+            <button type="submit" class="mt-4 mb-2 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">
+                Simpan
+            </button>
         </form>
     </div>
 </section>

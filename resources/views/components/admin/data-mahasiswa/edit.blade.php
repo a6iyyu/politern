@@ -1,13 +1,23 @@
-<section class="modal modal-edit-mahasiswa fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
-    <div class="min-h-screen flex items-center justify-center w-full px-4">
-        <form action="#" method="POST" id="form-edit-mahasiswa" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+<section class="modal modal-edit-mahasiswa fixed inset-0 z-50 hidden items-center justify-center bg-black/20 backdrop-blur-[1px]" aria-modal="true" role="dialog">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <form action="#" method="POST" id="form-edit-mahasiswa" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white py-7 px-10 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('PUT')
-            <h2 class="text-lg font-semibold text-center text-gray-800 mb-3">
-                Edit Data Mahasiswa
-            </h2>
-            <hr class="mb-4 border border-[var(--primary)]" />
-            <h5 class="cursor-default mt-6 px-6 py-4 rounded-md text-sm bg-[var(--secondary)] text-white">
+            <span class="mb-3 flex items-center justify-between">
+                <h2 class="cursor-default text-sm font-semibold text-[var(--primary)]">
+                    Edit Data Mahasiswa
+                </h2>
+                <i class="close fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>
+            </span>
+            <hr class="mb-6 border border-[var(--primary)]" />
+            @if ($errors->any())
+                <ul class="p-4 cursor-default rounded-lg bg-red-50 border border-red-500 list-disc list-inside text-sm text-red-500">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            @endif
+            <h5 class="cursor-default my-6 px-5 py-3 rounded-md text-sm bg-[var(--secondary)] text-white">
                 Data Pengguna
             </h5>
             <span class="mb-3 mt-6 flex items-center justify-between gap-4">
@@ -39,7 +49,7 @@
                 :required="true"
                 :value="$mahasiswa->pengguna->email ?? ''"
             />
-            <h5 class="cursor-default my-6 px-6 py-4 rounded-md text-sm bg-[var(--secondary)] text-white">
+            <h5 class="cursor-default my-6 px-5 py-3 rounded-md text-sm bg-[var(--secondary)] text-white">
                 Data Mahasiswa
             </h5>
             <x-input
@@ -62,6 +72,17 @@
                     :value="$mahasiswa->nim ?? ''"
                 />
                 <x-input
+                    icon="fa-solid fa-id-card"
+                    label="IPK"
+                    name="ipk"
+                    type="number"
+                    placeholder="IPK"
+                    :required="true"
+                    :value="$mahasiswa->ipk ?? ''"
+                />
+            </span>
+            <span class="mb-3 mt-6 flex items-center justify-between gap-4">
+                <x-input
                     icon="fa-solid fa-calendar"
                     label="Semester"
                     name="semester"
@@ -69,16 +90,6 @@
                     placeholder="Semester"
                     :required="true"
                     :value="$mahasiswa->semester ?? ''"
-                />
-            </span>
-            <span class="mb-3 mt-6 flex items-center justify-between gap-4">
-                <x-select
-                    label="Pilih Program Studi"
-                    name="program_studi"
-                    placeholder="-- Semua Program Studi --"
-                    :options="$program_studi->pluck('nama', 'id_prodi')->toArray()"
-                    :required="true"
-                    :selected="old('program_studi', $mahasiswa->id_prodi ?? '')"
                 />
                 <x-select
                     label="Angkatan"
@@ -89,26 +100,19 @@
                     :selected="old('angkatan', $mahasiswa->angkatan ?? '')"
                 />
             </span>
-            <span class="mb-3 mt-6 flex items-center justify-between gap-4">
-                <x-input
-                    icon="fa-solid fa-calculator"
-                    label="IPK"
-                    name="ipk"
-                    type="number"
-                    step="0.01"
-                    placeholder="IPK"
-                    :required="true"
-                    :value="$mahasiswa->ipk ?? ''"
-                />
+            <span class="mb-3 mt-6 flex items-center">
+                <x-select
+                        label="Pilih Program Studi"
+                        name="program_studi"
+                        placeholder="-- Semua Program Studi --"
+                        :options="$program_studi->pluck('nama', 'id_prodi')->toArray()"
+                        :required="true"
+                        :selected="old('program_studi', $mahasiswa->id_prodi ?? '')"
+                    />
             </span>
-            <span class="flex justify-end gap-3 items-center mt-6 text-sm">
-                <button type="button" class="close cursor-pointer bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600 transition-all duration-300">
-                    Tutup
-                </button>
-                <button type="submit" class="cursor-pointer bg-[var(--blue-tertiary)] text-white px-5 py-2 rounded hover:bg-[var(--blue-tertiary)]/80 transition-all duration-300">
-                    Edit
-                </button>
-            </span>
+            <button type="submit" class="mt-4 mb-2 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">
+                Simpan
+            </button>
         </form>
     </div>
 </section>

@@ -10,7 +10,8 @@
     <button
         type="submit"
         onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')"
-        class="cursor-pointer rounded px-4 py-2 text-white text-xs font-medium transition-all duration-300 ease-in-out bg-[var(--red-tertiary)] hover:bg-red-600"
+        class="cursor-pointer rounded px-4 py-2 text-white text-xs font-medium bg-[var(--red-tertiary)] transition-all duration-300 ease-in-out hover:bg-red-600"
     >
         Hapus
+    </button>
 </form>

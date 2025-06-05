@@ -22,6 +22,21 @@ class DataProdi extends Controller
         if ($pengguna === "ADMIN") {
             $total_prodi = ProgramStudi::count();
             $jenjang = ProgramStudi::distinct()->pluck('jenjang')->toArray();
+            $status = ProgramStudi::distinct()->pluck('status')->toArray();
+            $jenjang_options = ProgramStudi::select('jenjang')
+                ->distinct()
+                ->pluck('jenjang')
+                ->mapWithKeys(function($item) {
+                    return [$item => $item];
+                })
+                ->toArray();
+            $status_options = ProgramStudi::select('status')
+                ->distinct()
+                ->pluck('status')
+                ->mapWithKeys(function($item) {
+                    return [$item => $item];
+                })
+                ->toArray();
 
             $paginasi = ProgramStudi::paginate(request('per_page', 10));
             $data = collect($paginasi->items())->map(function (ProgramStudi $prodi): array {
@@ -31,6 +46,7 @@ class DataProdi extends Controller
                 };
                 return [
                     $prodi->id_prodi,
+                    $prodi->kode,
                     $prodi->nama,
                     $prodi->jenjang,
                     $prodi->jurusan,
@@ -39,7 +55,7 @@ class DataProdi extends Controller
                     view('components.admin.data-prodi.aksi', compact('prodi'))->render(),
                 ];
             })->toArray();
-            return view('pages.admin.data-prodi', compact('data', 'paginasi', 'total_prodi', 'jenjang'));
+            return view('pages.admin.data-prodi', compact('data', 'paginasi', 'total_prodi', 'jenjang_options', 'status_options'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }

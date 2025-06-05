@@ -1,6 +1,6 @@
 <section class="flex items-center justify-between mb-7">
     <h2 class="cursor-default text-base font-semibold text-[var(--primary-text)]">
-        Daftar Mahasiswa Bimbingan
+        Daftar Data Mahasiswa
     </h2>
     <div class="flex items-center gap-4">
         <a href="{{ route('admin.data-mahasiswa.ekspor-excel') }}" class="text-xs bg-[var(--primary)] text-white font-medium px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">

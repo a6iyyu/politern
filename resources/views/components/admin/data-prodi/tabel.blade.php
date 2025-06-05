@@ -23,7 +23,7 @@
     </ul>
 @endif
 @include('components.admin.data-prodi.filter')
-<x-table :headers="['No', 'Nama Prodi', 'Jenjang', 'Jurusan', 'Total Mahasiswa', 'Status', 'Aksi']" :sortable="['Nama Prodi', 'Jenjang']" :rows="$data" />
+<x-table :headers="['No', 'Kode Prodi', 'Nama Prodi', 'Jenjang', 'Jurusan', 'Total Mahasiswa', 'Status', 'Aksi']" :sortable="['Nama Prodi', 'Jenjang']" :rows="$data" />
 @if ($paginasi->hasPages())
     <div class="mt-4">
         {{ $paginasi->links() }}

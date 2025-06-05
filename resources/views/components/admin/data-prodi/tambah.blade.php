@@ -9,7 +9,14 @@
                 </h2>
                 <i class="close fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>
             </span>
-            <hr class="mb-6 border border-[var(--primary)]" />
+            <hr class="mb-6 border border-[var(--primary)]"/>
+            @if ($errors->any())
+                <ul class="p-4 cursor-default rounded-lg bg-red-50 border border-red-500 list-disc list-inside text-sm text-red-500">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            @endif
             <x-input
                 icon="fa-solid fa-user-group"
                 label="Nama Program Studi"
@@ -46,7 +53,7 @@
                     :required="true"
                 />
             </span>
-            <button type="submit" class="mt-4 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">
+            <button type="submit" class="mt-4 mb-2 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">
                 Simpan
             </button>
         </form>
