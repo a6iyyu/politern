@@ -1,6 +1,6 @@
 <section class="modal modal-tambah-perusahaan fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="min-h-screen flex items-center justify-center w-full px-4">
-        <form action="{{ route('admin.data-perusahaan.tambah') }}" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+        <form action="{{ route('admin.data-perusahaan.tambah') }}" enctype="multipart/form-data" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('POST')
             <h2 class="text-lg font-semibold text-center text-gray-800 mb-3">
@@ -66,7 +66,16 @@
                     name="status"
                     placeholder=""
                     :required="true"
-                    :options="['Aktif' => 'Aktif', 'Tidak Aktif' => 'Tidak Aktif']"
+                    :options="['AKTIF' => 'Aktif', 'TIDAK AKTIF' => 'Tidak Aktif']"
+                />
+                <x-select
+                    icon="fa-solid fa-map-marker-alt"
+                    label="Lokasi"
+                    type="text"
+                    name="id_lokasi"
+                    placeholder=""
+                    :required="true"
+                    :options="$lokasi"
                 />
             </span>
             </div>

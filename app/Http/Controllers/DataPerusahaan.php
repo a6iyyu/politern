@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Perusahaan;
+use App\Models\Lokasi;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -31,7 +32,8 @@ class DataPerusahaan extends Controller
                 view('components.admin.data-perusahaan.aksi', compact('perusahaan'))->render(),
             ])->toArray();
             $perusahaan = Perusahaan::with('lokasi')->get();
-            return view('pages.admin.data-perusahaan', compact('perusahaan', 'data', 'total_perusahaan', 'paginasi'));
+            $lokasi = Lokasi::pluck('nama_lokasi', 'id_lokasi')->toArray();
+            return view('pages.admin.data-perusahaan', compact('perusahaan', 'data', 'total_perusahaan', 'paginasi', 'lokasi'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
@@ -42,23 +44,27 @@ class DataPerusahaan extends Controller
         try {
             $request->validate([
                 'nama'          => 'required|string|max:50',
-                'nib'           => 'required|string|max:13|unique:nib',
-                'nomor_telepon' => 'required|string|max:15|unique:nomor_telepon',
-                'email'         => 'required|email|unique:email',
-                'website'       => 'required|url',
                 'logo'          => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'nib'           => 'required|string|max:13|unique:perusahaan_mitra,nib',
+                'email'         => 'required|email|unique:perusahaan_mitra,email',
+                'nomor_telepon' => 'required|string|max:15|unique:perusahaan_mitra,nomor_telepon',
+                'website'       => 'required|url',
                 'status'        => 'required|in:AKTIF,TIDAK AKTIF',
+                'id_lokasi'     => 'required|exists:lokasi,id_lokasi',
             ]);
 
+            $logo = null;
+            if ($request->hasFile('logo')) $logo = $request->file('logo')->store('logos', 'public');
+
             Perusahaan::create([
-                'id_lokasi'     => $request->id_lokasi,
                 'nama'          => $request->nama,
+                'logo'          => $logo,
                 'nib'           => $request->nib,
-                'nomor_telepon' => $request->nomor_telepon,
                 'email'         => $request->email,
+                'nomor_telepon' => $request->nomor_telepon,
                 'website'       => $request->website,
-                'logo'          => $request->logo,
-                'status'        => $request->status
+                'status'        => $request->status,
+                'id_lokasi'     => $request->id_lokasi,
             ]);
 
             return to_route('admin.data-perusahaan')->with('success', 'Berhasil menambahkan data perusahaan.');
@@ -82,7 +88,7 @@ class DataPerusahaan extends Controller
         }
     }
 
-    public function edit(): View
+    public function edit($id): View
     {
         try {
             $perusahaan = Perusahaan::with('lokasi')->get();
@@ -92,7 +98,7 @@ class DataPerusahaan extends Controller
             abort(404, 'Data perusahaan yang Anda cari tidak ditemukan.');
         } catch (Exception $exception) {
             report($exception);
-            abort(500, 'Gagal dalam mengambil informasi perusahaan karena kesalahan pada server.');
+            abort(500, 'Terjadi kesalahan pada sistem.');
         }
     }
 

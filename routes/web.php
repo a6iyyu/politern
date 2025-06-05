@@ -75,11 +75,11 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('data-perusahaan')->group(function () {
             Route::get('/', [DataPerusahaan::class, 'index'])->name('admin.data-perusahaan');
-            Route::get('/tambah', [DataPerusahaan::class, 'create'])->name('admin.data-perusahaan.tambah');
+            Route::post('/tambah', [DataPerusahaan::class, 'create'])->name('admin.data-perusahaan.tambah');
             Route::get('/{id}/detail', [DataPerusahaan::class, 'show'])->name('admin.data-perusahaan.detail');
             Route::get('/{id}/edit', [DataPerusahaan::class, 'edit'])->name('admin.data-perusahaan.edit');
-            Route::post('/{id}/edit', [DataPerusahaan::class, 'update'])->name('admin.data-perusahaan.perbarui');
-            Route::delete('/uri: {id}/edit', [DataPerusahaan::class, 'destroy'])->name('admin.data-perusahaan.hapus');
+            Route::post('/{id}/perbarui', [DataPerusahaan::class, 'update'])->name('admin.data-perusahaan.perbarui');
+            Route::delete('/{id}/hapus', [DataPerusahaan::class, 'destroy'])->name('admin.data-perusahaan.hapus');
         });
 
         Route::prefix('periode-magang')->group(function () {
