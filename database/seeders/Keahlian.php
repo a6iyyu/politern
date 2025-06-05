@@ -10,9 +10,9 @@ class Keahlian extends Seeder
     public function run(): void
     {
         DB::table('keahlian')->insert([
-            ['id_keahlian' => 1, 'nama_keahlian' => 'Pemrograman Web'],
-            ['id_keahlian' => 2, 'nama_keahlian' => 'Pemrograman Mobile'],
-            ['id_keahlian' => 3, 'nama_keahlian' => 'Pemrograman Desktop'],
+            ['id_keahlian' => 1, 'nama_keahlian' => 'Laravel'],
+            ['id_keahlian' => 2, 'nama_keahlian' => 'Golang'],
+            ['id_keahlian' => 3, 'nama_keahlian' => 'Java'],
             ['id_keahlian' => 4, 'nama_keahlian' => 'HTML'],
             ['id_keahlian' => 5, 'nama_keahlian' => 'CSS'],
             ['id_keahlian' => 6, 'nama_keahlian' => 'SCSS'],
@@ -22,14 +22,12 @@ class Keahlian extends Seeder
             ['id_keahlian' => 10, 'nama_keahlian' => 'TypeScript'],
             ['id_keahlian' => 11, 'nama_keahlian' => 'jQuery'],
             ['id_keahlian' => 12, 'nama_keahlian' => 'PHP'],
-            ['id_keahlian' => 13, 'nama_keahlian' => 'Laravel'],
             ['id_keahlian' => 14, 'nama_keahlian' => 'Livewire'],
             ['id_keahlian' => 15, 'nama_keahlian' => 'CodeIgniter'],
             ['id_keahlian' => 16, 'nama_keahlian' => 'Python'],
             ['id_keahlian' => 17, 'nama_keahlian' => 'Django'],
             ['id_keahlian' => 18, 'nama_keahlian' => 'Flask'],
             ['id_keahlian' => 19, 'nama_keahlian' => 'FastAPI'],
-            ['id_keahlian' => 20, 'nama_keahlian' => 'Java'],
             ['id_keahlian' => 21, 'nama_keahlian' => 'Spring Boot'],
             ['id_keahlian' => 22, 'nama_keahlian' => 'Kotlin'],
             ['id_keahlian' => 23, 'nama_keahlian' => 'C'],

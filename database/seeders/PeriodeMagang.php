@@ -14,7 +14,6 @@ class PeriodeMagang extends Seeder
             [
                 'id_periode'       => 1,
                 'nama_periode'     => 'Semester Genap 2025/2026',
-                'durasi'           => '6 Bulan',
                 'tanggal_mulai'    => '2025-07-01',
                 'tanggal_selesai'  => '2025-12-31',
                 'status'           => 'AKTIF',

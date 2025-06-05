@@ -116,11 +116,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/edit', [Profil::class, 'update'])->name('admin.profil.perbarui');
         });
     });
+    Route::get('/mahasiswa/rekomendasi-magang/{id_mahasiswa}', [Dasbor::class, 'rekomendasiMagang'])->name('mahasiswa.rekomendasi-magang');
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa.dasbor');
+        Route::get('/rekomendasi-magang/{id_mahasiswa}', [Dasbor::class, 'rekomendasiMagang'])->name('mahasiswa.rekomendasi-magang');
         Route::get('/lowongan', fn() => view('pages.student.lowongan'))->name('mahasiswa.lowongan');
         Route::get('/cari-lowongan', [Dasbor::class, 'index'])->name('mahasiswa.cari-lowongan');
+
 
         Route::prefix('kelola-lamaran')->group(function () {
             Route::get('/', [Pengajuan::class, 'index'])->name('mahasiswa.kelola-lamaran');

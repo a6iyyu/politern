@@ -62,8 +62,8 @@ class LowonganMagang extends Model
         return $this->belongsTo(Perusahaan::class, 'id_perusahaan_mitra', 'id_perusahaan_mitra');
     }
 
-    public function keahlian(): BelongsTo
+    public function keahlian(): BelongsToMany
     {
-        return $this->belongsTo(Keahlian::class, 'id_keahlian', 'id_keahlian');
+        return $this->belongsToMany(Keahlian::class, 'keahlian_lowongan', 'id_lowongan', 'id_keahlian');
     }
 }

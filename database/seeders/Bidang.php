@@ -10,7 +10,7 @@ class Bidang extends Seeder
     public function run(): void
     {
         DB::table('bidang')->insert([
-            ['id_bidang' => 1, 'nama_bidang' => 'Full Stack Development'],
+            ['id_bidang' => 1, 'nama_bidang' => 'UI/UX Design'],
             ['id_bidang' => 2, 'nama_bidang' => 'Front End Development'],
             ['id_bidang' => 3, 'nama_bidang' => 'Back End Development'],
             ['id_bidang' => 4, 'nama_bidang' => 'Mobile Engineering'],
@@ -117,9 +117,8 @@ class Bidang extends Seeder
             ['id_bidang' => 105, 'nama_bidang' => 'Sustainable Computing'],
             ['id_bidang' => 106, 'nama_bidang' => 'Tech Entrepreneurship'],
             ['id_bidang' => 107, 'nama_bidang' => 'Cybersecurity'],
-            ['id_bidang' => 108, 'nama_bidang' => 'UI/UX Design'],
-            ['id_bidang' => 109, 'nama_bidang' => 'User Experience (UX) Design'],
-            ['id_bidang' => 110, 'nama_bidang' => 'User Interface (UI) Design'],
+            ['id_bidang' => 108, 'nama_bidang' => 'User Experience (UX) Design'],
+            ['id_bidang' => 109, 'nama_bidang' => 'User Interface (UI) Design'],
         ]);
     }
 }

@@ -37,9 +37,9 @@ class DataMahasiswa extends Controller
             $status_aktivitas = array_unique(array_merge(Magang::pluck('status')->toArray(), ['BELUM MAGANG']));
 
             /** @var LengthAwarePaginator $paginasi */
-            $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', default: 10));
-            $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) {
-                $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') {
+            $paginasi = Mahasiswa::paginate(request('per_page', 10));
+            $data = collect($paginasi->items())->map(function (Mahasiswa $mhs) {
+                $status = match ($mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') {
                     'AKTIF'         => 'bg-green-200 text-green-800',
                     'SELESAI'       => 'bg-yellow-200 text-yellow-800',
                     'BELUM MAGANG'  => 'bg-red-200 text-red-800',

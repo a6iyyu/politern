@@ -29,7 +29,7 @@
         {{ $paginasi->links() }}
     </div>
 @else
-    <h5 class="cursor-default mt-4 text-xs font-light text-[var(--primary-text)]">
+    <h5 class="mt-4 cursor-default text-xs font-light text-[var(--primary-text)]">
         Menampilkan {{ count($data) ?? 0 }} dari {{ $total_dosen ?? 'N/A' }} dosen
     </h5>
 @endif

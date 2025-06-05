@@ -1,4 +1,4 @@
-<section class="relative w-full overflow-x-auto rounded-lg mb-6">
+<section class="relative w-full overflow-x-auto rounded-lg mb-6 border border-[var(--stroke)]">
     <table class="w-full min-w-max table-auto border-collapse cursor-default">
         <thead class="bg-[var(--primary)] text-white">
             <tr>
@@ -16,7 +16,7 @@
         </thead>
         <tbody>
             @foreach ($rows as $row)
-                <tr class="border-b border-[var(--stroke)] text-sm text-[var(--primary-text)] transition-all duration-200">
+                <tr class="border-t border-[var(--stroke)] text-sm text-[var(--primary-text)] transition-all duration-200">
                     @foreach ($row as $index => $cell)
                         <td class="px-6 py-3 whitespace-nowrap">
                             <section class="flex cursor-default space-x-3 text-[10pt]">

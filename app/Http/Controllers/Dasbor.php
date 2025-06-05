@@ -12,6 +12,9 @@ use App\Models\Magang;
 use App\Models\EvaluasiMagang;
 use App\Models\Dosen;
 use App\Models\Perusahaan;
+use App\Models\PreferensiJenisLokasiMagang;
+use App\Models\PreferensiDurasiMahasiswa;
+use App\Models\PreferensiLokasiMagang;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -20,6 +23,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
 
@@ -53,6 +57,7 @@ class Dasbor extends Controller
                 $mahasiswa = $this->mahasiswa();
                 if ($mahasiswa === null || !$mahasiswa->program_studi) abort(404, 'Data mahasiswa tidak ditemukan.');
 
+                $id_mahasiswa = $mahasiswa->id_mahasiswa;
                 $prodi = $mahasiswa->program_studi;
                 $ipk = $mahasiswa->ipk;
                 $jenjang = $prodi->jenjang;
@@ -61,7 +66,9 @@ class Dasbor extends Controller
                 $nama_prodi = $prodi->nama;
                 $semester = $mahasiswa->semester;
                 $status = $mahasiswa->status;
-                return view('pages.student.dasbor', compact('ipk', 'jenjang', 'log_aktivitas', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status'));
+                $rekomendasi = $this->rekomendasiMagang($mahasiswa->id_mahasiswa);
+                // dd($rekomendasi);
+                return view('pages.student.dasbor', compact('ipk', 'jenjang', 'log_aktivitas', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status', 'rekomendasi', 'id_mahasiswa'));
             })(),
             'DOSEN' => (function () use ($pengguna): View {
                 $nama = $pengguna->dosen->nama;
@@ -121,6 +128,175 @@ class Dasbor extends Controller
             report($e);
             abort(500, "Terjadi kesalahan pada server.");
         }
+    }
+
+    public function rekomendasiMagang($id_mahasiswa)
+    {
+        // Get mahasiswa data with relationships
+        $mahasiswa = Mahasiswa::findOrFail($id_mahasiswa);
+    
+        $skillMahasiswa = BidangMahasiswa::where('id_mahasiswa', $id_mahasiswa)->pluck('id_bidang')->toArray();
+        $lokasiMahasiswa = PreferensiLokasiMagang::where('id_mahasiswa', $id_mahasiswa)->pluck('id_lokasi')->toArray();
+        $jenisLokasiMahasiswa = PreferensiJenisLokasiMagang::where('id_mahasiswa', $id_mahasiswa)->pluck('id_jenis_lokasi')->toArray();
+        $durasiMahasiswa = PreferensiDurasiMahasiswa::where('id_mahasiswa', $id_mahasiswa)->pluck('id_durasi_magang')->toArray();
+
+        // Get all active lowongan with required relationships
+        $lowongans = LowonganMagang::with([
+            'keahlian:id_keahlian',
+            'perusahaan.lokasi',
+            'jenis_lokasi:id_jenis_lokasi',
+            'bidang:id_bidang'
+        ])
+        ->where('status', 'DIBUKA')
+        ->where('tanggal_selesai_pendaftaran', '>=', now())
+        ->get();
+
+        Log::info(json_encode($lowongans));
+
+        $alternatif = [];
+        foreach ($lowongans as $lowongan) {
+            $row = [];
+
+            // C1: Skill (jumlah skill yang cocok / total skill lowongan)
+            $mhsSkills = $skillMahasiswa;
+            $lowonganSkills = $lowongan->keahlian ? $lowongan->keahlian->pluck('id_keahlian')->toArray() : [];
+            $matchedSkills = count(array_intersect($mhsSkills, $lowonganSkills));
+            $row['C1'] = count($lowonganSkills) > 0 ? $matchedSkills / count($lowonganSkills) : 0;
+
+            // C2: Lokasi (menggunakan preferensi lokasi mahasiswa)
+            $perusahaanLokasi = $lowongan->perusahaan->lokasi->id_lokasi ?? null;
+            $row['C2'] = in_array($perusahaanLokasi, $lokasiMahasiswa) ? 1 : 0;
+
+            // C3: Jenis Lokasi (menggunakan preferensi jenis lokasi mahasiswa)
+            $lowonganJenisLokasi = $lowongan->jenis_lokasi->id_jenis_lokasi ?? null;
+            $row['C3'] = in_array($lowonganJenisLokasi, $jenisLokasiMahasiswa) ? 1 : 0;
+
+            // C4: Bidang
+            $mhsBidang = $mahasiswa->bidang->first()?->id_bidang ?? null;
+            $row['C4'] = $lowongan->id_bidang && $mhsBidang && 
+                        $lowongan->id_bidang == $mhsBidang ? 1 : 0;
+
+            // C5: Durasi (menggunakan preferensi durasi mahasiswa)
+            $lowonganDurasi = $lowongan->durasi->id_durasi_magang ?? null;
+            $row['C5'] = in_array($lowonganDurasi, $durasiMahasiswa) ? 1 : 0;
+
+            // C6: Gaji (menggunakan skala 1-7 berdasarkan range yang ditentukan)
+            $gaji = $lowongan->gaji ?? 0;
+            if ($gaji < 0) {
+                $row['C6'] = 1.0;
+            } elseif ($gaji == 0) {
+                $row['C6'] = 2.0;
+            } elseif ($gaji <= 500000) {
+                $row['C6'] = 3.0;
+            } elseif ($gaji <= 1000000) {
+                $row['C6'] = 4.0;
+            } elseif ($gaji <= 2000000) {
+                $row['C6'] = 5.0;
+            } elseif ($gaji <= 3000000) {
+                $row['C6'] = 6.0;
+            } else {
+                $row['C6'] = 7.0;
+            }
+            
+            // Normalize to 0-1 scale for TOPSIS
+            $row['C6'] = ($row['C6'] - 1) / 6; // Convert 1-7 scale to 0-1 scale
+
+            // C7: IPK minimal
+            $row['C7'] = $mahasiswa->ipk >= ($lowongan->ipk_min ?? 0) ? 1 : 0;
+
+            // C8: Nilai test minimal
+            $row['C8'] = $mahasiswa->nilai_test >= ($lowongan->nilai_test_min ?? 0) ? 1 : 0;
+
+            $alternatif[$lowongan->id_lowongan] = $row;
+        }
+
+        Log::info($alternatif);
+    
+        // Check if there are any alternatives
+        if (empty($alternatif)) {
+            return []; // Return empty array if no lowongan available
+        }
+    
+        // STEP 2: Normalisasi
+        $matrix = $alternatif;
+        $columns = array_keys(reset($matrix));
+        $normal = [];
+    
+        foreach ($columns as $col) {
+            $values = array_column($matrix, $col);
+            $sum = array_sum(array_map(fn($v) => pow($v, 2), $values));
+            $sum = $sum > 0 ? $sum : 1; // Prevent division by zero
+            foreach ($matrix as $id => $row) {
+                $normal[$id][$col] = $row[$col] / sqrt($sum);
+            }
+        }
+    
+        // STEP 3: Bobot
+        $bobot = [
+            'C1' => 0.25, // Skill
+            'C2' => 0.10, // Lokasi
+            'C3' => 0.05, // Jenis Lokasi
+            'C4' => 0.15, // Bidang
+            'C5' => 0.05, // Periode
+            'C6' => 0.10, // Gaji
+            'C7' => 0.15, // IPK
+            'C8' => 0.15, // Nilai Test
+        ];
+    
+        // STEP 4: Matriks Terbobot
+        $terbobot = [];
+        foreach ($normal as $id => $row) {
+            foreach ($row as $col => $val) {
+                $terbobot[$id][$col] = $val * $bobot[$col];
+            }
+        }
+    
+        // STEP 5: Solusi ideal positif & negatif
+        $idealPos = $idealNeg = [];
+        foreach ($columns as $col) {
+            $values = array_column($terbobot, $col);
+            if ($col == 'C6') { // C6 = Cost (lower is better)
+                $idealPos[$col] = min($values);
+                $idealNeg[$col] = max($values);
+            } else { // Benefit criteria (higher is better)
+                $idealPos[$col] = max($values);
+                $idealNeg[$col] = min($values);
+            }
+        }
+    
+        // STEP 6: Hitung D+ dan D-
+        $ranking = [];
+        foreach ($terbobot as $id => $row) {
+            $dPos = $dNeg = 0;
+            foreach ($row as $col => $val) {
+                $dPos += pow($val - $idealPos[$col], 2);
+                $dNeg += pow($val - $idealNeg[$col], 2);
+            }
+            $dPos = sqrt($dPos);
+            $dNeg = sqrt($dNeg);
+            $v = ($dPos + $dNeg) > 0 ? $dNeg / ($dPos + $dNeg) : 0;
+            $ranking[$id] = $v;
+        }
+    
+        // STEP 7: Rekomendasi
+        arsort($ranking);
+        $result = [];
+        foreach ($ranking as $id => $score) {
+            $lowongan = $lowongans->find($id);
+            if ($lowongan) {
+                $result[] = [
+                    'lowongan' => $lowongan,
+                    'skor' => round($score, 4)
+                ];
+            }
+        }
+    
+        Log::info($result);
+        return $result;
+        // return view('components.student.dasbor.rekomendasi-magang', [
+        //     'rekomendasi' => $result,
+        //     'mahasiswa' => $mahasiswa
+        // ]);
     }
 
     /**

@@ -1,12 +1,12 @@
 @if ($paginator->hasPages())
-    <section class="bg-green-medium mt-6 flex flex-col items-center justify-between gap-4 rounded-lg border border-emerald-100 p-4 shadow-sm sm:flex-row" role="navigation">
+    <section class="mt-6 flex flex-col items-center justify-between gap-4 rounded-lg border border-[var(--stroke)] p-4 sm:flex-row" role="navigation">
         <div class="flex items-center text-sm text-[var(--secondary-text)]">
             <label for="per_page" class="mr-3">Tampil:</label>
             <select
                 id="per_page"
                 name="per_page"
                 onchange="update_per_page(this.value)"
-                class="bg-green-medium appearance-none rounded-md border border-gray-200 px-3 py-1.5"
+                class="appearance-none rounded-md border border-[var(--stroke)] px-3 py-1.5"
             >
                 @foreach ([10, 25, 50, 100] as $perPageOption)
                     <option value="{{ $perPageOption }}" {{ Request::input('per_page', 10) == $perPageOption ? 'selected' : '' }}>

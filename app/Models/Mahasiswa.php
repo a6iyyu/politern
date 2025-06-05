@@ -37,9 +37,14 @@ class Mahasiswa extends Model
         return $this->belongsToMany(Keahlian::class, 'keahlian_mahasiswa', 'id_mahasiswa', 'id_keahlian');
     }
 
-    public function lokasi(): BelongsToMany
+    public function preferensi_lokasi(): BelongsToMany
     {
         return $this->belongsToMany(Lokasi::class, 'preferensi_lokasi_magang', 'id_mahasiswa', 'id_lokasi');
+    }
+
+    public function jenis_lokasi(): BelongsTo
+    {
+        return $this->belongsTo(JenisLokasi::class, 'id_jenis_lokasi', 'id_jenis_lokasi');
     }
 
     public function magang(): HasMany
@@ -49,7 +54,7 @@ class Mahasiswa extends Model
 
     public function pengajuan_magang(): HasMany
     {
-        return $this->hasMany(PengajuanMagang::class, 'id_pengajuan_magang', 'id_pengajuan_magang');
+        return $this->hasMany(PengajuanMagang::class, 'id_mahasiswa', 'id_mahasiswa');
     }
 
     public function pengalaman(): BelongsToMany

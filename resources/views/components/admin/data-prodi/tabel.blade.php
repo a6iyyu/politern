@@ -1,5 +1,5 @@
 <section class="flex flex-col justify-between mb-4 lg:items-center lg:mb-7 lg:flex-row">
-    <h2 class="text-base font-semibold text-[var(--primary-text)]">
+    <h2 class="cursor-default text-base font-semibold text-[var(--primary-text)]">
         Daftar Program Studi
     </h2>
     <div class="mt-4 flex gap-4 lg:mt-0">

@@ -11,12 +11,15 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        DB::table('keahlian_lowongan')->delete();
         DB::table('bidang_mahasiswa')->delete();
         DB::table('keahlian_mahasiswa')->delete();
         DB::table('pengalaman_mahasiswa')->delete();
         DB::table('proyek_mahasiswa')->delete();
         DB::table('sertifikasi_pelatihan_mahasiswa')->delete();
         DB::table('preferensi_lokasi_magang')->delete();
+        DB::table('preferensi_jenis_lokasi_magang')->delete();
+        DB::table('preferensi_durasi_mahasiswa')->delete();
         DB::table('pengalaman')->delete();
         DB::table('proyek')->delete();
         DB::table('sertifikasi_pelatihan')->delete();
@@ -27,6 +30,8 @@ class DatabaseSeeder extends Seeder
         DB::table('lowongan_magang')->delete();
         DB::table('perusahaan_mitra')->delete();
         DB::table('periode_magang')->delete();
+        DB::table('durasi_magang')->delete();
+        DB::table('jenis_magang')->delete();
         DB::table('mahasiswa')->delete();
         DB::table('lokasi')->delete();
         DB::table('jenis_lokasi')->delete();
@@ -58,6 +63,10 @@ class DatabaseSeeder extends Seeder
             BidangMahasiswa::class,
             KeahlianMahasiswa::class,
             PreferensiLokasiMagang::class,
+            PreferensiJenisLokasiMahasiswa::class,
+            DurasiMagang::class,
+            PreferensiDurasiMahasiswa::class,
+            JenisMagang::class,
             Perusahaan::class,
             PeriodeMagang::class,
             LowonganMagang::class,
@@ -65,6 +74,7 @@ class DatabaseSeeder extends Seeder
             Magang::class,
             LogAktivitas::class,
             EvaluasiMagang::class,
+            KeahlianLowongan::class,
         ]);
     }
 }
