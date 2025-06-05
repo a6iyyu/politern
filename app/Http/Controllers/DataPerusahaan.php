@@ -88,18 +88,23 @@ class DataPerusahaan extends Controller
         }
     }
 
-    public function edit($id): View
+    public function edit($id)
     {
-        try {
-            $perusahaan = Perusahaan::with('lokasi')->get();
-            return view('components.admin.data-perusahaan.edit', compact('perusahaan'));
-        } catch (ModelNotFoundException $exception) {
-            report($exception);
-            abort(404, 'Data perusahaan yang Anda cari tidak ditemukan.');
-        } catch (Exception $exception) {
-            report($exception);
-            abort(500, 'Terjadi kesalahan pada sistem.');
-        }
+        $perusahaan = Perusahaan::with('lokasi')->findOrFail($id);
+
+        return response()->json([
+            'perusahaan' => [
+                'nama'           => $perusahaan->nama,
+                'nib'            => $perusahaan->nib,
+                'nomor_telepon'  => $perusahaan->nomor_telepon,
+                'email'          => $perusahaan->email,
+                'website'        => $perusahaan->website,
+                'logo'           => $perusahaan->logo,
+                'status'         => $perusahaan->status,
+                'id_lokasi'      => $perusahaan->id_lokasi,
+            ],
+            'lokasi' => Lokasi::pluck('nama_lokasi', 'id_lokasi')->toArray(),
+        ]);
     }
 
     public function show(Request $request, string $id): array
@@ -114,7 +119,7 @@ class DataPerusahaan extends Controller
         }
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, string $id): RedirectResponse
     {
         try {
             $request->validate([
@@ -123,11 +128,11 @@ class DataPerusahaan extends Controller
                 'nomor_telepon' => 'required|string|max:15',
                 'email'         => 'required|email',
                 'website'       => 'required|url',
-                'logo'          => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'logo'          => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'status'        => 'required|in:AKTIF,TIDAK AKTIF',
             ]);
 
-            $perusahaan = Perusahaan::findOrFail($request->id_perusahaan);
+            $perusahaan = Perusahaan::findOrFail($id);
             $perusahaan->update([
                 'id_lokasi'     => $request->id_lokasi,
                 'nama'          => $request->nama,

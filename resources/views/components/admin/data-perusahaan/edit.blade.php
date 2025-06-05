@@ -1,14 +1,13 @@
 <section class="modal modal-edit-perusahaan fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="min-h-screen flex items-center justify-center w-full px-4">
-        <form action="#" method="POST" id="form-edit-perusahaan"
-        class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+        <form action="#" method="POST" id="form-edit-perusahaan" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('PUT')
             <h2 class="text-lg font-semibold text-center text-gray-800 mb-3">
                 Edit Perusahaan Mitra
             </h2>
             <hr class="mb-4 border border-[var(--primary)]" />
-            <div class="my-6 flex flex-col gap-3">
+            <div class="my-6 flex flex-col gap-5">
                 <x-input
                     icon="fa-solid fa-building"
                     label="Nama Perusahaan"
@@ -16,7 +15,6 @@
                     name="nama"
                     placeholder="Masukkan perusahaan mitra"
                     :required="true"
-                    {{-- :value="$perusahaan->nama" --}}
                 />
                 <x-input
                     icon="fa-solid fa-image"
@@ -24,7 +22,6 @@
                     type="file"
                     name="logo"
                     placeholder="Masukkan Logo"
-                    :required="true"
                 />
                 <x-input
                     icon="fa-solid fa-id-card"
@@ -68,7 +65,16 @@
                     name="status"
                     placeholder=""
                     :required="true"
-                    :options="['Aktif' => 'Aktif', 'Tidak Aktif' => 'Tidak Aktif']"
+                    :options="['AKTIF' => 'Aktif', 'TIDAK AKTIF' => 'Tidak Aktif']"
+                />
+                <x-select
+                    icon="fa-solid fa-map-marker-alt"
+                    label="Lokasi"
+                    type="text"
+                    name="id_lokasi"
+                    placeholder=""
+                    :required="true"
+                    :options="$lokasi"
                 />
             </span>
             </div>

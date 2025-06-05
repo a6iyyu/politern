@@ -2,6 +2,8 @@
     <label for="{{ $name }}" class="font-medium text-sm text-[var(--primary-text)]">
         @if (!empty($required))
             {{ $label }} <span class="text-red-500">*</span>
+        @elseif (empty($required) && $type === 'file')
+            {{ $label }}
         @endif
     </label>
     @if (!empty($info))

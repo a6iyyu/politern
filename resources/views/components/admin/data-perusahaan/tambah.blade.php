@@ -22,7 +22,6 @@
                     type="file"
                     name="logo"
                     placeholder="Masukkan Logo"
-                    :required="true"
                 />
                 <x-input
                     icon="fa-solid fa-id-card"
