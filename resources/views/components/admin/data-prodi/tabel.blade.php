@@ -1,8 +1,8 @@
-<section class="flex flex-col justify-between mb-4 lg:items-center lg:mb-7 lg:flex-row">
+<section class="flex items-center justify-between mb-5">
     <h2 class="cursor-default text-base font-semibold text-[var(--primary-text)]">
         Daftar Program Studi
     </h2>
-    <div class="mt-4 flex gap-4 lg:mt-0">
+    <div class="flex items-center gap-4">
         <a href="{{ route('admin.data-prodi.ekspor-excel') }}" class="text-xs bg-[var(--primary)] text-white font-medium px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
             <i class="fa fa-file-excel mr-2"></i> Ekspor Data
         </a>

@@ -5,28 +5,28 @@
         <x-input
             id="nama_lengkap"
             icon="fa-solid fa-magnifying-glass"
-            label="Cari Mahasiswa"
-            name="nama_lengkap"
-            placeholder="Cari Mahasiswa"
+            label="Cari Lowongan"
+            name="nama_lowonggan"
+            placeholder="Cari Lowongan"
             type="text"
             :required="false"
         />
     </div>
     <div class="w-80">
         <x-select
-            id="program_studi"
-            label="Program Studi"
-            name="program_studi"
-            :options="['' => 'Semua Program Studi'] + ($program_studi->pluck('nama', 'id_prodi')->toArray() ?? [])"
+            id="perusahaan"
+            label="Perusahaan"
+            name="perusahaan"
+            :options="['' => 'Semua Perusahaan'] + ($perusahaan_filter->pluck('nama', 'id_perusahaan_mitra')->toArray() ?? [])"
             :required="false"
         />
     </div>
     <div class="w-80">
         <x-select
-            id="status"
-            label="Status"
-            name="status"
-            :options="['' => 'Semua Status'] + $status_aktivitas"
+            id="periode"
+            label="Periode"
+            name="periode"
+            :options="['' => 'Semua Periode'] + ($periode_filter->pluck('nama_periode', 'id_periode')->toArray() ?? [])"
             :required="false"
         />
     </div>

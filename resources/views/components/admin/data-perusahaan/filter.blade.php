@@ -1,26 +1,26 @@
-<section class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-3">
-    <livewire:search
-        icon="fa-solid fa-magnifying-glass"
-        label="Cari nama perusahaan"
-        name="nama"
-        placeholder="Cth. PT. Pertamina"
-        :model="\App\Models\Perusahaan::class"
-        :required="false"
-    />
-    <x-select
-        icon="fa-solid fa-building"
-        label="Bidang"
-        name="bidang"
-        placeholder="Cth. BUMN"
-        :options="$bidang ?? ['Tidak ada data.']"
-        :required="false"
-    />
-    <x-select
-        icon="fa-solid fa-location-dot"
-        label="Kota"
-        name="kota"
-        placeholder="Cth. Malang"
-        :options="$kota ?? ['Tidak ada data.']"
-        :required="false"
-    />
+<section class="mb-7 flex flex-wrap items-end gap-4 w-auto">
+    <div class="w-80">
+        <livewire:search
+            icon="fa-solid fa-magnifying-glass"
+            label="Cari nama perusahaan"
+            name="nama"
+            placeholder="Cari nama perusahaan"
+            :model="\App\Models\Perusahaan::class"
+            :required="false"
+        />
+    </div>
+    <div class="w-80">
+        <x-select
+            icon="fa-solid fa-location-dot"
+            label="Lokasi"
+            name="lokasi"
+            :options="['' => 'Semua Lokasi'] + $lokasi_filter"
+            :required="false"
+        />
+    </div>
+    <div class="w-full sm:w-auto">
+        <button type="submit" class="cursor-pointer bg-[var(--secondary)] border border-[var(--secondary)] text-white px-12 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:py-2.5 lg:hover:bg-[#ff86cb]">
+            Cari
+        </button>
+    </div>
 </section>

@@ -1,4 +1,4 @@
-<section class="flex items-center justify-between mb-7">
+<section class="flex items-center justify-between mb-5">
     <h2 class="cursor-default text-base font-semibold text-[var(--primary-text)]">
         Daftar Data Mahasiswa
     </h2>

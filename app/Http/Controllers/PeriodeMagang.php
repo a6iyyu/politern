@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\DurasiMagang as DurasiMagangModel;
 use App\Models\PeriodeMagang as PeriodeMagangModel;
+use App\Models\Perusahaan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -22,17 +24,28 @@ class PeriodeMagang extends Controller
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
             $total_periode = PeriodeMagangModel::count();
+            $perusahaan_filter = Perusahaan::whereHas('lokasi')
+                ->pluck('nama', 'id_perusahaan_mitra')
+                ->toArray();
+            $durasi = DurasiMagangModel::all();
+
             $paginasi = PeriodeMagangModel::paginate(request('per_page', 10));
             $data = collect($paginasi->items())->map(fn(PeriodeMagangModel $periode): array => [
+                $periode->id_periode,
                 $periode->nama_periode,
-                $periode->durasi,
                 $periode->tanggal_mulai,
                 $periode->tanggal_selesai,
                 $periode->status,
                 view('components.admin.periode-magang.aksi', compact('periode'))->render(),
             ])->toArray();
 
-            return view('pages.admin.periode-magang', compact('data', 'paginasi', 'total_periode'));
+            $data_durasi = collect($durasi)->map(fn(DurasiMagangModel $durasi): array => [
+                $durasi->id_durasi_magang,
+                $durasi->nama_durasi,
+                view('components.admin.durasi-magang.aksi', compact('durasi'))->render(),
+            ])->toArray();
+
+            return view('pages.admin.periode-magang', compact('data', 'paginasi', 'total_periode', 'data_durasi', 'perusahaan_filter'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
@@ -43,10 +56,9 @@ class PeriodeMagang extends Controller
         try {
             $request->validate([
                 'nama_periode'      => 'required|string|max:200|unique:periode_magang,nama_periode',
-                'durasi'            => 'required|string|min:1|max:3',
                 'tanggal_mulai'     => 'required|date',
                 'tanggal_selesai'   => 'required|date|after_or_equal:tanggal_mulai',
-                'status'            => 'required|in:aktif,nonaktif',
+                'status'            => 'required|in:AKTIF,SELESAI',
             ]);
 
             PeriodeMagangModel::create([
@@ -94,10 +106,9 @@ class PeriodeMagang extends Controller
 
             $request->validate([
                 'nama_periode'    => "required|string|max:200|unique:periode_magang,nama_periode,{$id}",
-                'durasi'          => 'required|string|min:1|max:3',
                 'tanggal_mulai'   => 'required|date',
                 'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-                'status'          => 'required|in:aktif,nonaktif',
+                'status'          => 'required|in:AKTIF,SELESAI',
             ]);
 
             $periode->nama_periode    = $request->nama_periode;

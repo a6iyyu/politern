@@ -24,17 +24,27 @@ class Lowongan extends Controller
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
             $total_lowongan = LowonganMagang::count();
-
+            $perusahaan_filter = Perusahaan::all();
+            $periode_filter = PeriodeMagang::all();
+            
             $paginasi = LowonganMagang::paginate(request('per_page', 10));
-            $data = collect($paginasi->items())->map(fn(LowonganMagang $lowongan): array => [
-                $lowongan->bidang->nama_bidang ?? '-',
-                $lowongan->perusahaan->nama ?? '-',
-                $lowongan->kuota ?? '-',
-                $lowongan->periode_magang->nama_periode ?? '-',
-                $lowongan->status ?? '-',
-                view('components.admin.lowongan-magang.aksi', compact('lowongan'))->render(),
-            ])->toArray();
-            return view('pages.admin.lowongan-magang', compact('data', 'paginasi', 'total_lowongan'));
+            $data = collect($paginasi->items())->map(function (LowonganMagang $lowongan): array {
+                $status = match ($lowongan->status) {
+                    'DIBUKA'         => 'bg-green-200 text-green-800',
+                    'DITUTUP'   => 'bg-yellow-200 text-yellow-800',
+                };
+                return [
+                    $lowongan->id_lowongan,
+                    $lowongan->perusahaan->nama ?? '-',
+                    $lowongan->bidang->nama_bidang ?? '-',
+                    $lowongan->periode_magang->nama_periode ?? '-',
+                    $lowongan->durasi->nama_durasi ?? '-',
+                    $lowongan->kuota ?? '-',
+                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($lowongan->status ?? "N/A") . '</div>',
+                    view('components.admin.lowongan-magang.aksi', compact('lowongan'))->render(),
+                ];
+            })->toArray();
+            return view('pages.admin.lowongan-magang', compact('data', 'paginasi', 'total_lowongan', 'perusahaan_filter', 'periode_filter'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }

@@ -24,10 +24,14 @@ class LogAktivitas extends Controller
     public function index(): View
     {
         $pengguna = Auth::user()->tipe;
-        $log_aktivitas = LogAktivitasModel::all();
+        $log_aktivitas = LogAktivitasModel::with([
+            'magang.pengajuan_magang.mahasiswa',
+            'magang.pengajuan_magang.mahasiswa.program_studi',
+            'magang.pengajuan_magang.lowongan.perusahaan'
+        ])->get();
         $perusahaan = Perusahaan::pluck('nama', 'id_perusahaan_mitra')->toArray();
-        $periode_magang = PeriodeMagang::pluck('nama_periode', 'id_periode')->toArray();
-        $status_aktivitas = EvaluasiMagang::pluck('status', 'id_evaluasi')->toArray();
+        $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
+        $status_aktivitas = LogAktivitasModel::pluck('status')->unique()->toArray();
 
         switch ($pengguna) {
             case 'ADMIN':

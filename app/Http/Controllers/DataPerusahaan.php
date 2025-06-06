@@ -19,21 +19,31 @@ class DataPerusahaan extends Controller
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
             $total_perusahaan = Perusahaan::count();
-            $paginasi = Perusahaan::paginate(request('per_page', 10));
-            $data = collect($paginasi->items())->map(fn(Perusahaan $perusahaan): array => [
-                $perusahaan->id_perusahaan_mitra,
-                '<div class="flex items-center gap-2">
-                    <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($perusahaan->nama) . '
-                </div>',
-                $perusahaan->nib,
-                $perusahaan->email,
-                $perusahaan->lokasi->nama_lokasi,
-                $perusahaan->status == 'AKTIF' ? '<span class= "rounded px-4 py-2 text-white text-xs font-medium bg-[var(--green-tertiary)]">AKTIF</span>' : '<span class="rounded px-4 py-2 text-white text-xs font-medium bg-[var(--red-tertiary)]">' . e($perusahaan->status) . '</span>',
-                view('components.admin.data-perusahaan.aksi', compact('perusahaan'))->render(),
-            ])->toArray();
             $perusahaan = Perusahaan::with('lokasi')->get();
             $lokasi = Lokasi::pluck('nama_lokasi', 'id_lokasi')->toArray();
-            return view('pages.admin.data-perusahaan', compact('perusahaan', 'data', 'total_perusahaan', 'paginasi', 'lokasi'));
+            $lokasi_filter = Lokasi::whereHas('perusahaan')
+                ->pluck('nama_lokasi', 'id_lokasi')
+                ->toArray();
+
+            $paginasi = Perusahaan::paginate(request('per_page', 10));
+            $data = collect($paginasi->items())->map(function (Perusahaan $perusahaan) {
+                $status = match ($perusahaan->status) {
+                    'AKTIF'         => 'bg-green-200 text-green-800',
+                    'TIDAK AKTIF'       => 'bg-red-200 text-red-800',
+                };
+                return [
+                    $perusahaan->id_perusahaan_mitra,
+                    '<div class="flex items-center gap-2">
+                        <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($perusahaan->nama) . '
+                    </div>',
+                    $perusahaan->nib,
+                    $perusahaan->email,
+                    $perusahaan->lokasi->nama_lokasi,
+                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . e($perusahaan->status) . '</div>',
+                    view('components.admin.data-perusahaan.aksi', compact('perusahaan'))->render(),
+                ];
+            })->toArray();
+            return view('pages.admin.data-perusahaan', compact('perusahaan', 'data', 'total_perusahaan', 'paginasi', 'lokasi', 'lokasi_filter'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }

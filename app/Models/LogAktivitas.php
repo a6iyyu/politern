@@ -14,6 +14,7 @@ class LogAktivitas extends Model
 
     protected $table = 'log_aktivitas';
     protected $primaryKey = 'id_log';
+    protected $fillable = ['id_magang', 'judul', 'minggu', 'deskripsi', 'foto', 'status', 'komentar', 'tanggal_evaluasi'];
 
     public function magang(): BelongsTo
     {

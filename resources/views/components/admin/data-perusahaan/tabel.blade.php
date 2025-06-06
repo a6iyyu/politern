@@ -1,12 +1,12 @@
-<section class="flex flex-col justify-between mb-7 lg:items-center lg:flex-row">
+<section class="flex items-center justify-between mb-5">
     <h2 class="cursor-default text-base font-semibold text-[var(--primary-text)]">
-        Data Perusahaan Mitra
+        Daftar Data Perusahaan
     </h2>
-    <div class="mt-4 flex items-center gap-4 lg:mt-0">
-        <a href="{{ route('admin.data-dosen.ekspor-excel') }}" class="text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
+    <div class="flex items-center gap-4">
+        <a href="{{ route('admin.data-perusahaan.ekspor-excel') }}" class="text-xs bg-[var(--primary)] text-white font-medium px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
             <i class="fa fa-file-excel mr-2"></i> Ekspor Data
         </a>
-        <a href="javascript:void(0)" data-target="tambah-perusahaan" class="open text-sm bg-[var(--primary)] text-white px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
+        <a href="javascript:void(0)" data-target="tambah-perusahaan" class="open text-xs bg-[var(--primary)] text-white font-medium px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
             Tambah Data Perusahaan
         </a>
     </div>

@@ -4,10 +4,10 @@
     <div class="w-80">
         <livewire:search
             icon="fa-solid fa-magnifying-glass"
-            label="Cari nama dosen"
+            label="Cari nama durasi"
             name="nama"
-            placeholder="Cari nama dosen"
-            :model="\App\Models\Dosen::class"
+            placeholder="Cari nama durasi"
+            :model="\App\Models\DurasiMagang::class"
             :required="false"
         />
     </div>

@@ -24,7 +24,6 @@ class DatabaseSeeder extends Seeder
         DB::table('proyek')->delete();
         DB::table('sertifikasi_pelatihan')->delete();
         DB::table('log_aktivitas')->delete();
-        DB::table('evaluasi_magang')->delete();
         DB::table('magang')->delete();
         DB::table('pengajuan_magang')->delete();
         DB::table('lowongan_magang')->delete();
@@ -73,7 +72,6 @@ class DatabaseSeeder extends Seeder
             PengajuanMagang::class,
             Magang::class,
             LogAktivitas::class,
-            EvaluasiMagang::class,
             KeahlianLowongan::class,
         ]);
     }

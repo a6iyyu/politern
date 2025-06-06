@@ -12,5 +12,5 @@ class PeriodeMagang extends Model
     protected $primaryKey = 'id_periode';
     public $timestamps = true;
 
-    protected $fillable = ['nama_periode', 'tanggal_mulai', 'tanggal_selesai', 'semester', 'durasi'];
+    protected $fillable = ['nama_periode', 'tanggal_mulai', 'tanggal_selesai', 'semester'];
 }

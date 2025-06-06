@@ -1,8 +1,7 @@
-<div class="mb-7 ">
-@if (isset($perusahaan) || !empty($perusahaan))
-    <form action="" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-4" method="GET" enctype="multipart/form-data">
-        @csrf
-        @method('GET')
+<form action="" method="GET" class="mb-7 pt-2 flex flex-wrap items-end gap-4 w-auto">
+    @csrf
+    @method('GET')
+    <div class="w-80">
         <x-input
             icon="fa-solid fa-magnifying-glass"
             label="Cari Mahasiswa"
@@ -10,6 +9,8 @@
             placeholder="Cari Mahasiswa"
             type="text" :required="false"
         />
+    </div>
+    <div class="w-80">
         <x-select
             label="Perusahaan"
             name="perusahaan"
@@ -18,6 +19,8 @@
             :selected="request('perusahaan', '')"
             :required="false"
         />
+    </div>
+    <div class="w-80">
         <x-select
             label="Status"
             name="status"
@@ -26,24 +29,18 @@
             :selected="request('status', '')"
             :required="false"
         />
-        <section class="flex items-end lg:justify-end">
-            <button type="submit"
-                class="cursor-pointer bg-[var(--secondary)] text-white px-7 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:w-3/4 lg:py-2.5 lg:hover:bg-[#ff86cb]">
-                Cari
-            </button>
-        </section>
-    </form>
-@endif
-@if (isset($periode_magang) || !empty($periode_magang))
-    <div class="w-max">
-        <x-select
-            label="Periode Magang"
-            name="periode_magang"
-            placeholder="-- Pilih Periode Magang --"
-            :options="$periode_magang"
-            :selected="request('periode_magang', '')"
-            :required="false"
-        />
+    </div>
+    <div class="w-full sm:w-auto">
+        <button type="submit" class="cursor-pointer bg-[var(--secondary)] border border-[var(--secondary)] text-white px-12 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:py-2.5 lg:hover:bg-[#ff86cb] w-full sm:w-auto">
+            Cari
+        </button>
+    </div>
+</form>
+@if ($periode_magang)
+    <div class="cursor-default flex items-center mb-6 gap-2">
+        <h5 class="text-sm text-[var(--secondary-text)]">Periode Aktif:</h5>
+        <h5 class="px-4 py-2 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+            {{ $periode_magang->nama_periode }}
+        </h5>
     </div>
 @endif
-</div>

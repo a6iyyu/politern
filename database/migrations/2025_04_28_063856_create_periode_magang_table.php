@@ -10,7 +10,6 @@ return new class extends Migration {
         Schema::create('periode_magang', function (Blueprint $table) {
             $table->id('id_periode');
             $table->string('nama_periode');
-            $table->enum('durasi', ['1 Bulan', '2 Bulan', '3 Bulan', '4 Bulan', '5 Bulan', '6 Bulan']);
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->enum('status', ['AKTIF', 'SELESAI']);
