@@ -28,7 +28,8 @@ class DataPerusahaan extends Controller
                 $perusahaan->nib,
                 $perusahaan->email,
                 $perusahaan->lokasi->nama_lokasi,
-                $perusahaan->status == 'AKTIF' ? '<span class= "rounded px-4 py-2 text-white text-xs font-medium bg-[var(--green-tertiary)]">AKTIF</span>' : '<span class="rounded px-4 py-2 text-white text-xs font-medium bg-[var(--red-tertiary)]">' . e($perusahaan->status) . '</span>',
+                $perusahaan->status == 'AKTIF' ? '<span class= "text-xs font-medium px-5 py-2 rounded-2xl bg-green-200 text-green-800">AKTIF</span>' 
+                : '<span class="text-xs font-medium px-5 py-2 rounded-2xl bg-red-200 text-yellow-800">' . e($perusahaan->status) . '</span>',
                 view('components.admin.data-perusahaan.aksi', compact('perusahaan'))->render(),
             ])->toArray();
             $perusahaan = Perusahaan::with('lokasi')->get();
