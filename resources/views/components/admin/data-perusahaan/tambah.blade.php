@@ -3,9 +3,12 @@
         <form action="{{ route('admin.data-perusahaan.tambah') }}" enctype="multipart/form-data" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('POST')
-            <h2 class="text-lg font-semibold text-center text-gray-800 mb-3">
-                Tambah Perusahaan Mitra
-            </h2>
+              <span class="mb-3 flex items-center justify-between">
+                <h2 class="cursor-default text-sm font-semibold text-[var(--primary)]">
+                    Tambah Perusahaan Mitra
+                </h2>
+                <i class="close fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>
+            </span>
             <hr class="mb-4 border border-[var(--primary)]" />
             <div class="my-6 flex flex-col gap-3">
                 <x-input
@@ -79,12 +82,9 @@
             </span>
             </div>
             <span class="flex justify-end gap-3 text-sm items-center mt-6">
-                <button type="button" class="close cursor-pointer bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600 transition-all duration-300">
-                    Tutup
-                </button>
-                <button type="submit" class="cursor-pointer bg-[var(--blue-tertiary)] text-white px-5 py-2 rounded hover:bg-[#3d65a5] transition-all duration-300">
-                    Kirim
-                </button>
+               <button type="submit" class="mt-4 mb-2 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">
+                Simpan
+               </button>
             </span>
         </form>
     </div>
