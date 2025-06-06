@@ -267,7 +267,11 @@ class Dasbor extends Controller
         dump('Jarak Positif & Jarak Negatif:', $distances);
         
         // STEP 7: Rekomendasi
-        arsort($distances);
+        uasort($distances, function($a, $b) {
+            return $b['preference'] <=> $a['preference'];
+        });
+        
+        // Convert to array with numeric indices
         $result = [];
         foreach ($distances as $id => $data) {
             $lowongan = $lowongans->find($id);
