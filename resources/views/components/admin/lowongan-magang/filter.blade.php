@@ -2,13 +2,11 @@
     @csrf
     @method('GET')
     <div class="w-80">
-        <x-input
-            id="nama_lengkap"
-            icon="fa-solid fa-magnifying-glass"
-            label="Cari Lowongan"
-            name="nama_lowonggan"
-            placeholder="Cari Lowongan"
-            type="text"
+        <x-select
+            id="bidang"
+            label="Bidang Posisi"
+            name="bidang"
+            :options="['' => 'Semua Bidang'] + ($bidang_filter->pluck('nama_bidang', 'id_bidang')->toArray() ?? [])"
             :required="false"
         />
     </div>

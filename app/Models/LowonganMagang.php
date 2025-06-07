@@ -71,4 +71,9 @@ class LowonganMagang extends Model
     {
         return $this->belongsTo(DurasiMagang::class, 'id_durasi_magang', 'id_durasi_magang');
     }
+
+    public function jenis_magang(): BelongsTo
+    {
+        return $this->belongsTo(JenisMagang::class, 'id_jenis_magang', 'id_jenis_magang');
+    }
 }

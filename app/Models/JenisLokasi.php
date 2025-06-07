@@ -14,6 +14,7 @@ class JenisLokasi extends Model
 
     protected $table = 'jenis_lokasi';
     protected $primaryKey = 'id_jenis_lokasi';
+    protected $fillable = ['nama_jenis_lokasi'];
     public $timestamps = false;
 
     public function lowongan_magang(): HasMany

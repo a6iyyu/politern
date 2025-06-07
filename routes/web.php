@@ -104,7 +104,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('lowongan-magang')->group(function () {
             Route::get('/', [Lowongan::class, 'index'])->name('admin.lowongan-magang');
-            Route::get('/tambah', [Lowongan::class, 'create'])->name('admin.lowongan-magang.tambah');
+            Route::post('/tambah', [Lowongan::class, 'store'])->name('admin.lowongan-magang.tambah');
             Route::get('/{id}/detail', [Lowongan::class, 'detail'])->name('admin.lowongan-magang.detail');
             Route::get('/{id}/edit', [Lowongan::class, 'edit'])->name('admin.lowongan-magang.edit');
             Route::post('/{id}/edit', [Lowongan::class, 'update'])->name('admin.lowongan-magang.perbarui');
