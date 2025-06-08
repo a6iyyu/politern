@@ -82,7 +82,7 @@ class Dasbor extends Controller
                 $mahasiswa_aktif = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'AKTIF')->count();
                 $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
                 $mahasiswa_selesai = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'SELESAI')->count();
-                $menunggu_evaluasi = EvaluasiMagang::whereHas('magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->where('status', 'MENUNGGU')->count();
+                $menunggu_evaluasi = LogAktivitas::whereHas('magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->where('status', 'MENUNGGU')->count();
                 $total_aktivitas = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
                 $total_bimbingan = Magang::where('id_dosen_pembimbing', $id_dosen)->count();
                 $total_mahasiswa = Mahasiswa::count();
@@ -376,9 +376,9 @@ class Dasbor extends Controller
     {
         $pengguna = Auth::user();
         $id_dosen = $pengguna->dosen->id_dosen;
-        return EvaluasiMagang::whereHas('magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))
-            ->where('evaluasi_magang.status', 'MENUNGGU')
-            ->join('magang', 'evaluasi_magang.id_magang', '=', 'magang.id_magang')
+        return LogAktivitas::whereHas('magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))
+            ->where('log_aktivitas.status', 'MENUNGGU')
+            ->join('magang', 'log_aktivitas.id_magang', '=', 'magang.id_magang')
             ->join('pengajuan_magang', 'magang.id_pengajuan_magang', '=', 'pengajuan_magang.id_pengajuan_magang')
             ->select('pengajuan_magang.id_mahasiswa')
             ->distinct()
