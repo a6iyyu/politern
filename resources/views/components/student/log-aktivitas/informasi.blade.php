@@ -8,23 +8,27 @@
         </span>
         <span class="flex items-center gap-2">
             <strong>Periode:</strong>
-            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+            <h6>{{ $periode ?? "N/A" }}</h6>
         </span>
         <span class="flex items-center gap-2">
             <strong>Posisi:</strong>
-            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+            <h6>{{ $posisi ?? "N/A" }}</h6>
         </span>
         <span class="flex items-center gap-2">
             <strong>Total Log:</strong>
-            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+            <h6>{{ $total_log ?? "N/A" }}</h6>
         </span>
         <span class="flex items-center gap-2">
             <strong>Dosen Pembimbing:</strong>
-            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+            <h6>{{ $dospem ?? "N/A" }}</h6>
         </span>
         <span class="flex items-center gap-2">
             <strong>Status:</strong>
-            <h6>{{ $perusahaan ?? "N/A" }}</h6>
+            @if(strtolower($status ?? '') === 'aktif')
+                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">{{ $status }}</span>
+            @else
+                <span class="bg-gray-300 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold">{{ $status ?? "N/A" }}</span>
+            @endif
         </span>
     </figcaption>
 </figure>

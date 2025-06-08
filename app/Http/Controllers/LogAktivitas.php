@@ -17,6 +17,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
@@ -36,17 +37,73 @@ class LogAktivitas extends Controller
             case 'DOSEN':
                 return view('pages.lecturer.log-aktivitas', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
             case 'MAHASISWA':
-                $status_magang = Magang::where('id_pengajuan_magang', Auth::user()->id_pengguna)->first();
-                if (!$status_magang || $status_magang->status !== 'AKTIF') return view('pages.student.log-aktivitas', ['log_aktivitas' => null]);
+                // Ambil data magang aktif mahasiswa
+                $mahasiswa = DB::table('mahasiswa')->where('id_pengguna', Auth::user()->id_pengguna)->first();
+                if (!$mahasiswa) {
+                    return view('pages.student.log-aktivitas', ['log_aktivitas' => null]);
+                }
+                $pengajuan = DB::table('pengajuan_magang')->where('id_mahasiswa', $mahasiswa->id_mahasiswa)->first();
+                if (!$pengajuan) {
+                    return view('pages.student.log-aktivitas', ['log_aktivitas' => null]);
+                }
+                $magang = DB::table('magang')->where('id_pengajuan_magang', $pengajuan->id_pengajuan_magang)->where('status', 'AKTIF')->first();
+                if (!$magang) {
+                    return view('pages.student.log-aktivitas', ['log_aktivitas' => null]);
+                }
 
-                $dospem = $this->dospem();
-                $periode = $this->periode();
-                $perusahaan = $this->perusahaan();
-                $posisi = $this->posisi();
-                $status = $this->status();
-                $log_aktivitas = $this->log_aktivitas();
+                // Ambil data lowongan
+                $lowongan = DB::table('lowongan_magang')->where('id_lowongan', $pengajuan->id_lowongan)->first();
 
-                return view('pages.student.log-aktivitas', compact('dospem', 'log_aktivitas', 'periode', 'perusahaan', 'posisi', 'status'));
+                // Perusahaan
+                $perusahaan = "N/A";
+                if ($lowongan && $lowongan->id_perusahaan_mitra) {
+                    $perusahaanRow = DB::table('perusahaan_mitra')->where('id_perusahaan_mitra', $lowongan->id_perusahaan_mitra)->first();
+                    $perusahaan = $perusahaanRow->nama ?? "N/A";
+                }
+
+                // Lokasi
+                $lokasi = "N/A";
+                if (isset($perusahaanRow) && $perusahaanRow && $perusahaanRow->id_lokasi) {
+                    $lokasiRow = DB::table('lokasi')->where('id_lokasi', $perusahaanRow->id_lokasi)->first();
+                    $lokasi = $lokasiRow->nama_lokasi ?? "N/A";
+                }
+
+                // Periode
+                $periode = "N/A";
+                if ($lowongan && $lowongan->id_periode) {
+                    $periodeRow = DB::table('periode_magang')->where('id_periode', $lowongan->id_periode)->first();
+                    $periode = $periodeRow->nama_periode ?? "N/A";
+                }
+
+                // Posisi
+                $posisi = "N/A";
+                if ($lowongan && $lowongan->id_bidang) {
+                    $bidangRow = DB::table('bidang')->where('id_bidang', $lowongan->id_bidang)->first();
+                    $posisi = $bidangRow->nama_bidang ?? "N/A";
+                }
+
+                // Dosen Pembimbing
+                $dospem = "N/A";
+                if ($magang->id_dosen_pembimbing) {
+                    $dosen = DB::table('dosen')->where('id_dosen', $magang->id_dosen_pembimbing)->first();
+                    if ($dosen && $dosen->id_pengguna) {
+                        $penggunaDosen = DB::table('pengguna')->where('id_pengguna', $dosen->id_pengguna)->first();
+                        $dospem = $penggunaDosen->nama_pengguna ?? "N/A";
+                    }
+                }
+
+                // Status
+                $status = $magang->status ?? "N/A";
+
+                // Total log
+                $total_log = DB::table('log_aktivitas')->where('id_magang', $magang->id_magang)->count();
+
+                // Log aktivitas untuk mahasiswa ini
+                $log_aktivitas = LogAktivitasModel::where('id_magang', $magang->id_magang)->get();
+
+                return view('pages.student.log-aktivitas', compact(
+                    'dospem', 'log_aktivitas', 'periode', 'perusahaan', 'posisi', 'status', 'total_log', 'lokasi'
+                ));
             default:
                 abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
@@ -55,9 +112,56 @@ class LogAktivitas extends Controller
     public function create(Request $request): RedirectResponse
     {
         try {
-            $request->validate([]);
+            // Validasi input
+            $validated = $request->validate([
+                'minggu'     => 'required|integer|min:1',
+                'judul'      => 'required|string|max:255',
+                'deskripsi'  => 'required|string',
+                'foto'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            ]);
 
-            return to_route('mahasiswa.log-aktivitas');
+            // Ambil mahasiswa yang sedang login
+            $mahasiswa = DB::table('mahasiswa')->where('id_pengguna', Auth::user()->id_pengguna)->first();
+            if (!$mahasiswa) {
+                return back()->withErrors(['errors' => 'Mahasiswa tidak ditemukan.']);
+            }
+
+            // Ambil pengajuan magang aktif
+            $pengajuan = DB::table('pengajuan_magang')->where('id_mahasiswa', $mahasiswa->id_mahasiswa)->first();
+            if (!$pengajuan) {
+                return back()->withErrors(['errors' => 'Pengajuan magang tidak ditemukan.']);
+            }
+
+            // Ambil magang aktif
+            $magang = DB::table('magang')->where('id_pengajuan_magang', $pengajuan->id_pengajuan_magang)->where('status', 'AKTIF')->first();
+            if (!$magang) {
+                return back()->withErrors(['errors' => 'Magang aktif tidak ditemukan.']);
+            }
+
+            // Handle upload foto jika ada
+            $fotoPath = null;
+            if ($request->hasFile('foto')) {
+                $fotoPath = $request->file('foto')->storeAs(
+                    'shared/log-aktivitas',
+                    $request->file('foto')->getClientOriginalName(),
+                    'public'
+                );
+                $fotoPath = '/storage/shared/log-aktivitas/' . $request->file('foto')->getClientOriginalName();
+            }
+
+            // Simpan log aktivitas baru
+            DB::table('log_aktivitas')->insert([
+                'id_magang'  => $magang->id_magang,
+                'minggu'     => $validated['minggu'],
+                'judul'      => $validated['judul'],
+                'deskripsi'  => $validated['deskripsi'],
+                'foto'       => $fotoPath,
+                'status'     => 'MENUNGGU',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            return to_route('mahasiswa.log-aktivitas')->with('success', 'Log aktivitas berhasil ditambahkan.');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
