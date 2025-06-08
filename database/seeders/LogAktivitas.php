@@ -65,19 +65,6 @@ class LogAktivitas extends Seeder
                 'created_at'            => Carbon::now(),
                 'updated_at'            => Carbon::now(),
             ],
-            [
-                'id_log'                => 5,
-                'id_magang'             => 5,
-                'judul'                 => 'Pelatihan Teknologi Database',
-                'minggu'                => 5,
-                'deskripsi'             => 'Mengikuti pelatihan teknologi database yang digunakan perusahaan. Mempelajari arsitektur microservice dan teknologi deployment yang digunakan.',
-                'foto'                  => null,
-                'status'                => 'MENUNGGU',
-                'komentar'              => null,
-                'tanggal_evaluasi'      => null,
-                'created_at'            => Carbon::now(),
-                'updated_at'            => Carbon::now(),
-            ],
         ]);
     }
 }
