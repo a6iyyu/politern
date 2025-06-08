@@ -3,7 +3,7 @@
         Tambah Aktivitas
     </button>
 </section>
-<section class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+<section class="mt-6 grid grid-cols-1 gap-4">
     @if (isset($log_aktivitas) || !empty($log_aktivitas))
         @foreach ($log_aktivitas as $log)
             <x-log 

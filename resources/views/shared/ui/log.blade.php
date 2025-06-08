@@ -12,8 +12,8 @@
             </h5>
         </span>
         <span class="flex items-center gap-4 text-xs">
-            <h5 class="cursor-pointer px-4 py-2 rounded-2xl transition-all duration-300 ease-in-out {{ $info[$status] ?? 'border text-[var(--secondary-text)]' }}">
-                {{ $status === 'DIKONFIRMASI' ? 'Dikonfirmasi' : ucfirst(strtolower($status)) }}
+            <h5 class="cursor-pointer px-4 py-2 rounded-2xl transition-all duration-300 ease-in-out {{ $status() }}">
+                {{ $format() }}
             </h5>
             <a
                 href="javascript:void(0)"
@@ -52,7 +52,7 @@
             @endif
         </div>
     </section>
-    @if ($status === 'DITOLAK' || $status === 'DISETUJUI')
+    @if (in_array(strtoupper($status ?? ''), ['DITOLAK', 'DISETUJUI']))
         <section class="cursor-default mt-5 px-6 py-4 bg-[#f3f3f3] rounded-md">
             <h5 class="text-sm text-[var(--primary-text)]">
                 Komentar Dosen:

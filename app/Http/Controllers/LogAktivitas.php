@@ -11,6 +11,7 @@ use App\Models\PengajuanMagang;
 use App\Models\Perusahaan;
 use App\Models\PeriodeMagang;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -36,14 +37,14 @@ class LogAktivitas extends Controller
                 return view('pages.lecturer.log-aktivitas', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
             case 'MAHASISWA':
                 $status_magang = Magang::where('id_pengajuan_magang', Auth::user()->id_pengguna)->first();
-                if (!$status_magang || $status_magang->status !== 'AKTIF') return view('pages.student.log-aktivitas');
+                if (!$status_magang || $status_magang->status !== 'AKTIF') return view('pages.student.log-aktivitas', ['log_aktivitas' => null]);
 
                 $dospem = $this->dospem();
                 $periode = $this->periode();
                 $perusahaan = $this->perusahaan();
                 $posisi = $this->posisi();
                 $status = $this->status();
-                $log_aktivitas = LogAktivitasModel::all();
+                $log_aktivitas = $this->log_aktivitas();
 
                 return view('pages.student.log-aktivitas', compact('dospem', 'log_aktivitas', 'periode', 'perusahaan', 'posisi', 'status'));
             default:
@@ -127,6 +128,13 @@ class LogAktivitas extends Controller
         return 0;
     }
 
+    private function log_aktivitas(): array|Collection
+    {
+        return LogAktivitasModel::whereHas('magang.pengajuan_magang.mahasiswa.pengguna', function ($query) {
+            $query->where('id_pengguna', Auth::user()->id_pengguna);
+        })->with(['magang.pengajuan_magang.mahasiswa', 'magang.pengajuan_magang.mahasiswa.program_studi', 'magang.pengajuan_magang.lowongan.perusahaan'])->get();
+    }
+
     private function periode(): int
     {
         return 0;
@@ -136,6 +144,7 @@ class LogAktivitas extends Controller
     {
         $mahasiswa = Mahasiswa::where('id_pengguna', Auth::user()->id_pengguna)->first();
         if (!$mahasiswa) return null;
+
         $pengajuan = PengajuanMagang::with('lowongan.perusahaan')->where('id_mahasiswa', $mahasiswa->id_mahasiswa)->first();
         return $pengajuan?->lowongan?->perusahaan?->nama_perusahaan ?? "N/A";
     }

@@ -67,7 +67,7 @@
             </a>
         @endif
         @if (Auth::check() && Auth::user()->tipe === 'DOSEN')
-            <a href="{{ route('dosen.dasbor') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('dosen') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
+            <a href="{{ route('dosen.dasbor') }}" class="mb-4 flex items-center pl-5 pr-7 py-3 {{ Request::is('dosen') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('dosen') ? asset('icons/dasbor-biru.svg') : asset('icons/dasbor-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
                 <h4 class="ml-7 text-sm tracking-wider">Dasbor</h4>
             </a>
