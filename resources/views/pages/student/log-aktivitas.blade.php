@@ -10,7 +10,7 @@
 @section('konten')
     <x-header title="Log Aktivitas" />
     <main class="flex flex-col pb-10 px-10 pl-84 transition-all duration-300">
-        @if (!(isset($dospem) || isset($perusahaan)))   {{-- Ini akan diganti kalau sudah dinamis. --}}
+        @if (!collect($log_aktivitas)->isEmpty())
             @include('components.student.log-aktivitas.informasi')
             @include('components.student.log-aktivitas.daftar')
             @include('components.student.log-aktivitas.tambah')

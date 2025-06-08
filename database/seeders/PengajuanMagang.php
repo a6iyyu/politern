@@ -38,6 +38,24 @@ class PengajuanMagang extends Seeder
                 'keterangan'            => 'Pengajuan magang',
                 'created_at'            => Carbon::now(),
                 'updated_at'            => Carbon::now(),
+            ],
+            [
+                'id_pengajuan_magang'   => 4,
+                'id_mahasiswa'          => 3,
+                'id_lowongan'           => 2,
+                'status'                => 'DISETUJUI',
+                'keterangan'            => 'Pengajuan magang',
+                'created_at'            => Carbon::now(),
+                'updated_at'            => Carbon::now(),
+            ],
+            [
+                'id_pengajuan_magang'   => 5,
+                'id_mahasiswa'          => 5,
+                'id_lowongan'           => 2,
+                'status'                => 'DISETUJUI',
+                'keterangan'            => 'Pengajuan magang',
+                'created_at'            => Carbon::now(),
+                'updated_at'            => Carbon::now(),
             ]
         ]);
     }

@@ -13,8 +13,7 @@ interface Modal {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const buttons =
-    document.querySelectorAll<HTMLAnchorElement>('.edit[data-id]');
+  const buttons = document.querySelectorAll<HTMLAnchorElement>('.edit[data-id]');
   const modal = document.querySelector<HTMLElement>('.modal-edit-perusahaan');
   if (!buttons || !modal) return;
 
@@ -24,15 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const nama = form.querySelector<HTMLInputElement>("input[name='nama']");
   const nib = form.querySelector<HTMLInputElement>("input[name='nib']");
-  const nomor_telepon = form.querySelector<HTMLInputElement>(
-    "input[name='nomor_telepon']"
-  );
+  const nomor_telepon = form.querySelector<HTMLInputElement>("input[name='nomor_telepon']");
   const email = form.querySelector<HTMLInputElement>("input[name='email']");
   const website = form.querySelector<HTMLInputElement>("input[name='website']");
   const status = form.querySelector<HTMLSelectElement>("select[name='status']");
-  const id_lokasi = form.querySelector<HTMLSelectElement>(
-    "select[name='id_lokasi']"
-  );
+  const id_lokasi = form.querySelector<HTMLSelectElement>("select[name='id_lokasi']");
 
   const fetchPerusahaanData = async (id: string): Promise<Modal | null> => {
     try {
@@ -58,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const data = await fetchPerusahaanData(id);
       if (!data) return;
-
       modal.classList.remove('hidden');
 
       if (nama) nama.value = data.perusahaan.nama;
@@ -68,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (website) website.value = data.perusahaan.website;
       if (status) status.value = data.perusahaan.status;
       if (id_lokasi) id_lokasi.value = data.perusahaan.id_lokasi;
-
       form.action = `/admin/data-perusahaan/${id}/perbarui`;
     });
   });

@@ -19,8 +19,7 @@ interface Modal {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const buttons =
-    document.querySelectorAll<HTMLAnchorElement>('.detail[data-id]');
+  const buttons = document.querySelectorAll<HTMLAnchorElement>('.detail[data-id]');
   const modal = document.getElementById('modal-detail-periode');
   const close = document.getElementById('close-detail');
   if (!modal || !close) return;
@@ -29,10 +28,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const durasi = document.getElementById('durasi');
   const tanggal_mulai = document.getElementById('tanggal_mulai');
   const tanggal_selesai = document.getElementById('tanggal_selesai');
-    const status = document.getElementById('status');
-    const tanggal_dibuat = document.getElementById('tanggal_dibuat');
-  if (!nama_periode || !durasi || !tanggal_mulai || !tanggal_selesai || !status || !tanggal_dibuat)
-    return;
+  const status = document.getElementById('status');
+  const tanggal_dibuat = document.getElementById('tanggal_dibuat');
+  if (!nama_periode || !durasi || !tanggal_mulai || !tanggal_selesai || !status || !tanggal_dibuat) return;
 
   buttons.forEach((button) => {
     button.addEventListener('click', async () => {
@@ -49,11 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (!data.ok) return;
       const response = (await data.json()) as Modal;
-        console.log(response.periode.nama_periode);
-        console.log('durasi:', response.periode.durasi);
-        console.log('status:', response.periode.status);
 
-        
       nama_periode.textContent = response.periode.nama_periode;
       tanggal_mulai.textContent = response.periode.tanggal_mulai;
       tanggal_selesai.textContent = response.periode.tanggal_selesai;

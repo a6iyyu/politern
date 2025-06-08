@@ -27,19 +27,20 @@ class Lowongan extends Controller
     public function index(): View
     {
         $pengguna = Auth::user()->tipe;
+
         if ($pengguna === "ADMIN") {
             $total_lowongan = LowonganMagang::count();
             $perusahaan_filter = Perusahaan::all();
             $periode_filter = PeriodeMagang::all();
             $bidang_filter = Bidang::all();
 
-            $perusahaan   = Perusahaan::pluck('nama', 'id_perusahaan_mitra')->toArray();
             $bidang       = Bidang::pluck('nama_bidang', 'id_bidang')->toArray();
-            $keahlian     = Keahlian::pluck('nama_keahlian', 'id_keahlian')->toArray();
-            $jenis_lokasi = JenisLokasi::pluck('nama_jenis_lokasi', 'id_jenis_lokasi')->toArray();
-            $periode      = PeriodeMagang::pluck('nama_periode', 'id_periode')->toArray();
-            $jenis_magang = JenisMagang::pluck('nama_jenis', 'id_jenis_magang')->toArray();
             $durasi       = DurasiMagang::pluck('nama_durasi', 'id_durasi_magang')->toArray();
+            $jenis_lokasi = JenisLokasi::pluck('nama_jenis_lokasi', 'id_jenis_lokasi')->toArray();
+            $jenis_magang = JenisMagang::pluck('nama_jenis', 'id_jenis_magang')->toArray();
+            $keahlian     = Keahlian::pluck('nama_keahlian', 'id_keahlian')->toArray();
+            $periode      = PeriodeMagang::pluck('nama_periode', 'id_periode')->toArray();
+            $perusahaan   = Perusahaan::pluck('nama', 'id_perusahaan_mitra')->toArray();
             $query = LowonganMagang::query();
 
             if ($id_bidang = request('bidang')) $query->where('id_bidang', $id_bidang);
@@ -78,6 +79,9 @@ class Lowongan extends Controller
                 'jenis_magang',
                 'durasi'
             ));
+        } else if ($pengguna === 'MAHASISWA') {
+            $lowongan = LowonganMagang::with(['bidang', 'perusahaan', 'jenis_lokasi', 'periode_magang', 'keahlian', 'jenis_magang', 'durasi'])->where('status', 'DIBUKA')->get();
+            return view('pages.student.lowongan', compact('lowongan'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
@@ -87,13 +91,13 @@ class Lowongan extends Controller
     {
         try {
             $request->validate([
-                'nama'                          => 'required|string|max:100|unique:perusahaan,nama',
-                'nama_bidang'                   => 'required|string|max:100|unique:bidang,nama_bidang',
+                'id_perusahaan_mitra'           => 'required|string|max:100|unique:perusahaan,nama',
+                'id_bidang'                     => 'required|string|max:100|unique:bidang,nama_bidang',
                 'id_keahlian'                   => 'required|array|min:1',
                 'id_keahlian.*'                 => 'exists:keahlian,id_keahlian',
-                'nama_jenis_lokasi'             => 'required|string|max:100|unique:jenis_lokasi,nama_jenis_lokasi',
+                'id_periode'                    => 'required|string',
+                'id_jenis_lokasi'               => 'required|string',
                 'dekripsi'                      => 'required|string|max:255',
-                'gaji'                          => 'required|numeric|min:0',
                 'kuota'                         => 'required|integer|min:10',
                 'status'                        => 'required|in:DIBUKA,DITUTUP',
                 'tanggal_mulai_pendaftaran'     => 'required|date',

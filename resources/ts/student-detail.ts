@@ -38,8 +38,7 @@ interface Modal {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const buttons =
-    document.querySelectorAll<HTMLAnchorElement>('.detail[data-id]');
+  const buttons = document.querySelectorAll<HTMLAnchorElement>('.detail[data-id]');
   const modal = document.getElementById('modal-detail-mahasiswa');
   const close = document.getElementById('close-detail');
   if (!modal || !close) return;

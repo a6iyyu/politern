@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 Route::middleware('guest')->group(function () {
+    Route::get('/beranda', fn() => view('pages.unregistered.index'))->name('beranda')->withoutMiddleware('auth');
     Route::get('/lupa-kata-sandi', fn() => view('pages.auth.lupa-kata-sandi'))->name('lupa-kata-sandi')->withoutMiddleware('auth');
     Route::get('/masuk', fn() => view('pages.auth.masuk'))->name('masuk')->withoutMiddleware('auth');
     Route::post('/masuk', [Autentikasi::class, 'masuk'])->name('login')->withoutMiddleware('auth');
@@ -28,7 +29,7 @@ Route::middleware('auth')->group(function () {
         $tipe = strtolower(Session::get('tipe'));
         if (!in_array($tipe, ['admin', 'mahasiswa', 'dosen'])) return Redirect::route('keluar');
         return Redirect::route("{$tipe}.dasbor");
-    })->name('beranda');
+    });
 
     Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');
 
@@ -102,12 +103,12 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('lowongan-magang')->group(function () {
             Route::get('/', [Lowongan::class, 'index'])->name('admin.lowongan-magang');
-            Route::post('/tambah', [Lowongan::class, 'store'])->name('admin.lowongan-magang.tambah');
+            Route::get('/ekspor-excel', [Lowongan::class, 'export_excel'])->name('admin.lowongan-magang.ekspor-excel');
             Route::get('/{id}/detail', [Lowongan::class, 'detail'])->name('admin.lowongan-magang.detail');
             Route::get('/{id}/edit', [Lowongan::class, 'edit'])->name('admin.lowongan-magang.edit');
             Route::post('/{id}/edit', [Lowongan::class, 'update'])->name('admin.lowongan-magang.perbarui');
+            Route::post('/tambah', [Lowongan::class, 'store'])->name('admin.lowongan-magang.tambah');
             Route::delete('/{id}/hapus', [Lowongan::class, 'destroy'])->name('admin.lowongan-magang.hapus');
-            Route::get('/ekspor-excel', [Lowongan::class, 'export_excel'])->name('admin.lowongan-magang.ekspor-excel');
         });
 
         Route::prefix('pengajuan-magang')->group(function () {
@@ -128,8 +129,11 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa.dasbor');
-        Route::get('/{id}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang');
-        Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail');
+        
+        Route::prefix('rekomendasi-magang')->group(function () {
+            Route::get('/{id?}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang')->where('id', '[0-9]+');
+            Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail')->where('id', '[0-9]+');
+        });
 
         Route::prefix('kelola-lamaran')->group(function () {
             Route::get('/', [Pengajuan::class, 'index'])->name('mahasiswa.kelola-lamaran');

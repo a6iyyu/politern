@@ -1,36 +1,31 @@
-<form action="" method="GET" class="mb-7 pt-2 flex flex-wrap items-end gap-4 w-auto">
+<form action="" method="GET" class="mb-7 pt-2 grid grid-cols-1 gap-4 lg:grid-cols-4">
     @csrf
     @method('GET')
-    <div class="w-80">
-        <x-input
-            icon="fa-solid fa-magnifying-glass"
-            label="Cari Mahasiswa"
-            name="nama_lengkap"
-            placeholder="Cari Mahasiswa"
-            type="text" :required="false"
-        />
-    </div>
-    <div class="w-80">
-        <x-select
-            label="Perusahaan"
-            name="perusahaan"
-            placeholder="-- Semua Perusahaan --"
-            :options="$perusahaan"
-            :selected="request('perusahaan', '')"
-            :required="false"
-        />
-    </div>
-    <div class="w-80">
-        <x-select
-            label="Status"
-            name="status"
-            placeholder="-- Semua Status --"
-            :options="$status_aktivitas"
-            :selected="request('status', '')"
-            :required="false"
-        />
-    </div>
-    <div class="w-full sm:w-auto">
+    <x-input
+        icon="fa-solid fa-magnifying-glass"
+        label="Cari Mahasiswa"
+        name="nama_lengkap"
+        placeholder="Cari Mahasiswa"
+        type="text"
+        :required="false"
+    />
+    <x-select
+        label="Perusahaan"
+        name="perusahaan"
+        placeholder="-- Semua Perusahaan --"
+        :options="$perusahaan"
+        :selected="request('perusahaan', '')"
+        :required="false"
+    />
+    <x-select
+        label="Status"
+        name="status"
+        placeholder="-- Semua Status --"
+        :options="$status_aktivitas"
+        :selected="request('status', '')"
+        :required="false"
+    />
+    <div class="flex items-end justify-end">
         <button type="submit" class="cursor-pointer bg-[var(--secondary)] border border-[var(--secondary)] text-white px-12 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:py-2.5 lg:hover:bg-[#ff86cb] w-full sm:w-auto">
             Cari
         </button>

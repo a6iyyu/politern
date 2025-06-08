@@ -1,3 +1,4 @@
+
 <section class="flex items-center justify-between mb-5 pt-2">
     <h2 class="cursor-default text-base font-semibold text-[var(--primary-text)]">
         Daftar Aktivitas Magang
@@ -17,18 +18,18 @@
 @include('components.lecturer.log-aktivitas.filter')
 @if (!empty($log_aktivitas))
     @foreach ($log_aktivitas as $log)
-        <x-card-aktivity 
-            :minggu="$log->minggu ?? 'N/A'"
-            :judul="$log->judul"
-            :status="$log->status"
-            :deskripsi="$log->deskripsi"
-            :foto="$log->foto"
-            :id-log="$log->id_log"
-            :komentar="($log->status === 'DITOLAK' || $log->status === 'DISETUJUI') ? ($log->komentar ?? null) : null"
-            :nama="$log->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? 'N/A'"
+        <x-log
+            :comment="($log->status === 'DITOLAK' || $log->status === 'DISETUJUI') ? ($log->komentar ?? null) : null"
+            :confirmation_date="$log->tanggal_konfirmasi ? $log->tanggal_konfirmasi->format('d/m/Y') : null"
+            :description="$log->deskripsi ?? 'N/A'"
+            :id="$log->id_log ?? 'N/A'"
+            :name="$log->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? 'N/A'"
             :nim="$log->magang->pengajuan_magang->mahasiswa->nim ?? 'N/A'"
-            :foto-profil="$log->magang->pengajuan_magang->mahasiswa->foto_profil ?? null"
-            :tanggal-konfirmasi="$log->tanggal_konfirmasi ? $log->tanggal_konfirmasi->format('d/m/Y') : null"
+            :photo="$log->foto ?? 'Tidak ada foto yang tersedia.'"
+            :profile_photo="$log->magang->pengajuan_magang->mahasiswa->foto_profil ?? null"
+            :status="$log->status ?? 'N/A'"
+            :title="$log->judul ?? 'N/A'"
+            :week="$log->minggu ?? 'N/A'"
         />
     @endforeach
 @else
