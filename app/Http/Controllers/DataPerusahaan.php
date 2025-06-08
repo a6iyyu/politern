@@ -7,9 +7,11 @@ use App\Models\Lokasi;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
 
 class DataPerusahaan extends Controller
@@ -18,6 +20,7 @@ class DataPerusahaan extends Controller
     {
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
+            $baris = 1;
             $total_perusahaan = Perusahaan::count();
             $perusahaan = Perusahaan::with('lokasi')->get();
             $lokasi = Lokasi::pluck('nama_lokasi', 'id_lokasi')->toArray();
@@ -29,7 +32,7 @@ class DataPerusahaan extends Controller
             $data = collect($paginasi->items())->map(function (Perusahaan $perusahaan) {
                 $status = match ($perusahaan->status) {
                     'AKTIF'         => 'bg-green-200 text-green-800',
-                    'TIDAK AKTIF'       => 'bg-red-200 text-red-800',
+                    'TIDAK AKTIF'   => 'bg-red-200 text-red-800',
                 };
                 return [
                     $perusahaan->id_perusahaan_mitra,
@@ -98,23 +101,29 @@ class DataPerusahaan extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(string $id): JsonResponse
     {
-        $perusahaan = Perusahaan::with('lokasi')->findOrFail($id);
+        try {
+            $perusahaan = Perusahaan::with('lokasi')->findOrFail($id);
 
-        return response()->json([
-            'perusahaan' => [
-                'nama'           => $perusahaan->nama,
-                'nib'            => $perusahaan->nib,
-                'nomor_telepon'  => $perusahaan->nomor_telepon,
-                'email'          => $perusahaan->email,
-                'website'        => $perusahaan->website,
-                'logo'           => $perusahaan->logo,
-                'status'         => $perusahaan->status,
-                'id_lokasi'      => $perusahaan->id_lokasi,
-            ],
-            'lokasi' => Lokasi::pluck('nama_lokasi', 'id_lokasi')->toArray(),
-        ]);
+            return response()->json([
+                'lokasi' => Lokasi::pluck('nama_lokasi', 'id_lokasi')->toArray(),
+                'perusahaan' => [
+                    'nama'           => $perusahaan->nama,
+                    'nib'            => $perusahaan->nib,
+                    'nomor_telepon'  => $perusahaan->nomor_telepon,
+                    'email'          => $perusahaan->email,
+                    'website'        => $perusahaan->website,
+                    'logo'           => $perusahaan->logo,
+                    'status'         => $perusahaan->status,
+                    'id_lokasi'      => $perusahaan->id_lokasi,
+                ],
+            ]);
+        } catch (ModelNotFoundException $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return Response::json(['errors' => 'Data perusahaan tidak ditemukan.'], 404);
+        }
     }
 
     public function show(Request $request, string $id): array
@@ -153,6 +162,7 @@ class DataPerusahaan extends Controller
                 'logo'          => $request->logo,
                 'status'        => $request->status
             ]);
+
             return to_route('admin.data-perusahaan')->with('success', 'Berhasil memperbarui data perusahaan.');
         } catch (Exception $exception) {
             report($exception);

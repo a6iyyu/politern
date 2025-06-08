@@ -2,26 +2,19 @@
     Rekomendasi Magang
 </h4>
 <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-    @foreach ($rekomendasi as $item)
-        @php
-            $lowongan = $item['lowongan'];
-        @endphp
-
+    @foreach ($rekomendasi['lowongan'] as $item)
         <x-card
-            :category="$lowongan->bidang->first()->nama_bidang ?? 'N/A'"
-            :createdAt="$lowongan->created_at ?? 'N/A'"
-            :industry="$lowongan->perusahaan->nama ?? 'N/A'"
-            :location="$lowongan->perusahaan->lokasi->nama_lokasi ?? 'N/A'"
-            :logo="$lowongan->perusahaan->logo ?? 'N/A'"
-            :name="$lowongan->judul ?? 'N/A'"
-            :salary="$lowongan->gaji ?? 'N/A'"
-            :status="$lowongan->status ?? 'N/A'"
-            :type="$lowongan->jenis_lokasi->nama_jenis_lokasi ?? 'N/A'"
-            :url="route('mahasiswa.rekomendasi-magang', ['id' => $lowongan->perusahaan->id_perusahaan_mitra])"
-        >
-            <div class="mt-2 text-sm text-gray-500">
-                Skor Rekomendasi: <strong>{{ number_format($item['skor'], 4) }}</strong>
-            </div>
-        </x-card>   
+            :category="$item->bidang->nama_bidang ?? 'N/A'"
+            :createdAt="$item->created_at ?? 'N/A'"
+            :industry="$item->perusahaan->nama ?? 'N/A'"
+            :location="$item->perusahaan->lokasi->nama_lokasi ?? 'N/A'"
+            :logo="$item->perusahaan->logo ?? 'N/A'"
+            :name="$item->judul ?? 'N/A'"
+            :salary="$item->gaji ?? 'N/A'"
+            :score="number_format($rekomendasi['skor'][$item->id_lowongan] ?? 0, 4)"
+            :status="$item->status ?? 'N/A'"
+            :type="$item->jenis_lokasi->nama_jenis_lokasi ?? 'N/A'"
+            :url="route('mahasiswa.rekomendasi-magang.detail', ['id' => $item->perusahaan->id_perusahaan_mitra])"
+        />
     @endforeach
 </section>

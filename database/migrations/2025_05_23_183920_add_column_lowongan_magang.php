@@ -19,8 +19,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('lowongan_magang', function (Blueprint $table) {
-            $table->dropColumn('id_bidang');
-            $table->dropColumn('id_jenis_lokasi');
+            $table->dropColumn(['id_bidang', 'id_jenis_lokasi']);
         });
     }
 };

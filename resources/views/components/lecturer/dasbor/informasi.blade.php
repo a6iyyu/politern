@@ -20,7 +20,7 @@
             background="#fef5e6"
             color="#f59e0b"
             icon="fa-solid fa-user-xmark"
-            info="{{ $evaluasi_magang }} mahasiswa menunggu evaluasi"
+            info="{{ $evaluasi_magang ?? 'N/A' }} mahasiswa menunggu evaluasi"
             title="Menunggu Evaluasi"
             total="{{ $menunggu_evaluasi }}"
         />

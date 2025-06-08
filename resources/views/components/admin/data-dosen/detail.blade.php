@@ -1,8 +1,8 @@
 <section id="modal-detail-dosen" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/20 backdrop-blur-[1px]" aria-modal="true" role="dialog">
     <div class="flex items-center justify-center min-h-screen px-4">
-        <figure class="w-full max-w-2xl rounded-xl bg-white p-8 shadow-lg border border-[var(--stroke)]">
+        <figure class="w-full max-w-2xl rounded-xl bg-white p-7 shadow-lg border border-[var(--stroke)]">
             <span class="mb-3 flex items-center justify-between">
-                <h2 class="cursor-default text-sm font-semibold text-[var(--primary)]">
+                <h2 class="cursor-default text-sm font-semibold text-[var(--primary)] lg:text-base">
                     Detail Dosen
                 </h2>
                 <i id="close-detail" class="fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>

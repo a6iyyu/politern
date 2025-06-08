@@ -8,7 +8,7 @@
     </section>
     <nav class="flex overflow-y-scroll h-full pb-20 flex-1 flex-col gap-1">
         @if (Auth::check() && Auth::user()->tipe === 'ADMIN')
-            <a href="{{ route('admin.dasbor') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('admin') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
+            <a href="{{ route('admin.dasbor') }}" class="mb-4 flex items-center pl-5 pr-7 py-3 {{ Request::is('admin') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('admin') ? asset('icons/dasbor-biru.svg') : asset('icons/dasbor-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
                 <h4 class="ml-7 text-sm tracking-wider">Dasbor</h4>
             </a>
@@ -21,12 +21,12 @@
                 <img src="{{ Request::is('admin/data-dosen*') ? asset('icons/data-dosen-biru.svg') : asset('icons/data-dosen-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
                 <h4 class="ml-8 text-sm tracking-wider">Data Dosen</h4>
             </a>
-            <a href="{{ route('admin.data-prodi') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('admin/data-prodi*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
+            <a href="{{ route('admin.data-prodi') }}" class="mb-4 flex items-center pl-5 pr-7 py-3 {{ Request::is('admin/data-prodi*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('admin/data-prodi*') ? asset('icons/data-prodi-biru.svg') : asset('icons/data-prodi-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
                 <h4 class="ml-8 text-sm tracking-wider">Data Program Studi</h4>
             </a>
             <h4 class="cursor-default mb-1 mt-2 pl-5 text-sm tracking-wider text-white/80 font-light">Data Perusahaan</h4>
-            <a href="{{ route('admin.data-perusahaan') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('admin/data-perusahaan*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
+            <a href="{{ route('admin.data-perusahaan') }}" class="mb-4 flex items-center pl-5 pr-7 py-3 {{ Request::is('admin/data-perusahaan*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('admin/data-perusahaan*') ? asset('icons/data-perusahaan-biru.svg') : asset('icons/data-perusahaan-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
                 <h4 class="ml-7 text-sm tracking-wider">Data Perusahaan</h4>
             </a>

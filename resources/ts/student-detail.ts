@@ -6,89 +6,90 @@
  */
 
 interface Student {
-    nama_pengguna: string;
-    email: string;
-    nim: string;
-    nama_lengkap: string;
-    angkatan: string;
-    semester: string;
-    nama_prodi: string;
-    ipk: string;
-    status: string;
+  nama_pengguna: string;
+  email: string;
+  nim: string;
+  nama_lengkap: string;
+  angkatan: string;
+  semester: string;
+  nama_prodi: string;
+  ipk: number;
+  status: string;
 }
 
 interface User {
-    nama_pengguna: string;
-    email: string;
+  nama_pengguna: string;
+  email: string;
 }
 
 interface Prodi {
-    nama: string;
+  nama: string;
 }
 
 interface Status {
-    status: string;
+  status: string;
 }
 
 interface Modal {
-    mahasiswa: Student;
-    pengguna: User;
-    prodi: Prodi;
-    status: Status;
+  mahasiswa: Student;
+  pengguna: User;
+  prodi: Prodi;
+  status: Status;
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-    const buttons = document.querySelectorAll<HTMLAnchorElement>(".detail[data-id]");
-    const modal = document.getElementById("modal-detail-mahasiswa");
-    const close = document.getElementById("close-detail");
-    if (!modal || !close) return;
+document.addEventListener('DOMContentLoaded', async () => {
+  const buttons =
+    document.querySelectorAll<HTMLAnchorElement>('.detail[data-id]');
+  const modal = document.getElementById('modal-detail-mahasiswa');
+  const close = document.getElementById('close-detail');
+  if (!modal || !close) return;
 
-    const nama_pengguna = document.getElementById("nama_pengguna");
-    const email = document.getElementById("email");
-    const nim = document.getElementById("nim");
-    const nama_lengkap = document.getElementById("detail_nama_lengkap");
-    const angkatan = document.getElementById("detail_angkatan");
-    const semester = document.getElementById("detail_semester");
-    const nama_prodi = document.getElementById("nama_prodi");
-    const ipk = document.getElementById("ipk");
-    const status = document.getElementById("detail_status");
-    if (!nama_pengguna || !email || !nim || !nama_lengkap || !angkatan || !semester || !nama_prodi || !ipk || !status) return;
+  const nama_pengguna = document.getElementById('nama_pengguna');
+  const email = document.getElementById('email');
+  const nim = document.getElementById('nim');
+  const nama_lengkap = document.getElementById('detail_nama_lengkap');
+  const angkatan = document.getElementById('detail_angkatan');
+  const semester = document.getElementById('detail_semester');
+  const nama_prodi = document.getElementById('nama_prodi');
+  const ipk = document.getElementById('ipk');
+  const status = document.getElementById('detail_status');
+  if (!nama_pengguna || !email || !nim || !nama_lengkap || !angkatan || !semester || !nama_prodi || !ipk || !status) return;
 
-    buttons.forEach((button) => {
-        button.addEventListener("click", async () => {
-            const id = button.dataset.id;
-            if (!id) return;
-            modal.classList.remove("hidden");
+  buttons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const id = button.dataset.id;
+      if (!id) return;
+      modal.classList.remove('hidden');
 
-            const data = await fetch(`/admin/data-mahasiswa/${id}/detail`, {
-                headers: {
-                    Accept: "application/json",
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-            });
+      const data = await fetch(`/admin/data-mahasiswa/${id}/detail`, {
+        headers: {
+          Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      });
 
-            if (!data.ok) return;
-            const response = (await data.json()) as Modal;
-            console.log(response.mahasiswa.angkatan);
-            console.log("Angkatan: ", response.mahasiswa.angkatan);
-            console.log("Element:", angkatan);
-            console.log("Angkatan innerText:", angkatan.innerText);
+      if (!data.ok) return;
+      const response = (await data.json()) as Modal;
 
-            nama_pengguna.textContent = response.pengguna.nama_pengguna;
-            email.textContent = response.pengguna.email;
-            nim.textContent = response.mahasiswa.nim;
-            nama_lengkap.textContent = response.mahasiswa.nama_lengkap;
-            angkatan.textContent = response.mahasiswa.angkatan;
-            semester.textContent = response.mahasiswa.semester;
-            nama_prodi.textContent = response.prodi.nama;
-            ipk.textContent = response.mahasiswa.ipk;
-            status.textContent = response.status.status;
-        });
+      nama_pengguna.textContent = response.pengguna.nama_pengguna;
+      email.textContent = response.pengguna.email;
+      nim.textContent = response.mahasiswa.nim;
+      nama_lengkap.textContent = response.mahasiswa.nama_lengkap;
+      angkatan.textContent = response.mahasiswa.angkatan;
+      semester.textContent = response.mahasiswa.semester;
+      nama_prodi.textContent = response.prodi.nama.slice(0, 20) + '...';
+      ipk.textContent = Math.round(response.mahasiswa.ipk * 100) / 100 as unknown as string;
+      status.textContent = response.status.status;
+
+      if (status.textContent === 'AKTIF') status.classList.add('bg-green-200', 'text-green-800', 'px-5', 'py-1');
+      else if (status.textContent === 'BELUM MAGANG') status.classList.add('bg-red-200', 'text-red-800', 'px-5', 'py-1');
+      else if (status.textContent === 'SELESAI') status.classList.add('bg-yellow-200', 'text-yellow-800', 'px-5', 'py-1');
     });
+  });
 
-    close.addEventListener("click", () => modal.classList.add("hidden"));
+  close.addEventListener('click', () => modal.classList.add('hidden'));
 
-    modal.addEventListener("click", (event) => {
-        if (event.target === modal) modal.classList.add("hidden");
-    });
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) modal.classList.add('hidden');
+  });
 });

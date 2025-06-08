@@ -10,13 +10,6 @@
                 <i class="close fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>
             </span>
             <hr class="mb-6 border border-[var(--primary)]"/>
-            @if ($errors->any())
-                <ul class="p-4 cursor-default rounded-lg bg-red-50 border border-red-500 list-disc list-inside text-sm text-red-500">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            @endif
             <h5 class="cursor-default mt-6 px-5 py-3 rounded-md text-sm bg-[var(--secondary)] text-white">
                 Data Pengguna
             </h5>

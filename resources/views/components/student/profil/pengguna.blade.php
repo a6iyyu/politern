@@ -60,7 +60,4 @@
     <span class="flex flex-col gap-2 text-sm">
         Alamat <strong>{{ $mahasiswa->alamat ?? 'N/A' }}</strong>
     </span>
-    <a href="{{ route('mahasiswa.profil.edit') }}" class="hidden w-full px-4 py-2.5 font-semibold rounded-lg text-center text-sm border border-[var(--primary)] text-[var(--primary)] transition-all duration-300 ease-in-out lg:block lg:hover:bg-[var(--primary)] lg:hover:text-white">
-        Edit Profil
-    </a>
 </figure>

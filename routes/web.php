@@ -35,9 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['authorize:ADMIN'])->prefix('admin')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
         Route::get('/grafik', [Dasbor::class, 'chart'])->name('admin.dasbor.grafik');
-
         Route::get('/lowongan-magang', fn() => view('pages.admin.lowongan-magang'))->name('admin.lowongan-magang');
-        Route::get('/pengajuan-magang', [Pengajuan::class, 'index'])->name('admin.pengajuan-magang');
 
         Route::prefix('aktivitas-magang')->group(function () {
             Route::get('/', [LogAktivitas::class, 'index'])->name('admin.aktivitas-magang');
@@ -127,14 +125,11 @@ Route::middleware('auth')->group(function () {
             Route::post('/edit', [Profil::class, 'update'])->name('admin.profil.perbarui');
         });
     });
-    Route::get('/mahasiswa/rekomendasi-magang/{id_mahasiswa}', [Dasbor::class, 'rekomendasiMagang'])->name('mahasiswa.rekomendasi-magang');
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa.dasbor');
-        Route::get('/rekomendasi-magang/{id_mahasiswa}', [Dasbor::class, 'rekomendasiMagang'])->name('mahasiswa.rekomendasi-magang');
-        Route::get('/lowongan', fn() => view('pages.student.lowongan'))->name('mahasiswa.lowongan');
-        Route::get('/cari-lowongan', [Dasbor::class, 'index'])->name('mahasiswa.cari-lowongan');
-
+        Route::get('/{id}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang');
+        Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail');
 
         Route::prefix('kelola-lamaran')->group(function () {
             Route::get('/', [Pengajuan::class, 'index'])->name('mahasiswa.kelola-lamaran');
@@ -153,15 +148,32 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{id}/hapus', [LogAktivitas::class, 'destroy'])->name('mahasiswa.log-aktivitas.hapus');
         });
 
-        Route::prefix('profil')->group(function () {
-            Route::get('/', [Profil::class, 'index'])->name('mahasiswa.profil');
-            Route::get('/edit', [Profil::class, 'edit'])->name('mahasiswa.profil.edit');
-            Route::post('/edit', [Profil::class, 'update'])->name('mahasiswa.profil.perbarui');
+        Route::prefix('lowongan')->group(function () {
+            Route::get('/', [Lowongan::class, 'index'])->name('mahasiswa.lowongan');
+            Route::get('/{id}/detail', [Lowongan::class, 'detail'])->name('mahasiswa.lowongan.detail');
+            Route::get('/cari', [Dasbor::class, 'index'])->name('mahasiswa.lowongan.cari');
         });
 
-        Route::prefix('rekomendasi-magang')->group(function () {
-            Route::get('/{id}/detail', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang');
-            Route::get('/{id}/lamar', [RekomendasiMagang::class, 'store'])->name('mahasiswa.rekomendasi-magang.lamar');
+        Route::prefix('profil')->group(function () {
+            Route::get('/', [Profil::class, 'index'])->name('mahasiswa.profil');
+
+            Route::prefix('pengalaman')->group(function () {
+                Route::get('/edit', [Profil::class, 'edit'])->name('mahasiswa.profil.pengalaman.edit');
+                Route::post('/edit', [Profil::class, 'update'])->name('mahasiswa.profil.pengalaman.perbarui');
+                Route::delete('/hapus', [Profil::class, 'destroy'])->name('mahasiswa.profil.pengalaman.hapus');
+            });
+
+            Route::prefix('sertifikasi')->group(function () {
+                Route::get('/edit', [Profil::class, 'edit'])->name('mahasiswa.profil.sertifikasi.edit');
+                Route::post('/edit', [Profil::class, 'update'])->name('mahasiswa.profil.sertifikasi.perbarui');
+                Route::delete('/hapus', [Profil::class, 'destroy'])->name('mahasiswa.profil.sertifikasi.hapus');
+            });
+
+            Route::prefix('proyek')->group(function () {
+                Route::get('/edit', [Profil::class, 'edit'])->name('mahasiswa.profil.proyek.edit');
+                Route::post('/edit', [Profil::class, 'update'])->name('mahasiswa.profil.proyek.perbarui');
+                Route::delete('/hapus', [Profil::class, 'destroy'])->name('mahasiswa.profil.proyek.hapus');
+            });
         });
     });
 

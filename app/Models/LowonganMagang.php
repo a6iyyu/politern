@@ -47,9 +47,19 @@ class LowonganMagang extends Model
         return $this->belongsTo(Bidang::class, 'id_bidang', 'id_bidang');
     }
 
+    public function durasi(): BelongsTo
+    {
+        return $this->belongsTo(DurasiMagang::class, 'id_durasi_magang', 'id_durasi_magang');
+    }
+
     public function jenis_lokasi(): BelongsTo
     {
         return $this->belongsTo(JenisLokasi::class, 'id_jenis_lokasi', 'id_jenis_lokasi');
+    }
+
+    public function keahlian(): BelongsToMany
+    {
+        return $this->belongsToMany(Keahlian::class, 'keahlian_lowongan', 'id_lowongan', 'id_keahlian');
     }
 
     public function periode_magang(): BelongsTo
@@ -60,16 +70,6 @@ class LowonganMagang extends Model
     public function perusahaan(): BelongsTo
     {
         return $this->belongsTo(Perusahaan::class, 'id_perusahaan_mitra', 'id_perusahaan_mitra');
-    }
-
-    public function keahlian()
-    {
-        return $this->belongsToMany(Keahlian::class, 'keahlian_lowongan', 'id_lowongan', 'id_keahlian');
-    }
-
-    public function durasi(): BelongsTo
-    {
-        return $this->belongsTo(DurasiMagang::class, 'id_durasi_magang', 'id_durasi_magang');
     }
 
     public function jenis_magang(): BelongsTo
