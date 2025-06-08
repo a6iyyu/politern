@@ -7,13 +7,18 @@ namespace App\Http\Controllers;
 use App\Models\BidangMahasiswa;
 use App\Models\KeahlianMahasiswa;
 use App\Models\Magang;
+use App\Models\LowonganMagang;
 use App\Models\Mahasiswa;
+use App\Models\PeriodeMagang;
+use App\Models\Perusahaan;
 use App\Models\Pengguna;
 use App\Models\ProgramStudi;
+use App\Http\Controllers\Dasbor;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
@@ -26,7 +31,6 @@ class DataMahasiswa extends Controller
 {
     public function index(): View
     {
-        $baris = 1;
         $pengguna = Auth::user()->tipe;
         $total_mahasiswa = Mahasiswa::count();
         $total_mahasiswa_magang = Magang::count();
@@ -34,34 +38,69 @@ class DataMahasiswa extends Controller
         $mahasiswa_sedang_magang = Magang::where('status', 'AKTIF')->count();
         $mahasiswa_selesai_magang = Magang::where('status', 'SELESAI')->count();
         $program_studi = ProgramStudi::all();
+        $periode_magang = PeriodeMagang::select('id_periode', 'nama_periode')
+            ->with('lowongan')
+            ->get();
+        // dd($mahasiswa_bimbingan instanceof Collection);
         $status_aktivitas = array_unique(array_merge(Magang::pluck('status')->toArray(), ['BELUM MAGANG']));
 
-        /** @var LengthAwarePaginator $paginasi */
-        $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', default: 10));
-        $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
-            $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') {
-                'AKTIF'         => 'bg-green-200 text-green-800',
-                'SELESAI'       => 'bg-yellow-200 text-yellow-800',
-                'BELUM MAGANG'  => 'bg-red-200 text-red-800',
-            };
-            return [
-                $baris++,
-                '<div class="flex items-center gap-2">
-                    <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($mhs->nama_lengkap) . '
-                </div>',
-                $mhs->nim,
-                $mhs->program_studi->kode,
-                $mhs->angkatan,
-                $mhs->semester,
-                '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') . '</div>',
-                view('components.admin.data-mahasiswa.aksi', compact('mhs'))->render(),
-            ];
-        })->toArray();
-
         if ($pengguna === "ADMIN") {
+            $baris = 1;
+            /** @var LengthAwarePaginator $paginasi */
+            $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', default: 10));
+            $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
+                $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') {
+                    'AKTIF'         => 'bg-green-200 text-green-800',
+                    'SELESAI'       => 'bg-yellow-200 text-yellow-800',
+                    'BELUM MAGANG'  => 'bg-red-200 text-red-800',
+                };
+                return [
+                    $baris++,
+                    '<div class="flex items-center gap-2">
+                        <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . e($mhs->nama_lengkap) . '
+                    </div>',
+                    $mhs->nim,
+                    $mhs->program_studi->kode,
+                    $mhs->angkatan,
+                    $mhs->semester,
+                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') . '</div>',
+                    view('components.admin.data-mahasiswa.aksi', compact('mhs'))->render(),
+                ];
+            })->toArray();
+            
             return view('pages.admin.data-mahasiswa', compact('data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi', 'status_aktivitas'));
+            
         } else if ($pengguna === "DOSEN") {
-            return view('pages.lecturer.data-mahasiswa', compact('data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi', 'status_aktivitas'));
+            $mahasiswa_bimbingan = (new Dasbor())->mahasiswa_bimbingan();
+            
+            $baris = 1;
+            /** @var LengthAwarePaginator $paginasi */
+            $paginasi = $mahasiswa_bimbingan->paginate(request('per_page', default: 10));
+            $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
+                $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status) {
+                    'AKTIF'         => 'bg-green-200 text-green-800',
+                    'SELESAI'       => 'bg-yellow-200 text-yellow-800',
+                };
+                $pengajuan = $mhs->pengajuan_magang->first();
+                $magang = $pengajuan?->magang;
+                $lowongan = $pengajuan?->lowongan;
+                $perusahaan = $lowongan?->perusahaan;
+
+                return [
+                    $magang?->id_magang,
+                    '<div class="flex items-center gap-2">
+                        <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . $mhs->nama_lengkap . '
+                    </div>',
+                    $mhs->nim,
+                    $mhs->program_studi->kode,
+                    $lowongan?->periode_magang?->nama_periode ?? '-',
+                    $perusahaan?->nama ?? '-',
+                    $lowongan?->bidang->nama_bidang ?? '-',
+                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($magang?->status ?? 'BELUM MAGANG') . '</div>',
+                    view('components.lecturer.data-mahasiswa.aksi', compact('mhs'))->render(),
+                ];
+            })->toArray();
+            return view('pages.lecturer.data-mahasiswa', compact('data', 'paginasi', 'program_studi', 'periode_magang', 'status_aktivitas'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }

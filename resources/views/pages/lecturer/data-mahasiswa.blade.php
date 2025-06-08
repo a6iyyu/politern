@@ -10,12 +10,8 @@
 @section('konten')
     <x-header title="Data Mahasiswa" />
     <main class="flex flex-col pb-10 px-10 pl-84 transition-all duration-300">
-        @include('components.admin.data-mahasiswa.informasi')
-        <section class="p-6 mt-8 rounded-lg overflow-hidden bg-white border border-[var(--stroke)]">
-            @include('components.admin.data-mahasiswa.tabel')
+        <section class="py-6 px-12 mt-6 rounded-lg overflow-hidden bg-white border border-[var(--stroke)]">
+            @include('components.lecturer.data-mahasiswa.tabel')
         </section>
-        @include('components.admin.data-mahasiswa.tambah')
-        @include('components.admin.data-mahasiswa.edit')
-        @include('components.admin.data-mahasiswa.detail')
     </main>
 @endsection

@@ -1,4 +1,4 @@
-<aside class="fixed pb-12 z-50 translate-x-0 left-0 top-0 h-full w-76 flex-col space-y-4 border-r-2 border-[#6d6adc] p-6 shadow-2xl bg-[var(--primary)] transition-all duration-300 ease-in-out">
+<aside class="fixed pb-12 z-50 translate-x-0 left-0 top-0 h-full w-76 flex-col space-y-4 border-r-2 border-[#6d6adc] p-5 shadow-2xl bg-[var(--primary)] transition-all duration-300 ease-in-out">
     <section class="mb-5 flex items-center">
         <img src="{{ asset('shared/logo.png') }}" alt="Logo" class="w-14" />
         <div class="cursor-default flex flex-col justify-between text-[var(--stroke)]">
@@ -74,7 +74,7 @@
             <h4 class="cursor-default mb-1 mt-2 pl-5 text-sm tracking-wider text-white/80 font-light">Manajemen Magang</h4>
             <a href="{{ route('dosen.data-mahasiswa') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('dosen/data-mahasiswa*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('dosen/data-mahasiswa*') ? asset('icons/data-mahasiswa-biru.svg') : asset('icons/data-mahasiswa-putih.svg') }}" alt="Data Mahasiswa" class="h-5 w-5" />
-                <h4 class="ml-7 text-sm tracking-wider">Data Mahasiswa</h4>
+                <h4 class="ml-7 text-sm tracking-wider">Mahasiswa Bimbingan</h4>
             </a>
             <a href="{{ route('dosen.log-aktivitas') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('dosen/log-aktivitas*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('dosen/log-aktivitas*') ? asset('icons/log-aktivitas-biru.svg') : asset('icons/log-aktivitas-putih.svg') }}" alt="Log Aktivitas" class="h-5 w-5" />

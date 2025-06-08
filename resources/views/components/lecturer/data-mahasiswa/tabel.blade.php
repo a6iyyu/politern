@@ -1,10 +1,10 @@
-<section class="flex items-center justify-between mb-5 pt-2">
+<section class="flex items-center justify-between mb-5">
     <h2 class="cursor-default text-base font-semibold text-[var(--primary-text)]">
-        Daftar Data Pengajuan Magang
+        Data Mahasiswa Bimbingan
     </h2>
 </section>
 @if (session('success'))
-    <h5 class="mb-7 p-4 cursor-default rounded-lg bg-emerald-50 border border-emerald-500 list-disc list-inside text-sm text-emerald-500">
+    <h5 class="mb-4 p-4 cursor-default rounded-lg bg-emerald-50 border border-emerald-500 list-disc list-inside text-sm text-emerald-500">
         {{ session('success') }}
     </h5>
 @elseif ($errors->any())
@@ -14,14 +14,14 @@
         @endforeach
     </ul>
 @endif
-@include('components.admin.pengajuan-magang.filter')
-<x-table :headers="['ID', 'Tanggal Pengajuan', 'Mahasiswa', 'Kode', 'Perusahaan', 'Posisi', 'Status', 'Aksi', 'Konfirmasi']" :sortable="['Tanggal Pengajuan', 'Mahasiswa']" :rows="$data" />
+@include('components.lecturer.data-mahasiswa.filter')
+<x-table :headers="['No', 'Mahasiswa', 'NIM', 'Program Studi','Periode Magang', 'Perusahaan', 'Bidang', 'Status', 'Aksi']" :sortable="['Mahasiswa', 'Status']" :rows="$data" />
 @if ($paginasi->hasPages())
     <div class="mt-4">
         {{ $paginasi->links() }}
     </div>
 @else
     <h5 class="mt-4 cursor-default text-xs font-light text-[var(--primary-text)]">
-        Menampilkan {{ count($data) ?? 0 }} dari {{ $total_pengajuan_magang ?? 'N/A' }} pengajuan magang
+        Menampilkan {{ count($data) ?? 0 }} dari {{ $total_mahasiswa ?? 'N/A' }} mahasiswa
     </h5>
 @endif

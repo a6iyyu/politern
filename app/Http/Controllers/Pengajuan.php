@@ -55,6 +55,7 @@ class Pengajuan extends Controller
             $konfirmasi = '';
             if ($pengajuan->status === 'MENUNGGU') $konfirmasi = view('components.admin.pengajuan-magang.konfirmasi', compact('pengajuan'))->render();
             return [
+                $pengajuan->id_pengajuan_magang,
                 $pengajuan->created_at->format('d/m/Y'),
                 $pengajuan->mahasiswa->nama_lengkap,
                 $pengajuan->mahasiswa->program_studi->kode,
@@ -83,6 +84,7 @@ class Pengajuan extends Controller
             };
 
             return [
+                $pengajuan->id_pengajuan_magang,
                 $pengajuan->created_at->format('d/m/Y'),
                 $pengajuan->lowongan->perusahaan->nama,
                 $pengajuan->lowongan->bidang->nama_bidang ?? '-',
