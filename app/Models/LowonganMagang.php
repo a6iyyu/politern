@@ -22,6 +22,8 @@ class LowonganMagang extends Model
         'id_bidang',
         'id_periode',
         'id_jenis_lokasi',
+        'id_durasi_magang',
+        'id_jenis_magang',
         'judul',
         'deskripsi',
         'kategori',

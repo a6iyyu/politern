@@ -11,6 +11,8 @@ return new class extends Migration {
     {
         Schema::table('perusahaan_mitra', function (Blueprint $table) {
             $table->string('logo')->nullable()->after('website');
+            $table->string('email')->nullable()->change();
+            $table->string('website')->nullable()->change();
         });
     }
 
@@ -18,6 +20,8 @@ return new class extends Migration {
     {
         Schema::table('perusahaan_mitra', function (Blueprint $table) {
             $table->dropColumn('logo');
+            $table->string('email')->nullable(false)->change();
+            $table->string('website')->nullable(false)->change();
         });
     }
 };

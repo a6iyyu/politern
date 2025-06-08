@@ -106,7 +106,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/ekspor-excel', [Lowongan::class, 'export_excel'])->name('admin.lowongan-magang.ekspor-excel');
             Route::get('/{id}/detail', [Lowongan::class, 'detail'])->name('admin.lowongan-magang.detail');
             Route::get('/{id}/edit', [Lowongan::class, 'edit'])->name('admin.lowongan-magang.edit');
-            Route::post('/{id}/edit', [Lowongan::class, 'update'])->name('admin.lowongan-magang.perbarui');
+            Route::put('/{id}/edit', [Lowongan::class, 'update'])->name('admin.lowongan-magang.perbarui');
             Route::post('/tambah', [Lowongan::class, 'store'])->name('admin.lowongan-magang.tambah');
             Route::delete('/{id}/hapus', [Lowongan::class, 'destroy'])->name('admin.lowongan-magang.hapus');
         });
@@ -145,7 +145,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('log-aktivitas')->group(function () {
             Route::get('/', [LogAktivitas::class, 'index'])->name('mahasiswa.log-aktivitas');
-            Route::get('/tambah', [LogAktivitas::class, 'create'])->name('mahasiswa.log-aktivitas.tambah');
+            Route::post('/tambah', [LogAktivitas::class, 'create'])->name('mahasiswa.log-aktivitas.tambah');
             Route::get('/{id}/detail', [LogAktivitas::class, 'detail'])->name('mahasiswa.log-aktivitas.detail');
             Route::get('/{id}/edit', [LogAktivitas::class, 'edit'])->name('mahasiswa.log-aktivitas.edit');
             Route::post('/{id}/edit', [LogAktivitas::class, 'update'])->name('mahasiswa.log-aktivitas.perbarui');
