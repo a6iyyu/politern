@@ -1,30 +1,46 @@
-<form action="" class="my-10 flex flex-col justify-between gap-4 lg:flex-row">
-    <fieldset class="relative w-1/4">
-        <label for="semester" class="sr-only">Semester</label>
-        <select name="semester" id="semester" class="appearance-none w-full text-sm border border-[var(--primary)] text-[var(--primary)] rounded-md pl-5 pr-12 py-3">
-            <option value="">Semua Semester</option>
-            @if (!empty($semester))
-                @foreach ($semester as $periode)
-                    <option value="{{ $periode->id_semester }}">{{ $periode->semester }}</option>
-                @endforeach
-            @else
-                <option value="">Tidak ada data</option>
-            @endif
-        </select>
-        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 text-xs -translate-y-1/2 text-[var(--primary)]"></i>
-    </fieldset>
-    <fieldset class="relative">
-        <label for="periode" class="sr-only">Periode</label>
-        <select name="periode" id="periode" class="appearance-none w-full text-sm border border-[var(--primary)] text-[var(--primary)] rounded-md pl-5 pr-12 py-3">
-            <option value="">Terbaru</option>
-            @if (!empty($periode_magang))
-                @foreach ($periode_magang as $periode)
-                    <option value="{{ $periode->id_semester }}">{{ $periode->semester }}</option>
-                @endforeach
-            @else
-                <option value="">Tidak ada data</option>
-            @endif
-        </select>
-        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 text-xs -translate-y-1/2 text-[var(--primary)]"></i>
-    </fieldset>
+<form action="" method="GET" class="mb-7 pt-2 flex flex-wrap items-end gap-4 w-auto">
+    @csrf
+    @method('GET')
+    <div class="w-80">
+        <x-input
+            icon="fa-solid fa-magnifying-glass"
+            label="Cari Mahasiswa"
+            name="nama_lengkap"
+            placeholder="Cari Mahasiswa"
+            type="text" :required="false"
+        />
+    </div>
+    <div class="w-80">
+        <x-select
+            label="Perusahaan"
+            name="perusahaan"
+            placeholder="-- Semua Perusahaan --"
+            :options="$perusahaan"
+            :selected="request('perusahaan', '')"
+            :required="false"
+        />
+    </div>
+    <div class="w-80">
+        <x-select
+            label="Status"
+            name="status"
+            placeholder="-- Semua Status --"
+            :options="$status_aktivitas"
+            :selected="request('status', '')"
+            :required="false"
+        />
+    </div>
+    <div class="w-full sm:w-auto">
+        <button type="submit" class="cursor-pointer bg-[var(--secondary)] border border-[var(--secondary)] text-white px-12 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:py-2.5 lg:hover:bg-[#ff86cb] w-full sm:w-auto">
+            Cari
+        </button>
+    </div>
 </form>
+@if ($periode_magang)
+    <div class="cursor-default flex items-center mb-6 gap-2">
+        <h5 class="text-sm text-[var(--secondary-text)]">Periode Aktif:</h5>
+        <h5 class="px-4 py-2 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+            {{ $periode_magang->nama_periode }}
+        </h5>
+    </div>
+@endif

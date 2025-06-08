@@ -35,7 +35,7 @@ class LogAktivitas extends Controller
             case 'ADMIN':
                 return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
             case 'DOSEN':
-                return view('pages.lecturer.log-aktivitas', compact('log_aktivitas'));
+                return view('pages.lecturer.log-aktivitas', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
             case 'MAHASISWA':
                 $status_magang = Magang::where('id_pengajuan_magang', Auth::user()->id)->first();
                 if (!$status_magang || $status_magang->status !== 'AKTIF') return view('pages.student.log-aktivitas');
