@@ -1,10 +1,10 @@
 <section class="modal modal-tambah-perusahaan fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="min-h-screen flex items-center justify-center w-full px-4">
-        <form action="{{ route('admin.data-perusahaan.tambah') }}" enctype="multipart/form-data" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+        <form action="{{ route('admin.data-perusahaan.tambah') }}" enctype="multipart/form-data" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-7 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('POST')
               <span class="mb-3 flex items-center justify-between">
-                <h2 class="cursor-default text-sm font-semibold text-[var(--primary)]">
+                <h2 class="cursor-default text-sm font-semibold text-[var(--primary)] lg:text-base">
                     Tambah Perusahaan Mitra
                 </h2>
                 <i class="close fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>

@@ -15,6 +15,7 @@ class Bidang extends Model
 
     protected $table = 'bidang';
     protected $primaryKey = 'id_bidang';
+    protected $fillable = ['nama_bidang'];
     public $timestamps = false;
 
     public function lowongan(): HasMany

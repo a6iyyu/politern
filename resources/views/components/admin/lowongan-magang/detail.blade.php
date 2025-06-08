@@ -1,73 +1,79 @@
-<section id="modal-detail-lowongan" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
+<section id="modal-detail-lowongan" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-black/20 backdrop-blur-[1px]" aria-modal="true" role="dialog">
     <div class="flex items-center justify-center min-h-screen px-4">
-        <article class="w-full max-w-3xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+        <figure class="cursor-default w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
             <span class="mb-4 flex items-center justify-between">
                 <h2 class="font-semibold text-[var(--primary)]">Detail Lowongan Magang</h2>
                 <button aria-label="Tutup detail" class="fa-solid fa-xmark cursor-pointer text-[var(--primary)] close"></button>
             </span>
-            <hr class="mb-4 border-[var(--primary)]" />
-            <section class="mb-4 px-4 py-2 bg-pink-200 text-pink-800 font-medium rounded-full w-fit text-sm">
+            <hr class="border border-[var(--primary)] mb-6" />
+            <h5 class="bg-[var(--secondary)] text-white text-left px-4 py-2 rounded-md text-sm font-medium mb-6 lg:text-base">
                 Informasi Lowongan Magang
-            </section>
-            <dl class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-800">
+            </h5>
+            <div class="flex items-center gap-6 mb-4">
+                <img id="logo_perusahaan" alt="Logo Perusahaan" class="w-20 h-20 rounded-full object-cover" />
+                <figcaption class="grid grid-cols-1 gap-4 text-sm lg:grid-cols-2">
+                    <span class="mb-1">
+                        <h5 class="font-semibold">Bidang posisi:</h5>
+                        <h5 id="nama_bidang" class="text-gray-800"></h5>
+                    </span>
+                    <span class="mb-1">
+                        <h5 class="font-semibold">Nama Perusahaan Mitra:</h5>
+                        <h5 id="nama" class="text-gray-800"></h5>
+                    </span>
+                    <span class="mb-1">
+                        <h5 class="font-semibold">Lokasi:</h5>
+                        <h5 id="nama_lokasi" class="text-gray-800"></h5>
+                    </span>
+                    <span>
+                        <h5 class="font-semibold">Jenis Lokasi Magang:</h5>
+                        <h5 id="nama_jenis_lokasi" class="text-gray-800"></h5>
+                    </span>
+                </figcaption>
+            </div>
+            <figcaption class="mb-4">
+                <h3 class="font-semibold text-sm text-gray-800 mb-2">Keahlian</h3>
+                <div id="nama_keahlian" class="flex flex-wrap gap-2 text-xs"></div>
+            </figcaption>
+            <figcaption class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-800 mb-4">
+                <span>
+                    <h5 class="font-semibold mb-3">Periode Magang:</h5>
+                    <dd id="nama_periode" class="text-gray-600"></dd>
+                </span>
                 <div>
-                    <dt class="font-semibold">Bidang Posisi:</dt>
-                    <dd id="nama_bidang"></dd>
+                    <h5 class="font-semibold mb-3">Jenis Magang:</h5>
+                    <dd id="jenis_magang" class="text-gray-600"></dd>
                 </div>
-                <div>
-                    <dt class="font-semibold">Nama Perusahaan Mitra:</dt>
-                    <dd id="nama"></dd>
-                </div>
-                <div>
-                    <dt class="font-semibold">Lokasi:</dt>
-                    <dd id="nama_lokasi"></dd>
-                </div>
-                <div>
-                    <dt class="font-semibold">Jenis Lokasi Magang:</dt>
-                    <dd id="nama_jenis_lokasi"></dd>
-                </div>
-            </dl>
-            <section class="mt-6">
-                <h3 class="font-semibold text-sm text-gray-800">Keahlian:</h3>
-                <div class="mt-2 text-xs">
-                    <span id="nama_keahlian" class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full"></span>
-                </div>
-            </section>
-
-            <dl class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-800">
-                <div>
-                    <dt class="font-semibold">Periode Magang:</dt>
-                    <dd id="durasi"></dd>
-                </div>
-                <div>
-                    <dt class="font-semibold">Minimal IPK:</dt>
-                    <dd id="nilai_minimal"></dd>
-                </div>
-                <div>
-                    <dt class="font-semibold">Perkiraan Gaji:</dt>
-                    <dd id="gaji"></dd>
-                </div>
-                <div>
-                    <dt class="font-semibold">Jumlah Kuota:</dt>
-                    <dd id="kuota"></dd>
-                </div>
-                <div>
-                    <dt class="font-semibold">Tanggal Mulai Pendaftaran:</dt>
-                    <dd id="tanggal_mulai_pendaftaran"></dd>
-                </div>
-                <div>
-                    <dt class="font-semibold">Tanggal Selesai Pendaftaran:</dt>
-                    <dd id="tanggal_selesai_pendaftaran"></dd>
-                </div>
-                <div class="md:col-span-2">
-                    <dt class="font-semibold">Status:</dt>
-                    <dd id="status"></dd>
-                </div>
-            </dl>
-            <section class="mt-6 text-sm text-gray-800">
-                <h3 class="font-semibold">Deskripsi:</h3>
-                <p id="deskripsi" class="mt-1 whitespace-pre-line"></p>
-            </section>
-        </article>
+            </figcaption>
+            <figcaption class="mt-4 text-sm text-gray-800 mb-4">
+                <h5 class="font-semibold mb-3">Deskripsi:</h5>
+                <h5 id="deskripsi" class="mt-1 whitespace-pre-line"></h5>
+            </figcaption>
+            <figcaption class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-800 mb-4">
+                <span>
+                    <h5 class="font-semibold mb-3">Perkiraan Gaji:</h5>
+                    <h5 id="gaji" class="text-gray-600"></h5>
+                </span>
+                <span>
+                    <h5 class="font-semibold mb-3">Durasi Magang:</h5>
+                    <h5 id="durasi" class="text-gray-600"></h5>
+                </span>
+                <span>
+                    <h5 class="font-semibold mb-3">Jumlah Kuota:</h5>
+                    <h5 id="kuota" class="text-gray-600"></h5>
+                </span>
+                <span>
+                    <h5 class="font-semibold mb-3">Status:</h5>
+                    <h5 id="status" class="text-gray-600"></h5>
+                </span>
+                <span>
+                    <h5 class="font-semibold mb-3">Tanggal Mulai Pendaftaran:</h5>
+                    <h5 id="tanggal_mulai_pendaftaran" class="text-gray-600"></h5>
+                </span>
+                <span>
+                    <h5 class="font-semibold mb-3">Tanggal Selesai Pendaftaran:</h5>
+                    <h5 id="tanggal_selesai_pendaftaran" class="text-gray-600"></h5>
+                </span>
+            </figcaption>
+        </figure>
     </div>
 </section>

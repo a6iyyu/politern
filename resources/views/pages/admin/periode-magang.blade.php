@@ -16,6 +16,8 @@
         @include('components.admin.periode-magang.tambah')
         @include('components.admin.periode-magang.edit')
         @include('components.admin.periode-magang.detail')
-        @include('pages.admin.durasi-magang')
+        <section class="py-6 px-12 mt-6 rounded-lg overflow-hidden bg-white border border-[var(--stroke)]">
+            @include('components.admin.durasi-magang.tabel')
+        </section>
     </main>
 @endsection

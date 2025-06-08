@@ -1,10 +1,11 @@
 <section class="modal modal-edit-perusahaan fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="min-h-screen flex items-center justify-center w-full px-4">
-        <form action="#" method="POST" id="form-edit-perusahaan" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+        <form action="#" method="POST" id="form-edit-perusahaan"
+            class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-7 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('PUT')
               <span class="mb-3 flex items-center justify-between">
-                <h2 class="cursor-default text-sm font-semibold text-[var(--primary)]">
+                <h2 class="cursor-default text-sm font-semibold text-[var(--primary)] lg:text-base">
                     Edit Perusahaan Mitra
                 </h2>
                 <i class="close fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>
@@ -34,52 +35,51 @@
                     placeholder="Masukkan NIB"
                     :required="true"
                 />
-            <span class="mb-2 mt-3 flex items-center justify-between gap-4">
-                <x-input
-                    icon="fa-solid fa-envelope"
-                    label="Email"
-                    type="email"
-                    name="email"
-                    placeholder="Masukkan Email"
-                    :required="true"
-                />
-                <x-input
-                    icon="fa-solid fa-phone"
-                    label="Nomor Telepon"
-                    type="number"
-                    name="nomor_telepon"
-                    placeholder="Masukkan Nomor Telepon"
-                    :required="true"
-                />
-            </span>
-            <span class="mb-2 mt-3 flex items-center justify-between gap-4">
-                <x-input
-                    icon="fa-solid fa-globe"
-                    label="Website"
-                    type="text"
-                    name="website"
-                    placeholder="Masukkan Website"
-                    :required="true"
-                />
-                <x-select
-                    icon="fa-solid fa-toggle-on"
-                    label="Status"
-                    type="text"
-                    name="status"
-                    placeholder=""
-                    :required="true"
-                    :options="['AKTIF' => 'Aktif', 'TIDAK AKTIF' => 'Tidak Aktif']"
-                />
-                <x-select
-                    icon="fa-solid fa-map-marker-alt"
-                    label="Lokasi"
-                    type="text"
-                    name="id_lokasi"
-                    placeholder=""
-                    :required="true"
-                    :options="$lokasi"
-                />
-            </span>
+                <span class="mb-2 mt-3 flex items-center justify-between gap-4">
+                    <x-input
+                        icon="fa-solid fa-envelope"
+                        label="Email"
+                        type="email"
+                        name="email"
+                        placeholder="Masukkan Email"
+                        :required="true"
+                    />
+                    <x-input
+                        icon="fa-solid fa-phone"
+                        label="Nomor Telepon"
+                        type="number"
+                        name="nomor_telepon"
+                        placeholder="Masukkan Nomor Telepon"
+                        :required="true"
+                    />
+                </span>
+                <span class="mb-2 mt-3 flex items-center justify-between gap-4">
+                    <x-input
+                        icon="fa-solid fa-globe"
+                        label="Website"
+                        type="text"
+                        name="website"
+                        placeholder="Masukkan Website"
+                        :required="true"
+                    />
+                    <x-select
+                        icon="fa-solid fa-toggle-on"
+                        label="Status"
+                        type="text"
+                        name="status" placeholder=""
+                        :required="true"
+                        :options="['AKTIF' => 'Aktif', 'TIDAK AKTIF' => 'Tidak Aktif']"
+                    />
+                    <x-select
+                        icon="fa-solid fa-map-marker-alt"
+                        label="Lokasi"
+                        type="text"
+                        name="id_lokasi"
+                        placeholder=""
+                        :required="true"
+                        :options="$lokasi"
+                    />
+                </span>
             </div>
             <span class="flex justify-end gap-3 text-sm items-center mt-6">
                 <button type="submit" class="mt-4 mb-2 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">

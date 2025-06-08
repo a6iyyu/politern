@@ -20,32 +20,19 @@ class DataProdi extends Controller
     {
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
+            $baris = 1;
             $total_prodi = ProgramStudi::count();
-            $jenjang = ProgramStudi::distinct()->pluck('jenjang')->toArray();
-            $status = ProgramStudi::distinct()->pluck('status')->toArray();
-            $jenjang_options = ProgramStudi::select('jenjang')
-                ->distinct()
-                ->pluck('jenjang')
-                ->mapWithKeys(function($item) {
-                    return [$item => $item];
-                })
-                ->toArray();
-            $status_options = ProgramStudi::select('status')
-                ->distinct()
-                ->pluck('status')
-                ->mapWithKeys(function($item) {
-                    return [$item => $item];
-                })
-                ->toArray();
-
+            $jenjang = ['D1' => 'D1', 'D2' => 'D2', 'D3' => 'D3', 'D4' => 'D4', 'S2' => 'S2', 'S3' => 'S3'];
+            $status = ['AKTIF' => 'Aktif', 'NONAKTIF' => 'Nonaktif'];
+            
             $paginasi = ProgramStudi::paginate(request('per_page', 10));
-            $data = collect($paginasi->items())->map(function (ProgramStudi $prodi): array {
+            $data = collect($paginasi->items())->map(function (ProgramStudi $prodi) use (&$baris) {
                 $status = match ($prodi->status) {
-                    'AKTIF' => 'bg-green-200 text-green-800',
+                    'AKTIF'     => 'bg-green-200 text-green-800',
                     'NONAKTIF'  => 'bg-red-200 text-yellow-800',
                 };
                 return [
-                    $prodi->id_prodi,
+                    $baris++,
                     $prodi->kode,
                     $prodi->nama,
                     $prodi->jenjang,
@@ -55,7 +42,7 @@ class DataProdi extends Controller
                     view('components.admin.data-prodi.aksi', compact('prodi'))->render(),
                 ];
             })->toArray();
-            return view('pages.admin.data-prodi', compact('data', 'paginasi', 'total_prodi', 'jenjang_options', 'status_options'));
+            return view('pages.admin.data-prodi', compact('data', 'paginasi', 'total_prodi', 'jenjang', 'status'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
@@ -91,7 +78,7 @@ class DataProdi extends Controller
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
-            return back()->withErrors(['errors' => 'Gagal menambahkan data program studi karena kesalahan pada server.']);
+            return back()->withErrors('Gagal menambahkan data program studi karena kesalahan pada server.');
         }
     }
 
@@ -147,6 +134,7 @@ class DataProdi extends Controller
         $prodi = ProgramStudi::findOrFail($id);
 
         return [
+            'mahasiswa' => Mahasiswa::where('id_prodi', $id)->get(),
             'prodi' => [
                 'kode_prodi' => $prodi->kode,
                 'nama' => $prodi->nama,
@@ -154,7 +142,6 @@ class DataProdi extends Controller
                 'jurusan_prodi' => $prodi->jurusan,
                 'status_prodi' => $prodi->status,
             ],
-            'mahasiswa' => Mahasiswa::where('id_prodi', $id)->get(),
         ];
     }
 }

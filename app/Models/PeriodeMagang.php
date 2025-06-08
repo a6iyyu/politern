@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PeriodeMagang extends Model
 {
     protected $table = 'periode_magang';
     protected $primaryKey = 'id_periode';
     public $timestamps = true;
+    protected $fillable = ['nama_periode', 'tanggal_mulai', 'tanggal_selesai', 'semester', 'durasi'];
 
-    protected $fillable = ['nama_periode', 'tanggal_mulai', 'tanggal_selesai', 'semester'];
+    public function durasi(): BelongsTo
+    {
+        return $this->belongsTo(DurasiMagang::class, 'durasi', 'id_durasi_magang');
+    }
 }

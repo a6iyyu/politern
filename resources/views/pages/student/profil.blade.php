@@ -19,9 +19,6 @@
                 <div>
                     @include('components.student.profil.detail')
                 </div>
-                <a href="{{ route('mahasiswa.profil.edit') }}" class="block w-full px-4 py-2.5 font-semibold rounded-lg text-center text-sm border border-[var(--primary)] text-[var(--primary)] transition-all duration-300 ease-in-out lg:hidden lg:hover:bg-[var(--primary)] lg:hover:text-white">
-                    Edit Profil
-                </a>
             </article>
             <article class="mt-6 flex flex-col gap-4">
                 <h5 class="font-semibold text-[var(--primary)]">

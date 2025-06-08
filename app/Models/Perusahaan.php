@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Perusahaan extends Model
 {
+    use HasFactory;
+
     protected $table = 'perusahaan_mitra';
     protected $primaryKey = 'id_perusahaan_mitra';
 

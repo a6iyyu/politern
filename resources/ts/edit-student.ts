@@ -6,7 +6,7 @@ interface Student {
   angkatan: string;
   semester: string;
   nama_prodi: string;
-  ipk: string;
+  ipk: number;
   status: string;
 }
 
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (angkatan) angkatan.value = data.mahasiswa.angkatan;
       if (semester) semester.value = data.mahasiswa.semester;
       if (nama_prodi) nama_prodi.value = data.mahasiswa.nama_prodi;
-      if (ipk) ipk.value = data.mahasiswa.ipk;
+      if (ipk) ipk.value = Math.round(data.mahasiswa.ipk * 100) / 100 as unknown as string;
       if (status) status.value = data.status.status;
     });
   });

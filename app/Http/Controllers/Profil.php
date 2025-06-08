@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Pengguna;
+use App\Models\Mahasiswa;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
@@ -40,40 +40,32 @@ class Profil extends Controller
 
     public function edit(): RedirectResponse|View
     {
-        try {
-            $pengguna = Auth::user()->tipe;
-            if ($pengguna == null) return back()->withErrors(['errors' => 'Pengguna tidak ditemukan.']);
-
-            return match ($pengguna) {
-                'ADMIN'     => $this->admin(),
-                'DOSEN'     => $this->lecturer(),
-                'MAHASISWA' => $this->student(),
-            };
-        } catch (ModelNotFoundException $exception) {
-            report($exception);
-            Log::error($exception->getMessage());
-            return back()->withErrors(['errors' => 'Data Anda tidak ditemukan.']);
-        } catch (Exception $exception) {
-            report($exception);
-            Log::error($exception->getMessage());
-            return back()->withErrors(['errors' => 'Gagal dalam mengambil data Anda karena kesalahan pada server.']);
-        }
+        $pengguna = Auth::user()->tipe;
+        return match ($pengguna) {
+            'ADMIN'     => $this->admin(),
+            'DOSEN'     => $this->lecturer(),
+            'MAHASISWA' => $this->student('edit'),
+        };
     }
 
     public function update(Request $request): RedirectResponse
     {
-        try {
-            $request->validate([]);
+        $pengguna = Auth::user()->tipe;
+        return match ($pengguna) {
+            'ADMIN'     => $this->admin(),
+            'DOSEN'     => $this->lecturer(),
+            'MAHASISWA' => $this->student('update', $request),
+        };
+    }
 
-            /** @var Pengguna $pengguna  */
-            $pengguna = Auth::user();
-            $pengguna->update($request->all());
-            return back()->with('success', 'Profil Anda berhasil diubah.');
-        } catch (Exception $exception) {
-            report($exception);
-            Log::error($exception->getMessage());
-            return back()->withErrors(['errors' => 'Gagal dalam mengubah profil Anda karena kesalahan pada server.']);
-        }
+    public function destroy(): RedirectResponse
+    {
+        $pengguna = Auth::user()->tipe;
+        return match ($pengguna) {
+            'ADMIN'     => $this->admin(),
+            'DOSEN'     => $this->lecturer(),
+            'MAHASISWA' => $this->student('destroy'),
+        };
     }
 
     private function admin(): RedirectResponse|View
@@ -116,15 +108,64 @@ class Profil extends Controller
         }
     }
 
-    private function student(): RedirectResponse|View
+    private function student(string $action = 'index', $request = null): RedirectResponse|View
     {
         try {
             $pengguna = Auth::user();
-            $mahasiswa = $pengguna->mahasiswa;
             $route = Request::route() instanceof Route ? Request::route()->getName() : null;
 
-            if ($route === 'mahasiswa.profil.edit') return view('pages.student.edit-profil', compact('mahasiswa'));
-            return view('pages.student.profil', compact('mahasiswa'));
+            /** @var Mahasiswa $mahasiswa */
+            $mahasiswa = $pengguna->mahasiswa;
+
+            if ($action === 'index') return view('pages.student.profil', compact('mahasiswa'));
+
+            if ($action === 'edit') {
+                if ($route === 'mahasiswa.profil.pengalaman.edit') return view('pages.student.edit-pengalaman', compact('mahasiswa'));
+                if ($route === 'mahasiswa.profil.sertifikasi.edit') return view('pages.student.edit-sertifikasi', compact('mahasiswa'));
+                if ($route === 'mahasiswa.profil.proyek.edit') return view('pages.student.edit-proyek', compact('mahasiswa'));
+                return view('pages.student.edit-profil', compact('mahasiswa'));
+            }
+
+            if ($action === 'update' && $request) {
+                if ($route === 'mahasiswa.profil.pengalaman.perbarui') {
+                    $mahasiswa->pengalaman()->update($request->all());
+                    return back()->with('success', 'Pengalaman berhasil diperbarui.');
+                }
+
+                if ($route === 'mahasiswa.profil.sertifikasi.perbarui') {
+                    $mahasiswa->sertifikasi_pelatihan()->update($request->all());
+                    return back()->with('success', 'Sertifikasi berhasil diperbarui.');
+                }
+
+                if ($route === 'mahasiswa.profil.proyek.perbarui') {
+                    $mahasiswa->proyek()->update($request->all());
+                    return back()->with('success', 'Proyek berhasil diperbarui.');
+                }
+
+                $mahasiswa->update($request->all());
+                return back()->with('success', 'Profil berhasil diperbarui.');
+            }
+
+            if ($action === 'destroy') {
+                if ($route === 'mahasiswa.profil.pengalaman.hapus') {
+                    $mahasiswa->pengalaman()->delete();
+                    return back()->with('success', 'Pengalaman berhasil dihapus.');
+                }
+
+                if ($route === 'mahasiswa.profil.sertifikasi.hapus') {
+                    $mahasiswa->sertifikasi_pelatihan()->delete();
+                    return back()->with('success', 'Sertifikasi berhasil dihapus.');
+                }
+
+                if ($route === 'mahasiswa.profil.proyek.hapus') {
+                    $mahasiswa->proyek()->delete();
+                    return back()->with('success', 'Proyek berhasil dihapus.');
+                }
+
+                return back()->withErrors(['errors' => 'Data yang ingin dihapus tidak ditemukan.']);
+            }
+
+            return back()->withErrors(['errors' => 'Aksi tidak dikenal.']);
         } catch (ModelNotFoundException $exception) {
             report($exception);
             Log::error($exception->getMessage());

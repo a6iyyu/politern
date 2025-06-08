@@ -15,12 +15,10 @@
             {{ $status ?? 'N/A' }}
         </h5>
     </div>
-    <h5 class="cursor-default mt-3 text-sm text-[#585858]">
-        {{ $location ?? 'N/A' }}
-    </h5>
-    <h5 class="cursor-default mt-3 text-sm text-[#585858]">
-        {{ $salary ?? 'N/A' }}
-    </h5>
+    <span class="cursor-default flex items-center justify-between mt-3 text-sm text-[#585858]">
+        <h5>{{ $location ?? 'N/A' }}</h5>
+        <h5 class="font-bold italic">{{ $salary ?? 'N/A' }}</h5>
+    </span>
     <div class="flex flex-wrap gap-2 mt-4">
         <h5 class="cursor-pointer bg-[#fbecf1] text-xs text-[#585858] px-5 py-2 rounded-full border border-[#f9d4e2] transition-all duration-300 ease-in-out lg:hover:bg-[#f9d4e2]">
             {{ $type ?? 'N/A' }}
@@ -29,9 +27,12 @@
             {{ $category ?? 'N/A' }}
         </h5>
     </div>
-    <h5 class="cursor-default mt-3 text-xs text-[#585858]">
-        Diposting {{ $formattedDate() ?? 'N/A' }}
-    </h5>
+    <span class="flex items-center justify-between cursor-default mt-3 text-xs text-[#585858]">
+        <h5>Diposting {{ $formattedDate() ?? 'N/A' }}</h5>
+        @if (isset($score) || !empty($score))
+            <h6 class="italic">Skor: {{ $score ?? 'N/A' }}</h6>
+        @endif
+    </span>
     <span class="mt-6 flex items-center justify-between">
         <img src="{{ asset('icons/simpan-biru.svg') }}" alt="Simpan" id="save" />
         <a href="{{ $url }}" class="bg-[#ff77c3] text-white text-sm px-4 py-2 rounded-lg font-medium cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[#ff60b8]">

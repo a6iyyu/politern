@@ -13,7 +13,8 @@
         <section class="py-6 px-12 mt-2 rounded-lg overflow-hidden bg-white border border-[var(--stroke)]">
             @include('components.admin.lowongan-magang.tabel')
         </section>
-        @include('components.admin.lowongan-magang.tambah')
         @include('components.admin.lowongan-magang.detail')
+        @include('components.admin.lowongan-magang.edit')
+        @include('components.admin.lowongan-magang.tambah')
     </main>
 @endsection

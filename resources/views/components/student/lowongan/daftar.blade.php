@@ -9,7 +9,6 @@
     <fieldset class="flex items-center gap-1 mt-4 text-sm text-slate-700">
         <h5 class="cursor-default">Urut berdasarkan</h5>
         <select
-            wire:model="sortir"
             name="sortir"
             id="sortir"
             class="rounded-md py-1 text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
@@ -24,18 +23,19 @@
 </section>
 
 {{-- TODO: Menambahkan foreach sebagai perulangan dan mengambil data dari DB Lowongan Magang. --}}
-<section class="mt-3 max-h-[70vh] overflow-y-auto pr-2">
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+<section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    @foreach ($lowongan as $item)
         <x-card
-            :category="$bidang_keahlian ?? 'N/A'"
-            :createdAt="Carbon::now() ?? 'N/A'"
-            :industry="$perusahaan->nama ?? 'N/A'"
-            :location="$lokasi ?? 'N/A'"
-            :logo="$perusahaan->logo ?? 'N/A'"
-            :salary="(float) ($gaji_maksimal ?? 0)"
-            :name="$judul ?? 'N/A'"
-            :status="$status ?? 'N/A'"
-            :type="$kategori ?? 'N/A'"
+            :category="$item->bidang->first()->nama_bidang ?? 'N/A'"
+            :createdAt="$item->created_at ?? 'N/A'"
+            :industry="$item->perusahaan->nama ?? 'N/A'"
+            :location="$item->perusahaan->lokasi->nama_lokasi ?? 'N/A'"
+            :logo="asset($item->perusahaan->logo) ?? 'N/A'"
+            :name="$item->judul ?? 'N/A'"
+            :salary="$item->gaji ?? 'N/A'"
+            :status="$item->status ?? 'N/A'"
+            :type="$item->jenis_lokasi->nama_jenis_lokasi ?? 'N/A'"
+            :url="route('mahasiswa.lowongan.detail', ['id' => $item->perusahaan->id_perusahaan_mitra])"
         />
-    </div>
+    @endforeach
 </section>

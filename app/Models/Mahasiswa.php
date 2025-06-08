@@ -79,6 +79,6 @@ class Mahasiswa extends Model
 
     public function sertifikasi_pelatihan(): BelongsToMany
     {
-        return $this->belongsToMany(SertifikasiPelatihan::class,'sertifikasi_pelatihan_mahasiswa', 'id_mahasiswa', 'id_sertifikasi_pelatihan');
+        return $this->belongsToMany(SertifikasiPelatihan::class, 'sertifikasi_pelatihan_mahasiswa', 'id_mahasiswa', 'id_sertifikasi_pelatihan');
     }
 }

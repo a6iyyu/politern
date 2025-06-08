@@ -25,19 +25,22 @@ class DataDosen extends Controller
     {
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
+            $baris = 1;
             $total_dosen = Dosen::count();
             $total_dosen_pembimbing = DosenPembimbing::count();
 
             $paginasi = Dosen::paginate(request('per_page', 10));
-            $data = collect($paginasi->items())->map(fn(Dosen $dosen): array => [
-                $dosen->id_dosen,
-                '<div class="flex items-center gap-2">
-                    <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($dosen->nama) . '
-                </div>',
-                $dosen->nip,
-                $dosen->nomor_telepon,
-                view('components.admin.data-dosen.aksi', compact('dosen'))->render(),
-            ])->toArray();
+            $data = collect($paginasi->items())->map(callback: function (Dosen $dosen) use (&$baris) {
+                return [
+                    $baris++,
+                    '<div class="flex items-center gap-2">
+                        <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($dosen->nama) . '
+                    </div>',
+                    $dosen->nip,
+                    $dosen->nomor_telepon,
+                    view('components.admin.data-dosen.aksi', compact('dosen'))->render(),
+                ];
+            })->toArray();
             return view('pages.admin.data-dosen', compact('data', 'paginasi', 'total_dosen', 'total_dosen_pembimbing'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");

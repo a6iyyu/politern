@@ -12,7 +12,7 @@
     </div>
 </section>
 @if (session('success'))
-    <h5 class="mb-7 p-4 cursor-default rounded-lg bg-emerald-50 border border-emerald-500 list-disc list-inside text-sm text-emerald-500">
+    <h5 class="mb-4 p-4 cursor-default rounded-lg bg-emerald-50 border border-emerald-500 list-disc list-inside text-sm text-emerald-500">
         {{ session('success') }}
     </h5>
 @elseif ($errors->any())
