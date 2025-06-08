@@ -27,6 +27,7 @@ class Lowongan extends Controller
     public function index(): View
     {
         $pengguna = Auth::user()->tipe;
+
         if ($pengguna === "ADMIN") {
             $total_lowongan = LowonganMagang::count();
             $perusahaan_filter = Perusahaan::all();
@@ -78,6 +79,9 @@ class Lowongan extends Controller
                 'jenis_magang',
                 'durasi'
             ));
+        } else if ($pengguna === 'MAHASISWA') {
+            $lowongan = LowonganMagang::with(['bidang', 'perusahaan', 'jenis_lokasi', 'periode_magang', 'keahlian', 'jenis_magang', 'durasi'])->where('status', 'DIBUKA')->get();
+            return view('pages.student.lowongan', compact('lowongan'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }

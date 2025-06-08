@@ -31,7 +31,7 @@
         @include('shared.navigation.sidebar')
     @endauth
     @yield('konten')
-    @yield('skrip')
+    @stack('skrip')
     <div id="overlay" class="hidden fixed inset-0 z-40 lg:hidden"></div>
     @livewireScripts
 </body>

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\RekomendasiMagang;
+use App\Models\Bidang;
 use App\Models\BidangMahasiswa;
-use App\Models\Dosen;
 use App\Models\LogAktivitas;
 use App\Models\LowonganMagang;
-use App\Models\Magang;
 use App\Models\Mahasiswa;
+use App\Models\Magang;
+use App\Models\Dosen;
 use App\Models\Perusahaan;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -72,11 +72,11 @@ class Dasbor extends Controller
                 $id_dosen = $pengguna->dosen->id_dosen;
 
                 $aktivitas_terbaru = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->latest()->take(4)->get();
-                $evaluasi_magang = null; /** TODO: Perbaiki evaluasi magang. */
+                $evaluasi_magang = $this->evaluasi_magang();
                 $mahasiswa_aktif = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'AKTIF')->count();
                 $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
                 $mahasiswa_selesai = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'SELESAI')->count();
-                $menunggu_evaluasi = null;
+                $menunggu_evaluasi = LogAktivitas::whereHas('magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->where('status', 'MENUNGGU')->count();
                 $total_aktivitas = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
                 $total_bimbingan = Magang::where('id_dosen_pembimbing', $id_dosen)->count();
                 $total_mahasiswa = Mahasiswa::count();
@@ -114,7 +114,6 @@ class Dasbor extends Controller
     public function detail(string $id): View
     {
         $pengguna = Auth::user()->tipe;
-
         try {
             if ($pengguna === 'DOSEN') {
                 $mahasiswa = $this->mahasiswa_bimbingan($id)->firstOrFail();
@@ -139,26 +138,28 @@ class Dasbor extends Controller
      *
      * Fungsi di bawah ini bertujuan untuk mengembalikan semua data-data
      * yang nantinya akan divisualisasikan dalam berbagai bentuk grafik. 
+     * 
+     * TODO: Memeriksa ulang apakah datanya sudah sesuai dengan visual.
      */
     public function chart(): JsonResponse|View
     {
         try {
             /** Mengembalikan semua data yang dibutuhkan pada grafik lingkaran */
+            /** @var Collection<string, Bidang> $bidang */
             $total = BidangMahasiswa::count();
             $kategori_bidang_magang_terbanyak = BidangMahasiswa::with('bidang')
                 ->get()
                 ->groupBy('id_bidang')
                 ->take(5)
-                ->map(fn ($bidang) => [
+                ->map(fn($bidang) => [
                     'id_bidang'     => $bidang->first()->id_bidang,
                     'jumlah_bidang' => $bidang->count(),
                     'nama_bidang'   => $bidang->first()->bidang->nama_bidang ?? 'N/A',
                     'persentase'    => round($bidang->count() / $total * 100, 2),
                 ])
                 ->values();
-            
-            /** TODO: Perbaiki evaluasi magang. */
-            $progres_magang_mingguan = DB::table('evaluasi_magang')
+
+            $progres_magang_mingguan = DB::table('log_aktivitas')
                 ->select(DB::raw('DATE(tanggal_evaluasi) as tanggal'), DB::raw('COUNT(*) as jumlah'))
                 ->groupBy('tanggal')
                 ->orderBy('tanggal')
@@ -215,5 +216,24 @@ class Dasbor extends Controller
         $mahasiswa = $this->mahasiswa();
         if ($mahasiswa === null) return 0;
         return LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_mahasiswa', $mahasiswa->id_mahasiswa))->count();
+    }
+
+    /**
+     * @return int
+     *
+     * Menghitung jumlah mahasiswa yang masih menunggu evaluasi magang
+     * berdasarkan dosen pembimbing saat ini.
+     */
+    private function evaluasi_magang(): int
+    {
+        $pengguna = Auth::user();
+        $id_dosen = $pengguna->dosen->id_dosen;
+        return LogAktivitas::whereHas('magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))
+            ->where('log_aktivitas.status', 'MENUNGGU')
+            ->join('magang', 'log_aktivitas.id_magang', '=', 'magang.id_magang')
+            ->join('pengajuan_magang', 'magang.id_pengajuan_magang', '=', 'pengajuan_magang.id_pengajuan_magang')
+            ->select('pengajuan_magang.id_mahasiswa')
+            ->distinct()
+            ->count();
     }
 }
