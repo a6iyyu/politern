@@ -54,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await fetchCompanyData(id);
       if (!data || !data.perusahaan) return;
 
-      // Tampilkan data perusahaan ke dalam elemen
       nama.textContent = data.perusahaan.nama;
       nib.textContent = data.perusahaan.nib;
       nomor_telepon.textContent = data.perusahaan.nomor_telepon;

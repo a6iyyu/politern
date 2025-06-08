@@ -14,7 +14,7 @@
             :score="number_format($rekomendasi['skor'][$item->id_lowongan] ?? 0, 4)"
             :status="$item->status ?? 'N/A'"
             :type="$item->jenis_lokasi->nama_jenis_lokasi ?? 'N/A'"
-            :url="route('mahasiswa.rekomendasi-magang.detail', ['id' => $item->perusahaan->id_perusahaan_mitra])"
+            :url="route('mahasiswa.rekomendasi-magang.detail', ['id' => $item->perusahaan->id_perusahaan_mitra, 'from' => 'rekomendasi'])"
         />
     @endforeach
 </section>

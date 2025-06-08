@@ -102,12 +102,12 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('lowongan-magang')->group(function () {
             Route::get('/', [Lowongan::class, 'index'])->name('admin.lowongan-magang');
-            Route::post('/tambah', [Lowongan::class, 'store'])->name('admin.lowongan-magang.tambah');
+            Route::get('/ekspor-excel', [Lowongan::class, 'export_excel'])->name('admin.lowongan-magang.ekspor-excel');
             Route::get('/{id}/detail', [Lowongan::class, 'detail'])->name('admin.lowongan-magang.detail');
             Route::get('/{id}/edit', [Lowongan::class, 'edit'])->name('admin.lowongan-magang.edit');
             Route::post('/{id}/edit', [Lowongan::class, 'update'])->name('admin.lowongan-magang.perbarui');
+            Route::post('/tambah', [Lowongan::class, 'store'])->name('admin.lowongan-magang.tambah');
             Route::delete('/{id}/hapus', [Lowongan::class, 'destroy'])->name('admin.lowongan-magang.hapus');
-            Route::get('/ekspor-excel', [Lowongan::class, 'export_excel'])->name('admin.lowongan-magang.ekspor-excel');
         });
 
         Route::prefix('pengajuan-magang')->group(function () {

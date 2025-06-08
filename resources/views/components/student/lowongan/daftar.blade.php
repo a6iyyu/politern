@@ -35,7 +35,7 @@
             :salary="$item->gaji ?? 'N/A'"
             :status="$item->status ?? 'N/A'"
             :type="$item->jenis_lokasi->nama_jenis_lokasi ?? 'N/A'"
-            :url="route('mahasiswa.lowongan.detail', ['id' => $item->perusahaan->id_perusahaan_mitra])"
+            :url="route('mahasiswa.lowongan.detail', ['id' => $item->perusahaan->id_perusahaan_mitra, 'from' => 'lowongan'])"
         />
     @endforeach
 </section>
