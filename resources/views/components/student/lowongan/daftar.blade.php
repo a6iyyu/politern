@@ -31,7 +31,7 @@
             :industry="$item->perusahaan->nama ?? 'N/A'"
             :location="$item->perusahaan->lokasi->nama_lokasi ?? 'N/A'"
             :logo="asset($item->perusahaan->logo) ?? 'N/A'"
-            :name="$item->judul ?? 'N/A'"
+            :expertise="$item->keahlian->pluck('nama_keahlian')->toArray()"
             :salary="$item->gaji ?? 'N/A'"
             :status="$item->status ?? 'N/A'"
             :type="$item->jenis_lokasi->nama_jenis_lokasi ?? 'N/A'"

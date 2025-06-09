@@ -145,7 +145,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('lowongan')->group(function () {
             Route::get('/', [Lowongan::class, 'index'])->name('mahasiswa.lowongan');
-            Route::get('/{id}/detail', [Lowongan::class, 'detail'])->name('mahasiswa.lowongan.detail');
+            Route::get('/{id}/detail', [Lowongan::class, 'show'])->name('mahasiswa.lowongan.detail');
             Route::get('/cari', [Dasbor::class, 'index'])->name('mahasiswa.lowongan.cari');
         });
 

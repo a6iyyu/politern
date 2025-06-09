@@ -9,11 +9,11 @@
             :industry="$item->perusahaan->nama ?? 'N/A'"
             :location="$item->perusahaan->lokasi->nama_lokasi ?? 'N/A'"
             :logo="$item->perusahaan->logo ?? 'N/A'"
-            :name="$item->judul ?? 'N/A'"
             :salary="$item->gaji ?? 'N/A'"
             :score="number_format($rekomendasi['skor'][$item->id_lowongan] ?? 0, 4)"
             :status="$item->status ?? 'N/A'"
             :type="$item->jenis_lokasi->nama_jenis_lokasi ?? 'N/A'"
+            :expertise="$item->keahlian->pluck('nama_keahlian')->toArray()"
             :url="route('mahasiswa.rekomendasi-magang.detail', ['id' => $item->perusahaan->id_perusahaan_mitra])"
         />
     @endforeach
