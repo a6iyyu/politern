@@ -34,6 +34,7 @@ class LogAktivitas extends Controller
             case 'ADMIN':
                 return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
             case 'DOSEN':
+                $perusahaan = $log_aktivitas->pluck('magang.pengajuan_magang.lowongan.perusahaan')->unique('id_perusahaan_mitra')->mapWithKeys(fn($p) => [$p['id_perusahaan_mitra'] => $p['nama']])->toArray();
                 return view('pages.lecturer.log-aktivitas', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
             case 'MAHASISWA':
                 $mahasiswa = DB::table('mahasiswa')->where('id_pengguna', Auth::user()->id_pengguna)->first();

@@ -78,22 +78,12 @@ class Dasbor extends Controller
                 $mahasiswa_aktif = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'AKTIF')->count();
                 $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
                 $mahasiswa_selesai = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'SELESAI')->count();
-                $menunggu_evaluasi = LogAktivitas::where('status', 'menunggu')
-                    ->whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))
-                    ->count();
+                $menunggu_evaluasi = LogAktivitas::where('status', 'menunggu')->whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
                 $total_aktivitas = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
                 $total_bimbingan = Magang::where('id_dosen_pembimbing', $id_dosen)->count();
                 $total_mahasiswa = Mahasiswa::count();
 
-                // aktivitas magang terbaru
-                $log_aktivitas = LogAktivitas::with([
-                    'magang.pengajuan_magang.mahasiswa',
-                    'magang.pengajuan_magang.mahasiswa.program_studi',
-                    'magang.pengajuan_magang.lowongan.perusahaan'
-                ])
-                    ->latest()
-                    ->take(3)
-                    ->get();
+                $log_aktivitas = LogAktivitas::with(['magang.pengajuan_magang.mahasiswa', 'magang.pengajuan_magang.mahasiswa.program_studi', 'magang.pengajuan_magang.lowongan.perusahaan'])->latest()->take(3)->get();
                 $perusahaan = Perusahaan::pluck('nama', 'id_perusahaan_mitra')->toArray();
                 $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
                 $status_aktivitas = LogAktivitas::pluck('status')->unique()->toArray();
@@ -218,14 +208,14 @@ class Dasbor extends Controller
      *
      * Mengambil data mahasiswa yang sedang bimbingan dosen pembimbing saat ini.
      */
-    public function mahasiswa_bimbingan(?string $id_mahasiswa = null): Builder
+    public function mahasiswa_bimbingan(?string $id_mahasiswa = null): Collection
     {
         $pengguna = Auth::user();
         $id_dosen = $pengguna->dosen->id_dosen;
         $mahasiswa_bimbingan = Mahasiswa::with(['pengajuan_magang.lowongan.perusahaan', 'pengajuan_magang.magang'])->whereHas('pengajuan_magang.magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen));
 
         if ($id_mahasiswa) $mahasiswa_bimbingan->where('id_mahasiswa', $id_mahasiswa);
-        return $mahasiswa_bimbingan;
+        return $mahasiswa_bimbingan->get();
     }
 
     /**

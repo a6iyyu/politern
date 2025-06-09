@@ -11,9 +11,9 @@ use App\Models\Mahasiswa;
 use App\Models\PeriodeMagang;
 use App\Models\Pengguna;
 use App\Models\ProgramStudi;
-use App\Http\Controllers\Dasbor;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -73,9 +73,10 @@ class DataMahasiswa extends Controller
 
             return view('pages.admin.data-mahasiswa', compact('angkatan', 'data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi', 'status_aktivitas'));
         } else if ($pengguna === "DOSEN") {
-            $mahasiswa_bimbingan = (new Dasbor())->mahasiswa_bimbingan();
-
+            /** @var Builder $mahasiswa_bimbingan */
+            $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
             $baris = 1;
+
             /** @var LengthAwarePaginator $paginasi */
             $paginasi = $mahasiswa_bimbingan->paginate(request('per_page', default: 10));
             $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
@@ -90,7 +91,7 @@ class DataMahasiswa extends Controller
                 $perusahaan = $lowongan?->perusahaan;
 
                 return [
-                    $magang?->id_magang,
+                    $magang->id_magang ?? '-',
                     '<div class="flex items-center gap-2">
                         <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . $mhs->nama_lengkap . '
                     </div>',
@@ -310,5 +311,27 @@ class DataMahasiswa extends Controller
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save('php://output');
         exit;
+    }
+
+    /**
+     * @return Builder
+     * Query mahasiswa yang dibimbing dosen saat ini.
+     */
+    private function mahasiswa_bimbingan(?string $id_mahasiswa = null): Builder
+    {
+        $pengguna = Auth::user();
+        $id_dosen = $pengguna->dosen->id_dosen;
+
+        $query = Mahasiswa::with([
+            'pengajuan_magang.lowongan.perusahaan',
+            'pengajuan_magang.magang',
+            'program_studi',
+        ])->whereHas('pengajuan_magang.magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen));
+
+        if ($id_mahasiswa) {
+            $query->where('id_mahasiswa', $id_mahasiswa);
+        }
+
+        return $query;
     }
 }
