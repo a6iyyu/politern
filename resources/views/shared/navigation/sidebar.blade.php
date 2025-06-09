@@ -33,7 +33,7 @@
             <h4 class="cursor-default mb-1 mt-2 pl-5 text-sm tracking-wider text-white/80 font-light">Data Magang</h4>
             <a href="{{ route('admin.periode-magang') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('admin/periode-magang*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('admin/periode-magang*') ? asset('icons/periode-magang-biru.svg') : asset('icons/periode-magang-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />
-                <h4 class="ml-7 text-sm tracking-wider">Periode & Durasi Magang</h4>
+                <h4 class="ml-7 text-sm tracking-wider">Periode Magang</h4>
             </a>
             <a href="{{ route('admin.lowongan-magang') }}" class="flex items-center pl-5 pr-7 py-3 {{ Request::is('admin/lowongan-magang*') ? 'bg-white rounded-lg text-[var(--primary)] font-medium' : 'text-white' }}">
                 <img src="{{ Request::is('admin/lowongan-magang*') ? asset('icons/lowongan-magang-biru.svg') : asset('icons/lowongan-magang-putih.svg') }}" alt="Dasbor" class="h-5 w-5" />

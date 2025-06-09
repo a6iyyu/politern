@@ -3,7 +3,7 @@
         Riwayat Lamaran
     </h4>
     <x-table
-        :headers="['Tanggal Pengajuan', 'Nama Perusahaan', 'Posisi Magang',  'Status', 'Aksi']"
+        :headers="['No', 'Nama Perusahaan', 'Posisi Magang', 'Periode Magang', 'Tanggal Pengajuan',  'Status', 'Aksi']"
         :sortable="['Tanggal Pengajuan']"
         :rows="$data"
     />

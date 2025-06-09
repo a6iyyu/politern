@@ -11,11 +11,11 @@
     <x-header title="Dasbor" />
     <main class="flex flex-col pb-10 px-10 pl-84 transition-all duration-300">
         @include('components.lecturer.dasbor.informasi')
-        <div class="flex flex-col lg:flex-row gap-4 items-baseline">
-            <section class="p-7 mt-6 rounded-xl overflow-hidden bg-white border border-[var(--stroke)] flex-3">
-                @include('components.lecturer.dasbor.tabel')
-            </section>
+        <section class="p-7 mt-6 rounded-xl overflow-hidden bg-white border border-[var(--stroke)] flex-3">
+            @include('components.lecturer.dasbor.tabel')
+        </section>
+        <section class="mt-7 border border-[var(--stroke)] rounded-xl p-7 bg-white flex-2">
             @include('components.lecturer.dasbor.log-aktivitas')
-        </div>
+        </section>
     </main> 
 @endsection

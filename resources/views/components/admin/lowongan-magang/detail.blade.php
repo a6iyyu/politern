@@ -1,6 +1,6 @@
 <section id="modal-detail-lowongan" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-black/20 backdrop-blur-[1px]" aria-modal="true" role="dialog">
-    <div class="flex items-center justify-center min-h-screen px-4">
-        <figure class="cursor-default w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+    <div class="w-full flex items-center justify-center min-h-screen px-4">
+        <figure class="cursor-default w-4/5 max-h-[90vh] max-w-full overflow-y-auto rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)] lg:max-w-[90vh]">
             <span class="mb-4 flex items-center justify-between">
                 <h2 class="font-semibold text-[var(--primary)]">Detail Lowongan Magang</h2>
                 <button aria-label="Tutup detail" class="fa-solid fa-xmark cursor-pointer text-[var(--primary)] close"></button>
@@ -9,9 +9,9 @@
             <h5 class="bg-[var(--secondary)] text-white text-left px-4 py-2 rounded-md text-sm font-medium mb-6 lg:text-base">
                 Informasi Lowongan Magang
             </h5>
-            <div class="flex items-center gap-6 mb-4">
-                <img id="logo_perusahaan" alt="Logo Perusahaan" class="w-20 h-20 rounded-full object-cover" />
-                <figcaption class="grid grid-cols-1 gap-4 text-sm lg:grid-cols-2">
+            <div class="flex flex-col items-center mb-4 lg:gap-6 lg:flex-row">
+                <img id="logo_perusahaan" alt="Logo Perusahaan" class="hidden h-20 w-20 rounded-full object-cover lg:inline" />
+                <figcaption class="w-full grid grid-cols-1 gap-4 text-sm lg:grid-cols-2">
                     <span class="mb-1">
                         <h5 class="font-semibold">Bidang posisi:</h5>
                         <h5 id="nama_bidang" class="text-gray-800"></h5>
@@ -46,7 +46,7 @@
             </figcaption>
             <figcaption class="mt-4 text-sm text-gray-800 mb-4">
                 <h5 class="font-semibold mb-3">Deskripsi:</h5>
-                <h5 id="deskripsi" class="mt-1 whitespace-pre-line"></h5>
+                <h5 id="deskripsi" class="break-all mt-1 whitespace-pre-line"></h5>
             </figcaption>
             <figcaption class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-800 mb-4">
                 <span>

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class DataProdi extends Controller
 {
@@ -143,5 +145,51 @@ class DataProdi extends Controller
                 'status_prodi' => $prodi->status,
             ],
         ];
+    }
+
+    public function export_excel()
+    {
+        $prodi = ProgramStudi::all();
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Kode');
+        $sheet->setCellValue('C1', 'Nama');
+        $sheet->setCellValue('D1', 'Jenjang');
+        $sheet->setCellValue('E1', 'Jurusan');
+        $sheet->setCellValue('F1', 'Status');
+        $sheet->getStyle("A1:F1")->getFont()->setBold(true);
+
+        $nomor = 1;
+        $baris = 2;
+        foreach ($prodi as $value) {
+            $sheet->setCellValue("A$baris", $nomor);
+            $sheet->setCellValue("B$baris", $value->kode ?? '-');
+            $sheet->setCellValue("C$baris", $value->nama ?? '-');
+            $sheet->setCellValue("D$baris", $value->jenjang ?? '-');
+            $sheet->setCellValue("E$baris", $value->jurusan ?? '-');
+            $sheet->setCellValue("F$baris", $value->status ?? '-');
+            $baris++;
+            $nomor++;
+        }
+
+        foreach (range('A', 'F') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
+
+        $sheet->setTitle("Data Program Studi");
+        if (ob_get_length()) ob_end_clean();
+        $filename = 'Data Program Studi ' . date("Y-m-d_H-i-s") . '.xlsx';
+
+        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header("Cache-Control: max-age=0");
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate('D, d M Y H:i:s') . ' GMT');
+        header("Cache-Control: cache, must-revalidate");
+        header("Pragma: public");
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+        exit;
     }
 }

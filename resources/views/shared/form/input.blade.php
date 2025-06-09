@@ -24,7 +24,7 @@
                 lg:focus:outline-none lg:focus:border-[var(--primary)] text-[var(--primary-text)]
                 @if ($type === 'file') file:mr-4 file:py-2 file:px-4 file:border-0 file:rounded file:bg-[var(--green-tertiary)] file:text-white file:cursor-pointer @endif"
             value="{{ $type !== 'file' ? $value : '' }}"
-            @if ($type === 'number') step="any" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); if ((this.value.match(/,/g) || []).length > 1) this.value = this.value.slice(0, -1)))" onwheel="this.blur()" @endif
+            @if ($type === 'number') step="any" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); if ((this.value.match(/,/g) || []).length > 1) this.value = this.value.slice(0, -1))" onwheel="this.blur()" @endif
             @if ($type === 'text') oninput="this.value = this.value.replace(/[^a-zA-Z0-9\s.,?!:;'\-&quot;\-\()\/]/g, '')" @endif
             @if (!empty($required)) required @endif
             {{ $attributes ?? '' }}

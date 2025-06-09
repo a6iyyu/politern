@@ -7,18 +7,16 @@ namespace App\Http\Controllers;
 use App\Models\BidangMahasiswa;
 use App\Models\KeahlianMahasiswa;
 use App\Models\Magang;
-use App\Models\LowonganMagang;
 use App\Models\Mahasiswa;
 use App\Models\PeriodeMagang;
-use App\Models\Perusahaan;
 use App\Models\Pengguna;
 use App\Models\ProgramStudi;
-use App\Http\Controllers\Dasbor;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
@@ -38,13 +36,18 @@ class DataMahasiswa extends Controller
         $mahasiswa_sedang_magang = Magang::where('status', 'AKTIF')->count();
         $mahasiswa_selesai_magang = Magang::where('status', 'SELESAI')->count();
         $program_studi = ProgramStudi::all();
-        $periode_magang = PeriodeMagang::select('id_periode', 'nama_periode')
-            ->with('lowongan')
-            ->get();
-        // dd($mahasiswa_bimbingan instanceof Collection);
+        $periode_magang = PeriodeMagang::select('id_periode', 'nama_periode')->with('lowongan')->get();
         $status_aktivitas = array_unique(array_merge(Magang::pluck('status')->toArray(), ['BELUM MAGANG']));
 
         if ($pengguna === "ADMIN") {
+            $angkatan = PeriodeMagang::select('tanggal_mulai')
+                ->get()
+                ->map(fn(PeriodeMagang $periode) => Carbon::parse($periode->tanggal_mulai)->format('Y'))
+                ->unique()
+                ->values()
+                ->mapWithKeys(fn($tahun) => [$tahun => $tahun])
+                ->toArray();
+
             $baris = 1;
             /** @var LengthAwarePaginator $paginasi */
             $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', default: 10));
@@ -67,13 +70,13 @@ class DataMahasiswa extends Controller
                     view('components.admin.data-mahasiswa.aksi', compact('mhs'))->render(),
                 ];
             })->toArray();
-            
-            return view('pages.admin.data-mahasiswa', compact('data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi', 'status_aktivitas'));
-            
+
+            return view('pages.admin.data-mahasiswa', compact('angkatan', 'data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi', 'status_aktivitas'));
         } else if ($pengguna === "DOSEN") {
-            $mahasiswa_bimbingan = (new Dasbor())->mahasiswa_bimbingan();
-            
+            /** @var Builder $mahasiswa_bimbingan */
+            $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
             $baris = 1;
+
             /** @var LengthAwarePaginator $paginasi */
             $paginasi = $mahasiswa_bimbingan->paginate(request('per_page', default: 10));
             $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
@@ -81,13 +84,14 @@ class DataMahasiswa extends Controller
                     'AKTIF'         => 'bg-green-200 text-green-800',
                     'SELESAI'       => 'bg-yellow-200 text-yellow-800',
                 };
+
                 $pengajuan = $mhs->pengajuan_magang->first();
                 $magang = $pengajuan?->magang;
                 $lowongan = $pengajuan?->lowongan;
                 $perusahaan = $lowongan?->perusahaan;
 
                 return [
-                    $magang?->id_magang,
+                    $magang->id_magang ?? '-',
                     '<div class="flex items-center gap-2">
                         <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . $mhs->nama_lengkap . '
                     </div>',
@@ -143,12 +147,20 @@ class DataMahasiswa extends Controller
         } catch (Exception $e) {
             report($e);
             Log::error($e->getMessage());
-            return back()->withErrors($e->getMessage());
+            return back()->withErrors(['errors' => 'Gagal menambahkan data mahasiswa karena kesalahan pada server.']);
         }
     }
 
     public function edit($id): JsonResponse
     {
+        $angkatan = PeriodeMagang::select('tanggal_mulai')
+            ->get()
+            ->map(fn(PeriodeMagang $periode) => Carbon::parse($periode->tanggal_mulai)->format('Y'))
+            ->unique()
+            ->values()
+            ->mapWithKeys(fn($tahun) => [$tahun => $tahun])
+            ->toArray();
+
         $mahasiswa = Mahasiswa::with(['pengguna', 'program_studi'])->findOrFail($id);
 
         return response()->json([
@@ -156,7 +168,7 @@ class DataMahasiswa extends Controller
                 'nama_lengkap'  => $mahasiswa->nama_lengkap,
                 'nim'           => $mahasiswa->nim,
                 'semester'      => $mahasiswa->semester,
-                'angkatan'      => $mahasiswa->angkatan,
+                'angkatan'      => $angkatan,
                 'ipk'           => $mahasiswa->ipk,
                 'nama_prodi'    => $mahasiswa->program_studi?->id_prodi ?? '-',
                 'status'        => $mahasiswa->status,
@@ -299,5 +311,27 @@ class DataMahasiswa extends Controller
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save('php://output');
         exit;
+    }
+
+    /**
+     * @return Builder
+     * Query mahasiswa yang dibimbing dosen saat ini.
+     */
+    private function mahasiswa_bimbingan(?string $id_mahasiswa = null): Builder
+    {
+        $pengguna = Auth::user();
+        $id_dosen = $pengguna->dosen->id_dosen;
+
+        $query = Mahasiswa::with([
+            'pengajuan_magang.lowongan.perusahaan',
+            'pengajuan_magang.magang',
+            'program_studi',
+        ])->whereHas('pengajuan_magang.magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen));
+
+        if ($id_mahasiswa) {
+            $query->where('id_mahasiswa', $id_mahasiswa);
+        }
+
+        return $query;
     }
 }

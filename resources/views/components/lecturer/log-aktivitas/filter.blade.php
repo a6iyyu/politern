@@ -14,7 +14,7 @@
         name="perusahaan"
         placeholder="-- Semua Perusahaan --"
         :options="$perusahaan"
-        :selected="request('perusahaan', '')"
+        selected=""
         :required="false"
     />
     <x-select

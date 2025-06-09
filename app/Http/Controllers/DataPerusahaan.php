@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class DataPerusahaan extends Controller
 {
@@ -67,7 +69,7 @@ class DataPerusahaan extends Controller
             ]);
 
             $logo = null;
-            if ($request->hasFile('logo')) $logo = $request->file('logo')->store('logos', 'public');
+            if ($request->hasFile('logo')) $logo = $request->file('logo')->store('logo', 'public');
 
             Perusahaan::create([
                 'nama'          => $request->nama,
@@ -149,25 +151,80 @@ class DataPerusahaan extends Controller
                 'website'       => 'required|url',
                 'logo'          => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'status'        => 'required|in:AKTIF,TIDAK AKTIF',
+                'id_lokasi'     => 'required|exists:lokasi,id_lokasi',
             ]);
 
             $perusahaan = Perusahaan::findOrFail($id);
-            $perusahaan->update([
-                'id_lokasi'     => $request->id_lokasi,
-                'nama'          => $request->nama,
-                'nib'           => $request->nib,
-                'nomor_telepon' => $request->nomor_telepon,
-                'email'         => $request->email,
-                'website'       => $request->website,
-                'logo'          => $request->logo,
-                'status'        => $request->status
-            ]);
 
+            $perusahaan->nama          = $request->nama;
+            $perusahaan->nib           = $request->nib;
+            $perusahaan->nomor_telepon = $request->nomor_telepon;
+            $perusahaan->email         = $request->email;
+            $perusahaan->website       = $request->website;
+            $perusahaan->status        = $request->status;
+            $perusahaan->id_lokasi     = $request->id_lokasi;
+
+            if ($request->hasFile('logo')) {
+                $logo = $request->file('logo')->store('logo', 'public');
+                $perusahaan->logo = $logo;
+            }
+
+            $perusahaan->save();
             return to_route('admin.data-perusahaan')->with('success', 'Berhasil memperbarui data perusahaan.');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
             return back()->withErrors('Gagal memperbarui data perusahaan karena kesalahan pada server.');
         }
+    }
+
+    public function export_excel()
+    {
+        $perusahaan = Perusahaan::with('lokasi')->select('id_perusahaan_mitra', 'id_lokasi', 'nama', 'nib', 'nomor_telepon', 'email', 'website', 'status')->get();
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Lokasi');
+        $sheet->setCellValue('C1', 'Nama');
+        $sheet->setCellValue('D1', 'NIB');
+        $sheet->setCellValue('E1', 'Nomor Telepon');
+        $sheet->setCellValue('F1', 'Surel');
+        $sheet->setCellValue('G1', 'Website');
+        $sheet->setCellValue('H1', 'Status');
+        $sheet->getStyle("A1:H1")->getFont()->setBold(true);
+
+        $nomor = 1;
+        $baris = 2;
+        foreach ($perusahaan as $value) {
+            $sheet->setCellValue("A$baris", $nomor);
+            $sheet->setCellValue("B$baris", $value->lokasi->nama_lokasi ?? '-');
+            $sheet->setCellValue("C$baris", $value->nama);
+            $sheet->setCellValue("D$baris", $value->nib);
+            $sheet->setCellValue("E$baris", $value->nomor_telepon);
+            $sheet->setCellValue("F$baris", $value->email);
+            $sheet->setCellValue("G$baris", $value->website);
+            $sheet->setCellValue("H$baris", $value->status);
+            $baris++;
+            $nomor++;
+        }
+
+        foreach (range('A', 'H') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
+
+        $sheet->setTitle("Data Perusahaan Mitra");
+        if (ob_get_length()) ob_end_clean();
+        $filename = 'Data Perusahaan Mitra ' . date("Y-m-d_H-i-s") . '.xlsx';
+
+        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header("Cache-Control: max-age=0");
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate('D, d M Y H:i:s') . ' GMT');
+        header("Cache-Control: cache, must-revalidate");
+        header("Pragma: public");
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+        exit;
     }
 }

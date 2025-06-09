@@ -81,8 +81,7 @@
                     label="Angkatan"
                     name="angkatan"
                     placeholder="-- Semua Angkatan --"
-                    :selected="old('angkatan', $mahasiswa->angkatan ?? '')"
-                    :options="['2023' => '2023', '2024' => '2024']"
+                    :options="$angkatan"
                     :required="true"
                 />
             </span>
@@ -93,7 +92,6 @@
                     placeholder="-- Semua Program Studi --"
                     :options="$program_studi->pluck('nama', 'id_prodi')->toArray()"
                     :required="true"
-                    :selected="old('program_studi', '')"
                 />
             </span>
             <button type="submit" class="cursor-pointer mt-4 mb-2 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">

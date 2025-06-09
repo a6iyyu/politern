@@ -17,7 +17,7 @@ class PeriodeMagang extends Model
 
     public function durasi(): BelongsTo
     {
-        return $this->belongsTo(DurasiMagang::class, 'durasi', 'id_durasi_magang');
+        return $this->belongsTo(DurasiMagang::class, 'id_durasi_magang', 'id_durasi_magang');
     }
 
     public function lowongan(): HasMany

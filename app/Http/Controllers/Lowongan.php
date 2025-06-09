@@ -91,60 +91,38 @@ class Lowongan extends Controller
     {
         try {
             $request->validate([
-                'id_perusahaan_mitra'           => 'required|string|max:100|unique:perusahaan,nama',
-                'id_bidang'                     => 'required|string|max:100|unique:bidang,nama_bidang',
+                'id_perusahaan_mitra'           => 'required|exists:perusahaan_mitra,id_perusahaan_mitra',
+                'id_bidang'                     => 'required|exists:bidang,id_bidang',
                 'id_keahlian'                   => 'required|array|min:1',
                 'id_keahlian.*'                 => 'exists:keahlian,id_keahlian',
-                'id_periode'                    => 'required|string',
-                'id_jenis_lokasi'               => 'required|string',
-                'dekripsi'                      => 'required|string|max:255',
-                'kuota'                         => 'required|integer|min:10',
+                'id_periode'                    => 'required|exists:periode_magang,id_periode',
+                'id_jenis_lokasi'               => 'required|exists:jenis_lokasi,id_jenis_lokasi',
+                'id_jenis_magang'               => 'required|exists:jenis_magang,id_jenis_magang',
+                'id_durasi_magang'              => 'required|exists:durasi_magang,id_durasi_magang',
+                'deskripsi'                     => 'required|string|max:255',
+                'kuota'                         => 'required|integer|min:1',
+                'gaji'                          => 'required|string|max:100',
                 'status'                        => 'required|in:DIBUKA,DITUTUP',
                 'tanggal_mulai_pendaftaran'     => 'required|date',
                 'tanggal_selesai_pendaftaran'   => 'required|date|after_or_equal:tanggal_mulai_pendaftaran',
             ]);
 
-            $perusahaan = Perusahaan::create([
-                'id_lokasi'     => $request->id_lokasi,
-                'nama'          => $request->nama,
-                'nib'           => $request->nib,
-                'nomor_telepon' => $request->nomor_telepon,
-                'email'         => $request->email,
-                'website'       => $request->website,
+            $lowongan = LowonganMagang::create([
+                'id_perusahaan_mitra'           => $request->id_perusahaan_mitra,
+                'id_periode'                    => $request->id_periode,
+                'id_bidang'                     => $request->id_bidang,
+                'id_jenis_lokasi'               => $request->id_jenis_lokasi,
+                'id_jenis_magang'               => $request->id_jenis_magang,
+                'id_durasi_magang'              => $request->id_durasi_magang,
+                'deskripsi'                     => $request->deskripsi,
+                'kuota'                         => $request->kuota,
+                'gaji'                          => $request->gaji,
+                'status'                        => $request->status,
+                'tanggal_mulai_pendaftaran'     => $request->tanggal_mulai_pendaftaran,
+                'tanggal_selesai_pendaftaran'   => $request->tanggal_selesai_pendaftaran,
             ]);
 
-            $bidang = Bidang::create([
-                'nama_bidang' => $request->nama_bidang,
-            ]);
-
-            $jenis_lokasi = JenisLokasi::create([
-                'nama_jenis_lokasi' => $request->nama_jenis_lokasi,
-            ]);
-
-            $periode = PeriodeMagang::create([
-                'nama_periode'      => $request->nama_periode,
-                'durasi'            => PeriodeMagang::find($request->id_periode)->durasi,
-                'tanggal_mulai'     => $request->tanggal_mulai_pendaftaran,
-                'tanggal_selesai'   => $request->tanggal_selesai_pendaftaran,
-                'status'            => 'DIBUKA',
-            ]);
-
-            foreach ($request->id_keahlian as $id_keahlian) {
-                LowonganMagang::create([
-                    'id_perusahaan_mitra'           => $perusahaan->id_perusahaan_mitra,
-                    'id_keahlian'                   => $id_keahlian,
-                    'id_bidang'                     => $bidang->id_bidang,
-                    'id_jenis_lokasi'               => $jenis_lokasi->id_jenis_lokasi,
-                    'id_periode'                    => $periode->id_periode,
-                    'deskripsi'                     => $request->dekripsi,
-                    'kuota'                         => $request->kuota,
-                    'gaji'                          => $request->gaji,
-                    'ipk'                           => $request->ipk,
-                    'tanggal_mulai_pendaftaran'     => $request->tanggal_mulai_pendaftaran,
-                    'tanggal_selesai_pendaftaran'   => $request->tanggal_selesai_pendaftaran,
-                    'status'                        => $request->status,
-                ]);
-            }
+            $lowongan->keahlian()->sync($request->id_keahlian);
 
             return to_route('admin.lowongan-magang')->with('success', 'Lowongan magang berhasil ditambahkan');
         } catch (Exception $exception) {
@@ -203,6 +181,7 @@ class Lowongan extends Controller
     {
         try {
             $lowongan = LowonganMagang::findOrFail($id);
+            if (method_exists($lowongan, 'keahlian')) $lowongan->keahlian()->detach();
             $lowongan->delete();
             return to_route('admin.lowongan-magang')->with('success', 'Lowongan magang berhasil dihapus');
         } catch (ModelNotFoundException $exception) {
@@ -213,6 +192,93 @@ class Lowongan extends Controller
             report($exception);
             Log::error($exception->getMessage());
             return back()->withErrors(['errors' => 'Gagal menghapus data lowongan magang karena kesalahan pada server.']);
+        }
+    }
+    public function edit(string $id): JsonResponse
+    {
+        try {
+            $lowongan = LowonganMagang::with([
+                'bidang',
+                'perusahaan',
+                'jenis_lokasi',
+                'periode_magang',
+                'keahlian',
+                'jenis_magang',
+                'durasi',
+            ])->findOrFail($id);
+
+            return Response::json([
+                'id_lowongan'                  => $lowongan->id_lowongan,
+                'id_perusahaan_mitra'          => $lowongan->id_perusahaan_mitra,
+                'id_bidang'                    => $lowongan->id_bidang,
+                'id_periode'                   => $lowongan->id_periode,
+                'id_jenis_lokasi'              => $lowongan->id_jenis_lokasi,
+                'id_jenis_magang'              => $lowongan->id_jenis_magang,
+                'id_durasi_magang'             => $lowongan->id_durasi_magang,
+                'deskripsi'                    => $lowongan->deskripsi,
+                'kuota'                        => $lowongan->kuota,
+                'gaji'                         => $lowongan->gaji,
+                'status'                       => $lowongan->status,
+                'tanggal_mulai_pendaftaran'    => $lowongan->tanggal_mulai_pendaftaran,
+                'tanggal_selesai_pendaftaran'  => $lowongan->tanggal_selesai_pendaftaran,
+                'keahlian'                     => $lowongan->keahlian->map(fn($k) => [
+                    'id_keahlian'              => $k->id_keahlian,
+                    'nama_keahlian'            => $k->nama_keahlian,
+                ])->toArray(),
+            ]);
+        } catch (ModelNotFoundException $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return Response::json(['errors' => 'Lowongan magang tidak ditemukan.'], 404);
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return Response::json(['errors' => 'Gagal mengambil data lowongan magang karena kesalahan pada server.'], 500);
+        }
+    }
+    public function update(Request $request, string $id): RedirectResponse
+    {
+        try {
+            $request->validate([
+                'id_perusahaan_mitra'           => 'required|exists:perusahaan_mitra,id_perusahaan_mitra',
+                'id_bidang'                     => 'required|exists:bidang,id_bidang',
+                'id_keahlian'                   => 'required|array|min:1',
+                'id_keahlian.*'                 => 'exists:keahlian,id_keahlian',
+                'id_periode'                    => 'required|exists:periode_magang,id_periode',
+                'id_jenis_lokasi'               => 'required|exists:jenis_lokasi,id_jenis_lokasi',
+                'id_jenis_magang'               => 'required|exists:jenis_magang,id_jenis_magang',
+                'id_durasi_magang'              => 'required|exists:durasi_magang,id_durasi_magang',
+                'deskripsi'                     => 'required|string|max:255',
+                'kuota'                         => 'required|integer|min:1',
+                'gaji'                          => 'required|string|max:100',
+                'status'                        => 'required|in:DIBUKA,DITUTUP',
+                'tanggal_mulai_pendaftaran'     => 'required|date',
+                'tanggal_selesai_pendaftaran'   => 'required|date|after_or_equal:tanggal_mulai_pendaftaran',
+            ]);
+
+            $lowongan = LowonganMagang::findOrFail($id);
+
+            $lowongan->update([
+                'id_perusahaan_mitra'           => $request->id_perusahaan_mitra,
+                'id_periode'                    => $request->id_periode,
+                'id_bidang'                     => $request->id_bidang,
+                'id_jenis_lokasi'               => $request->id_jenis_lokasi,
+                'id_jenis_magang'               => $request->id_jenis_magang,
+                'id_durasi_magang'              => $request->id_durasi_magang,
+                'deskripsi'                     => $request->deskripsi,
+                'kuota'                         => $request->kuota,
+                'gaji'                          => $request->gaji,
+                'status'                        => $request->status,
+                'tanggal_mulai_pendaftaran'     => $request->tanggal_mulai_pendaftaran,
+                'tanggal_selesai_pendaftaran'   => $request->tanggal_selesai_pendaftaran,
+            ]);
+
+            $lowongan->keahlian()->sync($request->id_keahlian);
+            return to_route('admin.lowongan-magang')->with('success', 'Lowongan magang berhasil diperbarui');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return back()->withErrors(['errors' => 'Gagal memperbarui data lowongan magang karena kesalahan pada server.']);
         }
     }
 }

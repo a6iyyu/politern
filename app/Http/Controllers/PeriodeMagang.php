@@ -24,10 +24,7 @@ class PeriodeMagang extends Controller
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
             $total_periode = PeriodeMagangModel::count();
-            $perusahaan_filter = Perusahaan::whereHas('lokasi')
-                ->pluck('nama', 'id_perusahaan_mitra')
-                ->toArray();
-            $durasi = DurasiMagangModel::all();
+            $perusahaan_filter = Perusahaan::whereHas('lokasi')->pluck('nama', 'id_perusahaan_mitra')->toArray();
 
             $paginasi = PeriodeMagangModel::paginate(request('per_page', 10));
             $data = collect($paginasi->items())->map(fn(PeriodeMagangModel $periode): array => [
@@ -39,13 +36,7 @@ class PeriodeMagang extends Controller
                 view('components.admin.periode-magang.aksi', compact('periode'))->render(),
             ])->toArray();
 
-            $data_durasi = collect($durasi)->map(fn(DurasiMagangModel $durasi): array => [
-                $durasi->id_durasi_magang,
-                $durasi->nama_durasi,
-                view('components.admin.durasi-magang.aksi', compact('durasi'))->render(),
-            ])->toArray();
-
-            return view('pages.admin.periode-magang', compact('data', 'paginasi', 'total_periode', 'data_durasi', 'perusahaan_filter'));
+            return view('pages.admin.periode-magang', compact('data', 'paginasi', 'total_periode', 'perusahaan_filter'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
@@ -76,53 +67,51 @@ class PeriodeMagang extends Controller
         }
     }
 
-    public function show($id): array
+    public function show(string $id): array
     {
-        $periode = PeriodeMagangModel::findOrFail($id);
-        return compact('periode');
+        try {
+            $periode = PeriodeMagangModel::findOrFail($id);
+            $durasi = $periode->durasi->nama_durasi;
+            return compact('durasi', 'periode');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            return [];
+        }
     }
 
-
-    public function edit($id): JsonResponse
+    public function edit(string $id): array
     {
+        $durasi = DurasiMagangModel::pluck('nama_durasi', 'id_durasi_magang')->toArray();
         $periode = PeriodeMagangModel::findOrFail($id);
-
-        return response()->json([
-            'periode' => [
-                'nama_periode'    => $periode->nama_periode,
-                'durasi'          => $periode->durasi,
-                'tanggal_mulai'   => $periode->tanggal_mulai,
-                'tanggal_selesai' => $periode->tanggal_selesai,
-                'status'          => $periode->status,
-                'created_at'      => $periode->created_at,
-            ],
-        ]);
+        return compact('durasi', 'periode');
     }
 
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, string $id): RedirectResponse
     {
         try {
             $periode = PeriodeMagangModel::findOrFail($id);
 
             $request->validate([
-                'nama_periode'    => "required|string|max:200|unique:periode_magang,nama_periode,{$id}",
+                'nama_periode'    => "required|string|max:200|unique:periode_magang,nama_periode,{$id},id_periode",
                 'tanggal_mulai'   => 'required|date',
+                'durasi'          => 'required',
                 'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
                 'status'          => 'required|in:AKTIF,SELESAI',
             ]);
 
-            $periode->nama_periode    = $request->nama_periode;
-            $periode->durasi          = $request->durasi;
-            $periode->tanggal_mulai   = $request->tanggal_mulai;
-            $periode->tanggal_selesai = $request->tanggal_selesai;
-            $periode->status          = $request->status;
+            $periode->nama_periode      = $request->nama_periode;
+            $periode->id_durasi_magang  = $request->durasi;
+            $periode->tanggal_mulai     = $request->tanggal_mulai;
+            $periode->tanggal_selesai   = $request->tanggal_selesai;
+            $periode->status            = $request->status;
             $periode->save();
 
-            return to_route('admin.periode-magang')->with('success', 'Data periode magang berhasil diubah');
+            return to_route('admin.periode-magang')->with('success', 'Data periode akademik berhasil diubah');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
-            return back()->withErrors($exception->getMessage());
+            return back()->withErrors(['errors' => 'Gagal dalam memperbarui data periode akademik karena kesalahan pada server.']);
         }
     }
 
@@ -141,7 +130,10 @@ class PeriodeMagang extends Controller
 
     public function export_excel(): never
     {
-        $periode = PeriodeMagangModel::select('id_periode', 'nama_periode', 'durasi', 'tanggal_mulai', 'tanggal_selesai', 'status')->get();
+        $periode = PeriodeMagangModel::select('periode_magang.id_periode', 'periode_magang.nama_periode', 'durasi_magang.nama_durasi', 'periode_magang.tanggal_mulai', 'periode_magang.tanggal_selesai', 'periode_magang.status')
+            ->leftJoin('durasi_magang', 'durasi_magang.id_durasi_magang', '=', 'periode_magang.id_durasi_magang')
+            ->get();
+
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
@@ -158,7 +150,7 @@ class PeriodeMagang extends Controller
         foreach ($periode as $key => $value) {
             $sheet->setCellValue("A$baris", $nomor);
             $sheet->setCellValue("B$baris", $value->nama_periode);
-            $sheet->setCellValue("C$baris", $value->durasi);
+            $sheet->setCellValue("C$baris", $value->nama_durasi);
             $sheet->setCellValue("D$baris", $value->tanggal_mulai);
             $sheet->setCellValue("E$baris", $value->tanggal_selesai);
             $sheet->setCellValue("F$baris", $value->status);
@@ -168,11 +160,11 @@ class PeriodeMagang extends Controller
 
         foreach (range('A', 'F') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
 
-        $sheet->setTitle("Data periode Magang");
+        $sheet->setTitle("Data Periode Magang");
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
 
         header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        header('Content-Disposition: attachment; filename="' . 'Data periode Magang' . date("Y-m-d H:i:s") . '.xlsx' . '"');
+        header('Content-Disposition: attachment; filename="' . 'Data Periode Magang ' . date("Y-m-d H:i:s") . '.xlsx' . '"');
         header("Cache-Control: max-age=0");
         header("Cache-Control: max-age=1");
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");

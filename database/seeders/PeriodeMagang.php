@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class PeriodeMagang extends Seeder
 {
@@ -15,6 +15,7 @@ class PeriodeMagang extends Seeder
         DB::table('periode_magang')->insert([
             [
                 'id_periode'       => 1,
+                'id_durasi_magang' => 6,
                 'nama_periode'     => 'Semester Genap 2025/2026',
                 'tanggal_mulai'    => '2025-07-01',
                 'tanggal_selesai'  => '2025-12-31',

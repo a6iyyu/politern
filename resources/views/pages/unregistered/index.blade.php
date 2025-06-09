@@ -8,4 +8,5 @@
 @endsection
 
 @section('konten')
+    Iya ini masih kosongan
 @endsection

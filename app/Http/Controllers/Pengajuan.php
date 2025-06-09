@@ -87,9 +87,10 @@ class Pengajuan extends Controller
 
             return [
                 $pengajuan->id_pengajuan_magang,
-                $pengajuan->created_at->format('d/m/Y'),
                 $pengajuan->lowongan->perusahaan->nama,
                 $pengajuan->lowongan->bidang->nama_bidang ?? '-',
+                $pengajuan->lowongan->periode_magang->nama_periode ?? '-',
+                $pengajuan->created_at->format('d/m/Y'),
                 '<div class="text-xs text-white font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
                     . ($pengajuan->status ?? "N/A") .
                 '</div>',
