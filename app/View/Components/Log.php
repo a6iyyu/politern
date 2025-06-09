@@ -9,12 +9,8 @@ use Illuminate\View\Component;
 class Log extends Component
 {
     public array $info;
-
     public ?string $comment, $confirmation_date, $description, $id, $name, $nim, $photo, $profile_photo, $status, $title, $week;
 
-    /**
-     * Constructor yang jelas dan lebih aman
-     */
     public function __construct(
         ?string $comment = null,
         ?string $confirmation_date = null,
@@ -61,11 +57,11 @@ class Log extends Component
         if (!is_string($this->status) || empty($this->status)) return 'N/A';
         $status = trim(strtoupper($this->status));
         return match ($status) {
-            'DIKONFIRMASI' => 'Dikonfirmasi',
-            'DISETUJUI' => 'Disetujui',
-            'DITOLAK' => 'Ditolak',
-            'MENUNGGU' => 'Menunggu',
-            default => ucfirst(strtolower($this->status))
+            'DIKONFIRMASI'  => 'Dikonfirmasi',
+            'DISETUJUI'     => 'Disetujui',
+            'DITOLAK'       => 'Ditolak',
+            'MENUNGGU'      => 'Menunggu',
+            default         => ucfirst(strtolower($this->status))
         };
     }
 

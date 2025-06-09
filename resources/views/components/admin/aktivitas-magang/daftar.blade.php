@@ -17,15 +17,15 @@
 @include('components.admin.aktivitas-magang.filter')
 @if (!empty($log_aktivitas))
     @foreach ($log_aktivitas as $log)
-        <x-log 
+        <x-log
+            confirmation_date="{{ $log->tanggal_konfirmasi?->format('d/m/Y') }}"
+            profile_photo="{{ asset($log->magang->pengajuan_magang->mahasiswa->foto_profil) }}"
             :comment="($log->status === 'DITOLAK' || $log->status === 'DISETUJUI') ? ($log->komentar ?? null) : null"
-            :confirmation_date="$log->tanggal_konfirmasi ? $log->tanggal_konfirmasi->format('d/m/Y') : null"
             :description="$log->deskripsi"
             :id="$log->id_log"
             :name="$log->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? 'N/A'"
             :nim="$log->magang->pengajuan_magang->mahasiswa->nim ?? 'N/A'"
             :photo="$log->foto"
-            :profile_photo="$log->magang->pengajuan_magang->mahasiswa->foto_profil ?? null"
             :status="$log->status"
             :title="$log->judul"
             :week="$log->minggu ?? 'N/A'"

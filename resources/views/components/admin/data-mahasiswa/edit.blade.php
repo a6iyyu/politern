@@ -88,7 +88,7 @@
                     label="Angkatan"
                     name="angkatan"
                     placeholder="-- Semua Angkatan --"
-                    :options="['2023' => '2023', '2024' => '2024']"
+                    :options="$angkatan"
                     :required="true"
                     :selected="old('angkatan', $mahasiswa->angkatan ?? '')"
                 />

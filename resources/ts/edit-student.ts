@@ -15,12 +15,15 @@ interface User {
   email: string;
   kata_sandi: string;
 }
+
 interface Prodi {
   nama: string;
 }
+
 interface Status {
   status: string;
 }
+
 interface Modal {
   mahasiswa: Student;
   pengguna: User;

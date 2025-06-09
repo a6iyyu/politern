@@ -21,6 +21,11 @@ class DurasiMagang extends Model
         return $this->hasMany(LowonganMagang::class, 'id_durasi_magang', 'id_durasi_magang');
     }
 
+    public function periode(): HasMany
+    {
+        return $this->hasMany(PeriodeMagang::class, 'id_durasi_magang', 'id_durasi_magang');
+    }
+
     public function preferensi_mahasiswa(): HasMany
     {
         return $this->hasMany(PreferensiDurasiMahasiswa::class, 'id_durasi_magang', 'id_durasi_magang');

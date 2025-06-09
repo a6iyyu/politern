@@ -14,6 +14,7 @@ use App\Models\Magang;
 use App\Models\Dosen;
 use App\Models\Perusahaan;
 use Exception;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -75,7 +76,7 @@ class Dasbor extends Controller
                 $aktivitas_terbaru = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->latest()->take(4)->get();
                 $evaluasi_magang = LogAktivitas::where('status', 'menunggu')->with('magang.pengajuan_magang.mahasiswa')->get()->pluck('magang.pengajuan_magang.mahasiswa')->unique()->count();
                 $mahasiswa_aktif = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'AKTIF')->count();
-                $mahasiswa_bimbingan = $this->mahasiswa_bimbingan()->get();
+                $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
                 $mahasiswa_selesai = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'SELESAI')->count();
                 $menunggu_evaluasi = LogAktivitas::where('status', 'menunggu')
                     ->whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))
@@ -90,9 +91,9 @@ class Dasbor extends Controller
                     'magang.pengajuan_magang.mahasiswa.program_studi',
                     'magang.pengajuan_magang.lowongan.perusahaan'
                 ])
-                ->latest()
-                ->take(3)
-                ->get();
+                    ->latest()
+                    ->take(3)
+                    ->get();
                 $perusahaan = Perusahaan::pluck('nama', 'id_perusahaan_mitra')->toArray();
                 $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
                 $status_aktivitas = LogAktivitas::pluck('status')->unique()->toArray();
@@ -217,7 +218,7 @@ class Dasbor extends Controller
      *
      * Mengambil data mahasiswa yang sedang bimbingan dosen pembimbing saat ini.
      */
-    public function mahasiswa_bimbingan(?string $id_mahasiswa = null)
+    public function mahasiswa_bimbingan(?string $id_mahasiswa = null): Builder
     {
         $pengguna = Auth::user();
         $id_dosen = $pengguna->dosen->id_dosen;

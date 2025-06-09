@@ -1,12 +1,13 @@
 interface Periode {
+  id_durasi_magang: number;
   nama_periode: string;
-  durasi: string;
   tanggal_mulai: string;
   tanggal_selesai: string;
   status: string;
 }
 
 interface Modal {
+  durasi: string;
   periode: Periode;
 }
 
@@ -57,13 +58,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const data = await fetchPeriodeData(id);
       if (!data) return;
-      form.action = `/admin/periode-magang/${id}/perbarui`;
 
+      form.action = `/admin/periode-magang/${id}/perbarui`;
       if (nama_periode) nama_periode.value = data.periode.nama_periode;
-      if (durasi) durasi.value = data.periode.durasi;
       if (tanggal_mulai) tanggal_mulai.value = formattedDate(data.periode.tanggal_mulai);
       if (tanggal_selesai) tanggal_selesai.value = formattedDate(data.periode.tanggal_selesai);
-      if (status) status.value = data.periode.status;
+
+      if (durasi) {
+        durasi.innerHTML = '<option value="" disabled>Pilih Durasi</option>';
+
+        Object.entries(data.durasi).forEach(([id, value]) => {
+          const option = document.createElement('option');
+          option.value = id;
+          option.textContent = value;
+          durasi.appendChild(option);
+        });
+
+        durasi.value = String(data.periode.id_durasi_magang);
+      }
+
+      if (status) {
+        status.innerHTML = '<option value="" disabled>Pilih Status</option>';
+
+        const opsi = {
+          'AKTIF': 'Aktif',
+          'TIDAK AKTIF': 'Tidak Aktif',
+        };
+
+        Object.entries(opsi).forEach(([key, value]) => {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = value;
+          status.appendChild(option);
+        });
+
+        status.value = data.periode.status.toUpperCase();;
+      }
+
       modal.classList.remove('hidden');
     });
   });

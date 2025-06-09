@@ -6,7 +6,6 @@ use App\Http\Controllers\DataDosen;
 use App\Http\Controllers\DataMahasiswa;
 use App\Http\Controllers\DataPerusahaan;
 use App\Http\Controllers\DataProdi;
-use App\Http\Controllers\DurasiMagang;
 use App\Http\Controllers\LogAktivitas;
 use App\Http\Controllers\Lowongan;
 use App\Http\Controllers\PeriodeMagang;
@@ -91,14 +90,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/ekspor-excel', [PeriodeMagang::class, 'export_excel'])->name('admin.periode-magang.ekspor-excel');
             Route::put('/{id}/perbarui', [PeriodeMagang::class, 'update'])->name('admin.periode-magang.perbarui');
             Route::delete('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
-
-            Route::prefix('durasi')->group(function () {
-                Route::post('/', [DurasiMagang::class, 'store'])->name('admin.periode-magang.durasi.tambah');
-                Route::get('/{id}/edit', [DurasiMagang::class, 'edit'])->name('admin.periode-magang.durasi.edit');
-                Route::put('/{id}', [DurasiMagang::class, 'update'])->name('admin.periode-magang.durasi.perbarui');
-                Route::delete('/{id}', [DurasiMagang::class, 'destroy'])->name('admin.periode-magang.durasi.hapus');
-                Route::get('/ekspor-excel', [DurasiMagang::class, 'export_excel'])->name('admin.periode-magang.durasi.ekspor-excel');
-            });
         });
 
         Route::prefix('lowongan-magang')->group(function () {

@@ -107,7 +107,6 @@ class Lowongan extends Controller
                 'tanggal_selesai_pendaftaran'   => 'required|date|after_or_equal:tanggal_mulai_pendaftaran',
             ]);
 
-            // Simpan satu lowongan, lalu attach keahlian (relasi many-to-many)
             $lowongan = LowonganMagang::create([
                 'id_perusahaan_mitra'           => $request->id_perusahaan_mitra,
                 'id_periode'                    => $request->id_periode,
@@ -123,7 +122,6 @@ class Lowongan extends Controller
                 'tanggal_selesai_pendaftaran'   => $request->tanggal_selesai_pendaftaran,
             ]);
 
-            // Jika ada relasi keahlian many-to-many
             $lowongan->keahlian()->sync($request->id_keahlian);
 
             return to_route('admin.lowongan-magang')->with('success', 'Lowongan magang berhasil ditambahkan');
@@ -183,13 +181,8 @@ class Lowongan extends Controller
     {
         try {
             $lowongan = LowonganMagang::findOrFail($id);
-
-            if (method_exists($lowongan, 'keahlian')) {
-                $lowongan->keahlian()->detach();
-            }
-
+            if (method_exists($lowongan, 'keahlian')) $lowongan->keahlian()->detach();
             $lowongan->delete();
-
             return to_route('admin.lowongan-magang')->with('success', 'Lowongan magang berhasil dihapus');
         } catch (ModelNotFoundException $exception) {
             report($exception);
@@ -228,12 +221,10 @@ class Lowongan extends Controller
                 'status'                       => $lowongan->status,
                 'tanggal_mulai_pendaftaran'    => $lowongan->tanggal_mulai_pendaftaran,
                 'tanggal_selesai_pendaftaran'  => $lowongan->tanggal_selesai_pendaftaran,
-                'keahlian'                     => $lowongan->keahlian->map(function ($k) {
-                    return [
-                        'id_keahlian'   => $k->id_keahlian,
-                        'nama_keahlian' => $k->nama_keahlian,
-                    ];
-                })->toArray(),
+                'keahlian'                     => $lowongan->keahlian->map(fn($k) => [
+                    'id_keahlian'              => $k->id_keahlian,
+                    'nama_keahlian'            => $k->nama_keahlian,
+                ])->toArray(),
             ]);
         } catch (ModelNotFoundException $exception) {
             report($exception);
@@ -282,9 +273,7 @@ class Lowongan extends Controller
                 'tanggal_selesai_pendaftaran'   => $request->tanggal_selesai_pendaftaran,
             ]);
 
-            // Update relasi keahlian
             $lowongan->keahlian()->sync($request->id_keahlian);
-
             return to_route('admin.lowongan-magang')->with('success', 'Lowongan magang berhasil diperbarui');
         } catch (Exception $exception) {
             report($exception);

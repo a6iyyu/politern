@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const id_lokasi = document.getElementById('id_lokasi');
   const tanggal_dibuat = document.getElementById('tanggal_dibuat');
   const logo_perusahaan = document.getElementById('logo_perusahaan') as HTMLImageElement;
-  if (!nama || !nib || !nomor_telepon || !email || !website || !status || !id_lokasi || !tanggal_dibuat || !logo_perusahaan ) return;
+  if (!nama || !nib || !nomor_telepon || !email || !website || !status || !id_lokasi || !tanggal_dibuat || !logo_perusahaan) return;
 
   const fetchCompanyData = async (id: string): Promise<Modal | null> => {
     try {
@@ -64,22 +64,15 @@ document.addEventListener('DOMContentLoaded', () => {
       email.textContent = data.perusahaan.email;
       website.textContent = data.perusahaan.website;
       id_lokasi.textContent = data.perusahaan.id_lokasi;
-      logo_perusahaan.src = data.perusahaan.logo ? `/storage/${data.perusahaan.logo.replace('storage/', '')}` :
-
-      tanggal_dibuat.textContent = new Date(data.perusahaan.created_at).toLocaleDateString('id-ID', {
+      logo_perusahaan.src = data.perusahaan.logo ? `/storage/${data.perusahaan.logo.replace('storage/', '')}` : (tanggal_dibuat.textContent = new Date(data.perusahaan.created_at).toLocaleDateString('id-ID', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-      });
+      }));
 
       const statusText = data.perusahaan.status;
       status.textContent = statusText;
-
-      status.classList.remove(
-        'bg-green-100', 'text-green-700',
-        'bg-red-100', 'text-red-700',
-        'bg-yellow-100', 'text-yellow-700'
-      );
+      status.classList.remove('bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700', 'bg-yellow-100', 'text-yellow-700');
 
       const lowerStatus = statusText.toLowerCase();
       if (lowerStatus === 'aktif') {

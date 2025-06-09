@@ -7,14 +7,14 @@
 
 interface Periode {
   nama_periode: string;
-  durasi: string;
+  durasi: string | string[];
   tanggal_mulai: string;
   tanggal_selesai: string;
   status: string;
-  created_at: string;
 }
 
 interface Modal {
+  durasi: string;
   periode: Periode;
 }
 
@@ -24,13 +24,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const close = document.getElementById('close-detail');
   if (!modal || !close) return;
 
-  const nama_periode = document.getElementById('nama_periode');
+  const detail_nama_periode = document.getElementById('detail_nama_periode');
   const durasi = document.getElementById('durasi');
   const tanggal_mulai = document.getElementById('tanggal_mulai');
   const tanggal_selesai = document.getElementById('tanggal_selesai');
   const status = document.getElementById('status');
-  const tanggal_dibuat = document.getElementById('tanggal_dibuat');
-  if (!nama_periode || !durasi || !tanggal_mulai || !tanggal_selesai || !status || !tanggal_dibuat) return;
+  if (!detail_nama_periode || !durasi || !tanggal_mulai || !tanggal_selesai || !status) return;
+
+  const formattedDate = (date: string): string => {
+    const [year, month, day] = date.split('-');
+    return `${day}-${month}-${year}`;
+  }
 
   buttons.forEach((button) => {
     button.addEventListener('click', async () => {
@@ -48,19 +52,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!data.ok) return;
       const response = (await data.json()) as Modal;
 
-      nama_periode.textContent = response.periode.nama_periode;
-      tanggal_mulai.textContent = response.periode.tanggal_mulai;
-      tanggal_selesai.textContent = response.periode.tanggal_selesai;
-      durasi.textContent = response.periode.durasi;
+      detail_nama_periode.textContent = response.periode.nama_periode;
+      tanggal_mulai.textContent = formattedDate(response.periode.tanggal_mulai);
+      tanggal_selesai.textContent = formattedDate(response.periode.tanggal_selesai);
+      durasi.textContent = response.durasi;
       status.textContent = response.periode.status;
-
-      tanggal_dibuat.textContent = new Date(
-        response.periode.created_at
-      ).toLocaleDateString('id-ID', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      });
     });
   });
 

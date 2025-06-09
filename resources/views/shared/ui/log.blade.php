@@ -4,7 +4,7 @@
 @endphp
 
 <figure class="border border-[var(--stroke)] px-6 py-4 rounded-lg mb-4">
-    <section class="flex items-center justify-between text-xs">
+    <section class="flex flex-col gap-4 justify-between text-xs lg:items-center lg:flex-row">
         <span class="cursor-default flex items-center gap-5 text-sm text-[var(--primary)] font-semibold">
             <h5>Minggu ke-{{ $week ?? 'N/A' }}</h5>
             <h5 class="bg-[var(--primary)] text-xs text-white font-medium px-5 py-2 rounded-full">
@@ -27,7 +27,7 @@
     </section>
     <section class="cursor-default mt-5">
         <div class="flex items-center gap-3 mb-5 text-sm text-[var(--primary)]">
-            <img src="{{ asset($profile_photo) }}" alt="Profile" class="w-10 h-10 rounded-full object-cover">
+            <img src="{{ $profile_photo }}" alt="Profil" class="w-10 h-10 rounded-full object-cover">
             <span class="flex gap-4 items-end">
                 <h5 class="font-medium">{{ $name ?? 'N/A' }}</h5>
                 <h6>{{ $nim ?? 'N/A' }}</h6>
@@ -64,7 +64,7 @@
     @endif
     <div class="mt-2 text-right">
         <span class="text-xs text-[var(--secondary-text)]">
-            Dikonfirmasi Pada: {{ $tanggal_evaluasi }}
+            Dikonfirmasi Pada: {{ $confirmation_date }}
         </span>
     </div>
 </figure>

@@ -10,7 +10,7 @@
             <hr class="mb-4 border border-[var(--primary)]" />
             <span class="mt-1 flex items-center gap-2 text-sm">
                 <strong>Nama Periode:</strong>
-                <h6 id="nama_periode"></h6>
+                <h6 id="detail_nama_periode"></h6>
             </span>
             <figcaption class="mt-4 grid grid-cols-1 gap-2 md:grid-cols-2">
                 <span class="mt-1 flex items-center gap-2 text-sm">
@@ -29,12 +29,7 @@
                     <strong>Status:</strong>
                     <h6 id="status"></h6>
                 </span>
-                
             </figcaption>
-            <span class="mt-4 flex items-center gap-2 text-sm">
-                <strong>Tanggal Dibuat:</strong>
-                <h6 id="tanggal_dibuat"></h6>
-            </span>
         </figure>
     </div>
 </section>
