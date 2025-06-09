@@ -6,6 +6,7 @@ interface Perusahaan {
   website: string;
   status: string;
   id_lokasi: string;
+  created_at: string;
 }
 
 interface Modal {
@@ -25,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const website = document.getElementById('website');
   const status = document.getElementById('status');
   const id_lokasi = document.getElementById('id_lokasi');
-  if (!nama || !nib || !nomor_telepon || !email || !website || !status || !id_lokasi) return;
+  const tanggal_dibuat = document.getElementById('tanggal_dibuat');
+  if (!nama || !nib || !nomor_telepon || !email || !website || !status || !id_lokasi || !tanggal_dibuat) return;
 
   const fetchCompanyData = async (id: string): Promise<Modal | null> => {
     try {
@@ -61,6 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
       website.textContent = data.perusahaan.website;
       status.textContent = data.perusahaan.status;
       id_lokasi.textContent = data.perusahaan.id_lokasi;
+      tanggal_dibuat.textContent = new Date(data.perusahaan.created_at).toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
 
       modal.classList.remove('hidden');
     });
