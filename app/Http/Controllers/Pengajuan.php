@@ -8,6 +8,7 @@ use App\Models\PengajuanMagang;
 use App\Models\PeriodeMagang;
 use App\Models\Perusahaan;
 use App\Models\ProgramStudi;
+use App\Models\Magang;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -15,6 +16,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class Pengajuan extends Controller
 {
@@ -115,6 +117,145 @@ class Pengajuan extends Controller
         } catch (Exception $exception) {
             report($exception);
             return back()->withErrors('Gagal memperbarui status pengajuan magang.');
+        }
+    }
+
+    public function detail($id)
+    {
+        $pengajuan = PengajuanMagang::with([
+            'mahasiswa.program_studi',
+            'mahasiswa.keahlian',
+            'mahasiswa.pengalaman',
+            'mahasiswa.sertifikasi_pelatihan',
+            'mahasiswa.proyek',
+            'lowongan.bidang',
+            'lowongan.perusahaan.lokasi',
+        ])->findOrFail($id);
+
+        $mahasiswa = $pengajuan->mahasiswa;
+        $lowongan = $pengajuan->lowongan;
+
+        $logoUrl = null;
+        if ($lowongan->perusahaan->logo) {
+            $logoUrl = str_starts_with($lowongan->perusahaan->logo, 'storage/') 
+                ? '/'.$lowongan->perusahaan->logo 
+                : (str_starts_with($lowongan->perusahaan->logo, '/storage/') 
+                    ? $lowongan->perusahaan->logo 
+                    : '/storage/'.$lowongan->perusahaan->logo);
+        }
+
+        return response()->json([
+            'pengajuan' => [
+                'bidang_posisi' => $lowongan->bidang->nama_bidang ?? '-',
+                'logo' => $logoUrl,
+                'nama_perusahaan_mitra' => $lowongan->perusahaan->nama,
+                'lokasi' => $lowongan->perusahaan->lokasi->nama_lokasi ?? '-',
+            ],
+            'mahasiswa' => [
+                'nim' => $mahasiswa->nim,
+                'nama_lengkap' => $mahasiswa->nama_lengkap,
+                'angkatan' => $mahasiswa->angkatan,
+                'semester' => $mahasiswa->semester,
+                'program_studi' => $mahasiswa->program_studi->nama,
+                'ipk' => $mahasiswa->ipk,
+                'nomor_telepon' => $mahasiswa->nomor_telepon,
+                'deskripsi' => $mahasiswa->deskripsi,
+                'status' => $mahasiswa->status,
+                'cv' => [
+                    'nama_file' => $mahasiswa->cv_file ?? 'CV_' . str_replace(' ', '_', $mahasiswa->nama_lengkap) . '.pdf',
+                    'url' => $mahasiswa->cv_file,
+                ],
+                'keahlian' => $mahasiswa->keahlian->pluck('nama_keahlian')->toArray(),
+                // 'pengalaman' => $mahasiswa->pengalaman->map(function ($pengalaman) {
+                //     return [
+                //         'jenis' => $pengalaman->jenis,
+                //         'posisi' => $pengalaman->posisi,
+                //         'perusahaan' => $pengalaman->perusahaan,
+                //         'deskripsi' => $pengalaman->deskripsi,
+                //         'tanggal_mulai' => $pengalaman->tanggal_mulai,
+                //         'tanggal_selesai' => $pengalaman->tanggal_selesai,
+                //         'dokumen_pendukung' => $pengalaman->dokumen_pendukung,
+                //     ];
+                // })->toArray(),
+                // 'sertifikasi' => $mahasiswa->sertifikasi_pelatihan->map(function ($sertifikat) {
+                //     return [
+                //         'nama' => $sertifikat->nama,
+                //         'penyelenggara' => $sertifikat->penyelenggara,
+                //         'deskripsi' => $sertifikat->deskripsi,
+                //         'tanggal_terbit' => $sertifikat->tanggal_terbit,
+                //         'tanggal_kadaluwarsa' => $sertifikat->tanggal_kadaluwarsa,
+                //         'dokumen_pendukung' => $sertifikat->dokumen_pendukung,
+                //     ];
+                // })->toArray(),
+                // 'proyek' => $mahasiswa->proyek->map(function ($proyek) {
+                //     return [
+                //         'nama' => $proyek->nama,
+                //         'role' => $proyek->role,
+                //         'deskripsi' => $proyek->deskripsi,
+                //         'url' => $proyek->url,
+                //         'tanggal_mulai' => $proyek->tanggal_mulai,
+                //         'tanggal_selesai' => $proyek->tanggal_selesai,
+                //         'tools' => json_decode($proyek->tools, true) ?? [],
+                //     ];
+                // })->toArray(),
+            ]
+        ]);
+    }
+
+    public function konfirmasi(Request $request, $id)
+    {
+        $request->validate([
+            'dosen_pembimbing_id' => 'required_if:status,DISETUJUI|exists:dosen,id_dosen',
+            'status' => 'required|in:DISETUJUI,DITOLAK',
+        ]);
+
+        $pengajuan = PengajuanMagang::findOrFail($id);
+        
+        try {
+            \DB::beginTransaction();
+
+            if ($request->status === 'DISETUJUI') {
+                // Create new magang record
+                $magang = new Magang();
+                $magang->id_mahasiswa = $pengajuan->id_mahasiswa;
+                $magang->id_lowongan = $pengajuan->id_lowongan;
+                $magang->id_dosen = $request->dosen_pembimbing_id;
+                $magang->status = 'AKTIF';
+                $magang->tgl_mulai = now();
+                $magang->save();
+
+                // Update pengajuan status
+                $pengajuan->status = 'DISETUJUI';
+                $pengajuan->save();
+
+                // Send notification to student
+                // Add your notification logic here if needed
+
+                \DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Pengajuan magang berhasil disetujui'
+                ]);
+            } else {
+                // Reject the application
+                $pengajuan->status = 'DITOLAK';
+                $pengajuan->save();
+
+                // Send rejection notification
+                // Add your notification logic here if needed
+
+                \DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Pengajuan magang berhasil ditolak'
+                ]);
+            }
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

@@ -4,14 +4,3 @@
 <a href="javascript:void(0)" data-id="{{ $pengajuan->id_pengajuan_magang }}" class="edit inline-flex items-center rounded px-4 py-2 text-white text-xs font-medium bg-[var(--yellow-tertiary)] hover:bg-yellow-500 mr-1">
     Edit
 </a>
-<form action="{{ route('admin.pengajuan-magang.hapus', ['id' => $pengajuan->id_pengajuan_magang]) }}" method="POST" class="inline-block">
-    @csrf
-    @method('DELETE')
-    <button
-        type="submit"
-        onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')"
-        class="inline-flex items-center rounded px-4 py-2 text-white text-xs font-medium bg-[var(--red-tertiary)] hover:bg-red-600"
-    >
-        Hapus
-    </button>
-</form>

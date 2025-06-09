@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('judul')
-    Beranda
+    Berandaaaa
 @endsection
 
 @section('deskripsi')

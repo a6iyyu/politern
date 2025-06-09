@@ -25,3 +25,5 @@ import './sorting';
 import './student-detail';
 import './student-guidance-data-modal';
 import './toggle-profile-photo-menu';
+import './application-detail';
+import './application-confirmation';

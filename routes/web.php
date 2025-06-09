@@ -117,7 +117,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/edit', [Pengajuan::class, 'edit'])->name('admin.pengajuan-magang.edit');
             Route::put('/{id}/status', [Pengajuan::class, 'update_status'])->name('admin.pengajuan-magang.perbarui-status');
             Route::post('/{id}/edit', [Pengajuan::class, 'update'])->name('admin.pengajuan-magang.perbarui');
-            Route::delete('/{id}/hapus', [Pengajuan::class, 'destroy'])->name('admin.pengajuan-magang.hapus');
+            Route::post('/konfirmasi/{id}', [Pengajuan::class, 'konfirmasi'])->name('admin.pengajuan-magang.konfirmasi');
         });
 
         Route::prefix('profil')->group(function () {

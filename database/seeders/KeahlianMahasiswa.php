@@ -13,6 +13,11 @@ class KeahlianMahasiswa extends Seeder
             ['id_mahasiswa' => 1, 'id_keahlian' => 1],
             ['id_mahasiswa' => 1, 'id_keahlian' => 2],
             ['id_mahasiswa' => 1, 'id_keahlian' => 3],
+            ['id_mahasiswa' => 4, 'id_keahlian' => 1],
+            ['id_mahasiswa' => 4, 'id_keahlian' => 2],
+            ['id_mahasiswa' => 4, 'id_keahlian' => 3],
+            ['id_mahasiswa' => 4, 'id_keahlian' => 4],
+            ['id_mahasiswa' => 4, 'id_keahlian' => 5],
         ]);
     }
 }
