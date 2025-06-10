@@ -11,19 +11,19 @@ use Illuminate\View\Component;
 
 class Card extends Component
 {
+    public array $expertise;
     public Carbon $createdAt;
     public string $category, $industry, $location, $logo,  $salary, $status, $type;
     public ?string $score, $url;
-    public array $expertise;
 
     public function __construct(string $category, Carbon $createdAt, string $industry, string $location, string $logo, array $expertise, string $salary, string $status, string $type, ?string $score = null, ?string $url = null)
     {
         $this->category = $category;
         $this->createdAt = $createdAt;
+        $this->expertise = $expertise;
         $this->industry = $industry;
         $this->location = $location;
         $this->logo = $logo;
-        $this->expertise = $expertise;
         $this->salary = $salary;
         $this->score = $score;
         $this->status = $status;

@@ -4,6 +4,8 @@
  * This file imports all custom JavaScript modules required for various functionalities.
  */
 
+import './application-confirmation';
+import './application-detail';
 import './array-in-select';
 import './bootstrap';
 import './chart';
@@ -25,5 +27,3 @@ import './sorting';
 import './student-detail';
 import './student-guidance-data-modal';
 import './toggle-profile-photo-menu';
-import './application-detail';
-import './application-confirmation';

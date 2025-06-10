@@ -194,6 +194,7 @@ class Lowongan extends Controller
             return back()->withErrors(['errors' => 'Gagal menghapus data lowongan magang karena kesalahan pada server.']);
         }
     }
+
     public function edit(string $id): JsonResponse
     {
         try {
@@ -236,6 +237,7 @@ class Lowongan extends Controller
             return Response::json(['errors' => 'Gagal mengambil data lowongan magang karena kesalahan pada server.'], 500);
         }
     }
+
     public function update(Request $request, string $id): RedirectResponse
     {
         try {
@@ -281,7 +283,8 @@ class Lowongan extends Controller
             return back()->withErrors(['errors' => 'Gagal memperbarui data lowongan magang karena kesalahan pada server.']);
         }
     }
-    public function show(string $id)
+
+    public function show(string $id): View
     {
         try {
             $lowongan = LowonganMagang::with([

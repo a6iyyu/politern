@@ -120,7 +120,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa.dasbor');
-        
+
         Route::prefix('rekomendasi-magang')->group(function () {
             Route::get('/{id?}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang')->where('id', '[0-9]+');
             Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail')->where('id', '[0-9]+');
