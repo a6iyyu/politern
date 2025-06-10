@@ -38,16 +38,9 @@
             </div>
             <div class="mb-3 mt-6 flex items-center justify-between gap-4">
                 <x-select 
-                    label="Durasi" 
-                    name="durasi" 
-                    :options="['6' => '6 Bulan', '3' => '3 Bulan']" 
-                    placeholder="Pilih Durasi" 
-                    required
-                />
-                <x-select 
                     label="Status" 
                     name="status" 
-                    :options="['aktif' => 'Aktif', 'tidak aktif' => 'Tidak Aktif']" 
+                    :options="['AKTIF' => 'Aktif', 'SELESAI' => 'Selesai']" 
                     placeholder="Pilih Status" 
                     required 
                 />

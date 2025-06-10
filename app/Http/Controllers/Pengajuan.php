@@ -11,6 +11,7 @@ use App\Models\ProgramStudi;
 use App\Models\Magang;
 use App\Models\Dosen;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -35,6 +36,123 @@ class Pengajuan extends Controller
             report($exception);
             Log::error('Terjadi kesalahan pada server: ' . $exception->getMessage());
             abort(500, $exception->getMessage());
+        }
+    }
+
+    public function update_status(Request $request, string $id): RedirectResponse
+    {
+        try {
+            $pengajuan = PengajuanMagang::findOrFail($id);
+            $status = $request->input('status');
+            if (!in_array($status, ['DISETUJUI', 'DITOLAK'])) return back()->withErrors('Status tidak valid!');
+
+            $pengajuan->status = $status;
+            $pengajuan->save();
+
+            $message = $status === 'DISETUJUI' ? 'disetujui' : 'ditolak';
+            return to_route('admin.pengajuan-magang')->with('success', "Pengajuan magang berhasil {$message}");
+        } catch (Exception $exception) {
+            report($exception);
+            return back()->withErrors('Gagal memperbarui status pengajuan magang.');
+        }
+    }
+
+    public function detail($id): JsonResponse
+    {
+        $pengajuan = PengajuanMagang::with([
+            'mahasiswa.program_studi',
+            'mahasiswa.keahlian',
+            'mahasiswa.pengalaman',
+            'mahasiswa.sertifikasi_pelatihan',
+            'mahasiswa.proyek',
+            'lowongan.bidang',
+            'lowongan.perusahaan.lokasi',
+        ])->findOrFail($id);
+
+        $mahasiswa = $pengajuan->mahasiswa;
+        $lowongan = $pengajuan->lowongan;
+
+        $logo = null;
+        if ($lowongan->perusahaan->logo) {
+            $logo = str_starts_with($lowongan->perusahaan->logo, 'storage/')
+                ? '/' . $lowongan->perusahaan->logo
+                : (str_starts_with($lowongan->perusahaan->logo, '/storage/')
+                    ? $lowongan->perusahaan->logo
+                    : '/storage/' . $lowongan->perusahaan->logo);
+        }
+
+        return response()->json([
+            'pengajuan' => [
+                'bidang_posisi'         => $lowongan->bidang->nama_bidang ?? '-',
+                'logo'                  => $logo,
+                'nama_perusahaan_mitra' => $lowongan->perusahaan->nama,
+                'lokasi'                => $lowongan->perusahaan->lokasi->nama_lokasi ?? '-',
+            ],
+            'mahasiswa' => [
+                'nim'           => $mahasiswa->nim,
+                'nama_lengkap'  => $mahasiswa->nama_lengkap,
+                'angkatan'      => $mahasiswa->angkatan,
+                'semester'      => $mahasiswa->semester,
+                'program_studi' => $mahasiswa->program_studi->nama,
+                'ipk'           => $mahasiswa->ipk,
+                'nomor_telepon' => $mahasiswa->nomor_telepon,
+                'deskripsi'     => $mahasiswa->deskripsi,
+                'status'        => $mahasiswa->status,
+                'cv' => [
+                    'nama_file' => $mahasiswa->cv_file ?? 'CV_' . str_replace(' ', '_', $mahasiswa->nama_lengkap) . '.pdf',
+                    'url'       => $mahasiswa->cv_file,
+                ],
+                'keahlian'      => $mahasiswa->keahlian->pluck('nama_keahlian')->toArray(),
+            ]
+        ]);
+    }
+
+    public function konfirmasi(Request $request, $id): JsonResponse
+    {
+        $request->validate([
+            'dosen_pembimbing_id' => 'required_if:status,DISETUJUI|exists:dosen,id_dosen',
+            'status'              => 'required|in:DISETUJUI,DITOLAK',
+        ]);
+
+        $pengajuan = PengajuanMagang::findOrFail($id);
+
+        try {
+            DB::beginTransaction();
+
+            if ($request->status === 'DISETUJUI') {
+                $magang = new Magang();
+                $magang->id_mahasiswa = $pengajuan->id_mahasiswa;
+                $magang->id_lowongan = $pengajuan->id_lowongan;
+                $magang->id_dosen = $request->dosen_pembimbing_id;
+                $magang->status = 'AKTIF';
+                $magang->tgl_mulai = now();
+                $magang->save();
+
+                $pengajuan->status = 'DISETUJUI';
+                $pengajuan->save();
+
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Pengajuan magang berhasil disetujui'
+                ]);
+            } else {
+                $pengajuan->status = 'DITOLAK';
+                $pengajuan->save();
+
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Pengajuan magang berhasil ditolak'
+                ]);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses pengajuan magang karena kesalahan pada server.',
+            ], 500);
         }
     }
 
@@ -67,7 +185,7 @@ class Pengajuan extends Controller
                 $pengajuan->lowongan->bidang->nama_bidang ?? '-',
                 '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
                     . ($pengajuan->status ?? "N/A") .
-                '</div>',
+                    '</div>',
                 view('components.admin.pengajuan-magang.aksi', compact('pengajuan'))->render(),
                 $konfirmasi,
             ];
@@ -95,7 +213,7 @@ class Pengajuan extends Controller
                 $pengajuan->created_at->format('d/m/Y'),
                 '<div class="text-xs text-white font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
                     . ($pengajuan->status ?? "N/A") .
-                '</div>',
+                    '</div>',
                 view('components.student.kelola-lamaran.aksi', compact('pengajuan'))->render(),
             ];
         })->toArray();

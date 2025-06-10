@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -13,11 +15,18 @@ class KeahlianMahasiswa extends Seeder
             ['id_mahasiswa' => 1, 'id_keahlian' => 1],
             ['id_mahasiswa' => 1, 'id_keahlian' => 2],
             ['id_mahasiswa' => 1, 'id_keahlian' => 3],
+            ['id_mahasiswa' => 2, 'id_keahlian' => 2],
+            ['id_mahasiswa' => 2, 'id_keahlian' => 3],
+            ['id_mahasiswa' => 2, 'id_keahlian' => 4],
+            ['id_mahasiswa' => 3, 'id_keahlian' => 3],
+            ['id_mahasiswa' => 3, 'id_keahlian' => 2],
+            ['id_mahasiswa' => 3, 'id_keahlian' => 5],
+            ['id_mahasiswa' => 4, 'id_keahlian' => 6],
+            ['id_mahasiswa' => 4, 'id_keahlian' => 7],
             ['id_mahasiswa' => 4, 'id_keahlian' => 1],
-            ['id_mahasiswa' => 4, 'id_keahlian' => 2],
-            ['id_mahasiswa' => 4, 'id_keahlian' => 3],
-            ['id_mahasiswa' => 4, 'id_keahlian' => 4],
-            ['id_mahasiswa' => 4, 'id_keahlian' => 5],
+            ['id_mahasiswa' => 5, 'id_keahlian' => 5],
+            ['id_mahasiswa' => 5, 'id_keahlian' => 3],
+            ['id_mahasiswa' => 5, 'id_keahlian' => 1],
         ]);
     }
 }

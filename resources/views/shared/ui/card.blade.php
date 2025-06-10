@@ -4,7 +4,7 @@
             <img src="{{ $logo ?? 'N/A' }}" alt="{{ $industry }}" class="w-7 object-cover md:w-10" />
             <span>
                 <h4 class="text-[#5955b2] font-semibold">
-                    {{ $name ?? 'N/A' }}
+                    {{ $category ?? 'N/A' }}
                 </h4>
                 <h5 class="text-[#585858] text-sm font-medium">
                     {{ $industry ?? 'N/A' }}
@@ -23,9 +23,11 @@
         <h5 class="cursor-pointer bg-[#fbecf1] text-xs text-[#585858] px-5 py-2 rounded-full border border-[#f9d4e2] transition-all duration-300 ease-in-out lg:hover:bg-[#f9d4e2]">
             {{ $type ?? 'N/A' }}
         </h5>
-        <h5 class="cursor-pointer bg-[#fbecf1] text-xs text-[#585858] px-4 py-2 rounded-full border border-[#f9d4e2] transition-all duration-300 ease-in-out lg:hover:bg-[#f9d4e2]">
-            {{ $category ?? 'N/A' }}
-        </h5>
+        @foreach(explode(', ', $skill) as $skillItem)
+            <h5 class="cursor-pointer bg-[#ECEFFB] text-xs text-[#585858] px-4 py-2 rounded-full border border-[#aab5ff] transition-all duration-300 ease-in-out lg:hover:bg-[#aab5ff]">
+                {{ $skillItem ?? 'N/A' }}
+            </h5>
+        @endforeach
     </div>
     <span class="flex items-center justify-between cursor-default mt-3 text-xs text-[#585858]">
         <h5>Diposting {{ $formattedDate() ?? 'N/A' }}</h5>

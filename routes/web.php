@@ -120,10 +120,11 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['authorize:MAHASISWA'])->prefix('mahasiswa')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa.dasbor');
-        
+
         Route::prefix('rekomendasi-magang')->group(function () {
             Route::get('/{id?}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang')->where('id', '[0-9]+');
             Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail')->where('id', '[0-9]+');
+            Route::get('/{id}/perhitungan', [RekomendasiMagang::class, 'tampilkan'])->name('mahasiswa.rekomendasi-magang.perhitungan')->where('id', '[0-9]+');
         });
 
         Route::prefix('kelola-lamaran')->group(function () {
@@ -145,7 +146,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('lowongan')->group(function () {
             Route::get('/', [Lowongan::class, 'index'])->name('mahasiswa.lowongan');
-            Route::get('/{id}/detail', [Lowongan::class, 'detail'])->name('mahasiswa.lowongan.detail');
+            Route::get('/{id}/detail', [Lowongan::class, 'show'])->name('mahasiswa.lowongan.detail');
             Route::get('/cari', [Dasbor::class, 'index'])->name('mahasiswa.lowongan.cari');
         });
 

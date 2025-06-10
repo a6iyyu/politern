@@ -4,6 +4,8 @@
  * This file imports all custom JavaScript modules required for various functionalities.
  */
 
+import './application-confirmation';
+import './application-detail';
 import './array-in-select';
 import './bootstrap';
 import './chart';

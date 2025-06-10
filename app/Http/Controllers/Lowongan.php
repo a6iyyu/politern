@@ -194,6 +194,7 @@ class Lowongan extends Controller
             return back()->withErrors(['errors' => 'Gagal menghapus data lowongan magang karena kesalahan pada server.']);
         }
     }
+
     public function edit(string $id): JsonResponse
     {
         try {
@@ -236,6 +237,7 @@ class Lowongan extends Controller
             return Response::json(['errors' => 'Gagal mengambil data lowongan magang karena kesalahan pada server.'], 500);
         }
     }
+
     public function update(Request $request, string $id): RedirectResponse
     {
         try {
@@ -279,6 +281,31 @@ class Lowongan extends Controller
             report($exception);
             Log::error($exception->getMessage());
             return back()->withErrors(['errors' => 'Gagal memperbarui data lowongan magang karena kesalahan pada server.']);
+        }
+    }
+
+    public function show(string $id): View
+    {
+        try {
+            $lowongan = LowonganMagang::with([
+                'bidang',
+                'perusahaan.lokasi',
+                'jenis_lokasi',
+                'periode_magang',
+                'keahlian',
+                'jenis_magang',
+                'durasi',
+            ])->findOrFail($id);
+
+            return view('pages.student.detail-lowongan', compact('lowongan'));
+        } catch (ModelNotFoundException $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            abort(404, 'Lowongan magang tidak ditemukan.');
+        } catch (Exception $exception) {
+            report($exception);
+            Log::error($exception->getMessage());
+            abort(500, 'Terjadi kesalahan pada server.');
         }
     }
 }
