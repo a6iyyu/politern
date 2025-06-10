@@ -27,3 +27,4 @@ import './student-guidance-data-modal';
 import './toggle-profile-photo-menu';
 import './application-detail';
 import './application-confirmation';
+import './edit-application';

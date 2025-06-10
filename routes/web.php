@@ -106,9 +106,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [Pengajuan::class, 'index'])->name('admin.pengajuan-magang');
             Route::get('/{id}/detail', [Pengajuan::class, 'detail'])->name('admin.pengajuan-magang.detail');
             Route::get('/{id}/edit', [Pengajuan::class, 'edit'])->name('admin.pengajuan-magang.edit');
+            Route::put('/{id}', [Pengajuan::class, 'update'])->name('admin.pengajuan-magang.update');
             Route::put('/{id}/status', [Pengajuan::class, 'update_status'])->name('admin.pengajuan-magang.perbarui-status');
-            Route::post('/{id}/edit', [Pengajuan::class, 'update'])->name('admin.pengajuan-magang.perbarui');
-            Route::post('/konfirmasi/{id}', [Pengajuan::class, 'konfirmasi'])->name('admin.pengajuan-magang.konfirmasi');
+            Route::put('/{id}/konfirmasi', [Pengajuan::class, 'konfirmasi'])->name('admin.pengajuan-magang.process-konfirmasi');
         });
 
         Route::prefix('profil')->group(function () {
