@@ -81,8 +81,11 @@ class LogAktivitas extends Controller
                 $status = $magang->status ?? "N/A";
                 $total_log = DB::table('log_aktivitas')->where('id_magang', $magang->id_magang)->count();
                 $log_aktivitas = LogAktivitasModel::where('id_magang', $magang->id_magang)->get();
+                $minggu = LogAktivitasModel::where('id_magang', $magang->id_magang)
+                    ->orderBy('minggu')
+                    ->value('minggu'); 
 
-                return view('pages.student.log-aktivitas', compact('dospem', 'log_aktivitas', 'periode', 'perusahaan', 'posisi', 'status', 'total_log', 'lokasi'));
+                return view('pages.student.log-aktivitas', compact('dospem', 'log_aktivitas', 'periode', 'perusahaan', 'posisi', 'status', 'total_log', 'lokasi', 'minggu'));
             default:
                 abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
@@ -167,7 +170,11 @@ class LogAktivitas extends Controller
         }
     }
 
-    public function detail() {}
+    public function detail($id)
+    {
+
+    }
+
 
     public function show(string $id): JsonResponse
     {
