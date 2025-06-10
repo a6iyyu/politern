@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DurasiMagang as DurasiMagangModel;
 use App\Models\PeriodeMagang as PeriodeMagangModel;
-use App\Models\Perusahaan;
+use App\Models\periode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -20,27 +20,35 @@ use Illuminate\Http\JsonResponse;
 class PeriodeMagang extends Controller
 {
     public function index(): View
-    {
-        $pengguna = Auth::user()->tipe;
-        if ($pengguna === "ADMIN") {
-            $total_periode = PeriodeMagangModel::count();
-            $perusahaan_filter = Perusahaan::whereHas('lokasi')->pluck('nama', 'id_perusahaan_mitra')->toArray();
+{
+    $pengguna = Auth::user()->tipe;
+    if ($pengguna === "ADMIN") {
+        $total_periode = PeriodeMagangModel::count();
+        $status = ['AKTIF' => 'Aktif', 'SELESAI' => 'Selesai'];
 
-            $paginasi = PeriodeMagangModel::paginate(request('per_page', 10));
-            $data = collect($paginasi->items())->map(fn(PeriodeMagangModel $periode): array => [
+        $paginasi = PeriodeMagangModel::paginate(request('per_page', 10));
+        $data = collect($paginasi->items())->map(function (PeriodeMagangModel $periode) {
+            $statusClass = match ($periode->status) {
+                'AKTIF' => 'bg-green-200 text-green-800',  
+                'SELESAI' => 'bg-red-200 text-yellow-800',  
+            };
+            return [
                 $periode->id_periode,
                 $periode->nama_periode,
                 $periode->tanggal_mulai,
                 $periode->tanggal_selesai,
-                $periode->status,
+                // Menampilkan status dengan kelas CSS yang sesuai
+                '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $statusClass . '">' . ($periode->status ?? "N/A") . '</div>',
                 view('components.admin.periode-magang.aksi', compact('periode'))->render(),
-            ])->toArray();
+            ];
+        })->toArray();
 
-            return view('pages.admin.periode-magang', compact('data', 'paginasi', 'total_periode', 'perusahaan_filter'));
-        } else {
-            abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
-        }
+        return view('pages.admin.periode-magang', compact('data', 'paginasi', 'total_periode', 'status'));
+    } else {
+        abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
     }
+}
+
 
     public function create(Request $request): RedirectResponse
     {
@@ -54,9 +62,9 @@ class PeriodeMagang extends Controller
 
             PeriodeMagangModel::create([
                 'nama_periode'      => $request->nama_periode,
-                'durasi'            => $request->durasi,
                 'tanggal_mulai'     => $request->tanggal_mulai,
                 'tanggal_selesai'   => $request->tanggal_selesai,
+                'status'            => $request->status
             ]);
 
             return to_route('admin.periode-magang')->with('success', 'Periode Magang berhasil ditambahkan');
@@ -71,8 +79,7 @@ class PeriodeMagang extends Controller
     {
         try {
             $periode = PeriodeMagangModel::findOrFail($id);
-            $durasi = $periode->durasi->nama_durasi;
-            return compact('durasi', 'periode');
+            return compact('periode');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
@@ -82,9 +89,8 @@ class PeriodeMagang extends Controller
 
     public function edit(string $id): array
     {
-        $durasi = DurasiMagangModel::pluck('nama_durasi', 'id_durasi_magang')->toArray();
         $periode = PeriodeMagangModel::findOrFail($id);
-        return compact('durasi', 'periode');
+        return compact( 'periode');
     }
 
     public function update(Request $request, string $id): RedirectResponse
@@ -95,13 +101,11 @@ class PeriodeMagang extends Controller
             $request->validate([
                 'nama_periode'    => "required|string|max:200|unique:periode_magang,nama_periode,{$id},id_periode",
                 'tanggal_mulai'   => 'required|date',
-                'durasi'          => 'required',
                 'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
                 'status'          => 'required|in:AKTIF,SELESAI',
             ]);
 
             $periode->nama_periode      = $request->nama_periode;
-            $periode->id_durasi_magang  = $request->durasi;
             $periode->tanggal_mulai     = $request->tanggal_mulai;
             $periode->tanggal_selesai   = $request->tanggal_selesai;
             $periode->status            = $request->status;
@@ -130,8 +134,7 @@ class PeriodeMagang extends Controller
 
     public function export_excel(): never
     {
-        $periode = PeriodeMagangModel::select('periode_magang.id_periode', 'periode_magang.nama_periode', 'durasi_magang.nama_durasi', 'periode_magang.tanggal_mulai', 'periode_magang.tanggal_selesai', 'periode_magang.status')
-            ->leftJoin('durasi_magang', 'durasi_magang.id_durasi_magang', '=', 'periode_magang.id_durasi_magang')
+        $periode = PeriodeMagangModel::select('periode_magang.id_periode', 'periode_magang.nama_periode', 'periode_magang.tanggal_mulai', 'periode_magang.tanggal_selesai', 'periode_magang.status')
             ->get();
 
         $spreadsheet = new Spreadsheet();
@@ -139,7 +142,6 @@ class PeriodeMagang extends Controller
 
         $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'Nama Periode');
-        $sheet->setCellValue('C1', 'Durasi');
         $sheet->setCellValue('D1', 'Tanggal Mulai');
         $sheet->setCellValue('E1', 'Tanggal Selesai');
         $sheet->setCellValue('F1', 'Status');
@@ -150,7 +152,6 @@ class PeriodeMagang extends Controller
         foreach ($periode as $key => $value) {
             $sheet->setCellValue("A$baris", $nomor);
             $sheet->setCellValue("B$baris", $value->nama_periode);
-            $sheet->setCellValue("C$baris", $value->nama_durasi);
             $sheet->setCellValue("D$baris", $value->tanggal_mulai);
             $sheet->setCellValue("E$baris", $value->tanggal_selesai);
             $sheet->setCellValue("F$baris", $value->status);

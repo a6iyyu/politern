@@ -7,14 +7,12 @@
 
 interface Periode {
   nama_periode: string;
-  durasi: string | string[];
   tanggal_mulai: string;
   tanggal_selesai: string;
   status: string;
 }
 
 interface Modal {
-  durasi: string;
   periode: Periode;
 }
 
@@ -25,11 +23,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!modal || !close) return;
 
   const detail_nama_periode = document.getElementById('detail_nama_periode');
-  const durasi = document.getElementById('durasi');
   const tanggal_mulai = document.getElementById('tanggal_mulai');
   const tanggal_selesai = document.getElementById('tanggal_selesai');
   const status = document.getElementById('status');
-  if (!detail_nama_periode || !durasi || !tanggal_mulai || !tanggal_selesai || !status) return;
+  if (!detail_nama_periode || !tanggal_mulai || !tanggal_selesai || !status) return;
 
   const formattedDate = (date: string): string => {
     const [year, month, day] = date.split('-');
@@ -55,7 +52,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       detail_nama_periode.textContent = response.periode.nama_periode;
       tanggal_mulai.textContent = formattedDate(response.periode.tanggal_mulai);
       tanggal_selesai.textContent = formattedDate(response.periode.tanggal_selesai);
-      durasi.textContent = response.durasi;
       status.textContent = response.periode.status;
     });
   });

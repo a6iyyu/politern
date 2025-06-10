@@ -1,5 +1,4 @@
 interface Periode {
-  id_durasi_magang: number;
   nama_periode: string;
   tanggal_mulai: string;
   tanggal_selesai: string;
@@ -7,7 +6,6 @@ interface Periode {
 }
 
 interface Modal {
-  durasi: string;
   periode: Periode;
 }
 
@@ -29,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!close || !form) return;
 
   const nama_periode = form.querySelector<HTMLInputElement>("input[name='nama_periode']");
-  const durasi = form.querySelector<HTMLSelectElement>("select[name='durasi']");
   const tanggal_mulai = form.querySelector<HTMLInputElement>("input[name='tanggal_mulai']");
   const tanggal_selesai = form.querySelector<HTMLInputElement>("input[name='tanggal_selesai']");
   const status = form.querySelector<HTMLSelectElement>("select[name='status']");
@@ -63,26 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (nama_periode) nama_periode.value = data.periode.nama_periode;
       if (tanggal_mulai) tanggal_mulai.value = formattedDate(data.periode.tanggal_mulai);
       if (tanggal_selesai) tanggal_selesai.value = formattedDate(data.periode.tanggal_selesai);
-
-      if (durasi) {
-        durasi.innerHTML = '<option value="" disabled>Pilih Durasi</option>';
-
-        Object.entries(data.durasi).forEach(([id, value]) => {
-          const option = document.createElement('option');
-          option.value = id;
-          option.textContent = value;
-          durasi.appendChild(option);
-        });
-
-        durasi.value = String(data.periode.id_durasi_magang);
-      }
-
       if (status) {
         status.innerHTML = '<option value="" disabled>Pilih Status</option>';
 
         const opsi = {
           'AKTIF': 'Aktif',
-          'TIDAK AKTIF': 'Tidak Aktif',
+          'SELESAI': 'Selesai',
         };
 
         Object.entries(opsi).forEach(([key, value]) => {

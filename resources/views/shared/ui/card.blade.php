@@ -23,9 +23,9 @@
         <h5 class="cursor-pointer bg-[#fbecf1] text-xs text-[#585858] px-5 py-2 rounded-full border border-[#f9d4e2] transition-all duration-300 ease-in-out lg:hover:bg-[#f9d4e2]">
             {{ $type ?? 'N/A' }}
         </h5>
-        @foreach ($expertise as $skill)
-            <h5 class="cursor-pointer bg-[#ECEFFB] text-xs text-[#585858] px-4 py-2 rounded-full border border-[#e3e6f3] transition-all duration-300 ease-in-out lg:hover:bg-[#d6dbf7]">
-                {{ $skill }}
+        @foreach(explode(', ', $skill) as $skillItem)
+            <h5 class="cursor-pointer bg-[#ECEFFB] text-xs text-[#585858] px-4 py-2 rounded-full border border-[#aab5ff] transition-all duration-300 ease-in-out lg:hover:bg-[#aab5ff]">
+                {{ $skillItem ?? 'N/A' }}
             </h5>
         @endforeach
     </div>

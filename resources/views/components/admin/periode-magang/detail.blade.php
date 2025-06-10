@@ -21,14 +21,11 @@
                     <strong>Tanggal Selesai:</strong>
                     <h6 id="tanggal_selesai"></h6>
                 </span>
-                <span class="mt-2 flex items-center gap-2 text-sm">
-                    <strong>Durasi:</strong>
-                    <h6 id="durasi"></h6>
-                </span>
-                <span class="mt-2 flex items-center gap-2 text-sm">
+                <div class="mt-2 flex items-center gap-2 text-sm">
                     <strong>Status:</strong>
-                    <h6 id="status"></h6>
-                </span>
+                    <h6 id="status" class="m-0"></h6>
+                </div>
+                
             </figcaption>
         </figure>
     </div>

@@ -31,7 +31,6 @@
                 />
             </div>
             <div class="mb-3 mt-6 flex items-center justify-between gap-4">
-                <x-select label="Durasi" name="durasi" placeholder="Pilih Durasi" :required="true" />
                 <x-select label="Status" name="status" placeholder="Pilih Status" :required="true" />
             </div>
             <span class="flex justify-end gap-3 text-sm items-center mt-6">
