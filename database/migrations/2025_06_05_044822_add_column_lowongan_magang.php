@@ -8,8 +8,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('lowongan_magang', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_jenis_magang');
-            $table->unsignedBigInteger('id_durasi_magang');
+            $table->unsignedBigInteger('id_jenis_magang')->after('id_jenis_lokasi');
+            $table->unsignedBigInteger('id_durasi_magang')->after('id_jenis_magang');
 
             $table->foreign('id_jenis_magang')->references('id_jenis_magang')->on('jenis_magang');
             $table->foreign('id_durasi_magang')->references('id_durasi_magang')->on('durasi_magang');

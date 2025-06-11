@@ -81,8 +81,9 @@ class DataMahasiswa extends Controller
             $paginasi = $mahasiswa_bimbingan->paginate(request('per_page', default: 10));
             $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
                 $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status) {
-                    'AKTIF'         => 'bg-green-200 text-green-800',
-                    'SELESAI'       => 'bg-yellow-200 text-yellow-800',
+                    'AKTIF'   => 'bg-green-200 text-green-800',
+                    'SELESAI' => 'bg-yellow-200 text-yellow-800',
+                    default   => 'bg-red-200 text-red-800',
                 };
 
                 $pengajuan = $mhs->pengajuan_magang->first();
@@ -91,7 +92,7 @@ class DataMahasiswa extends Controller
                 $perusahaan = $lowongan?->perusahaan;
 
                 return [
-                    $magang->id_magang ?? '-',
+                    $baris++,
                     '<div class="flex items-center gap-2">
                         <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . $mhs->nama_lengkap . '
                     </div>',

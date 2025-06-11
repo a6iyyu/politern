@@ -1,4 +1,4 @@
-<section class="flex flex-col justify-between mb-5 gap-4 lg:items-center lg:flex-row">
+<section class="flex flex-col justify-between mb-5 gap-4 lg:flex-row lg:items-center">
     <h2 class="cursor-default text-base font-semibold text-[var(--primary-text)]">
         Daftar Data Lowongan Magang
     </h2>

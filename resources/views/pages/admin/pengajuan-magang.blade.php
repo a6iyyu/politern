@@ -14,9 +14,7 @@
             @include('components.admin.pengajuan-magang.tabel')
         </section>
         @include('components.admin.pengajuan-magang.detail')
-        @include('components.admin.pengajuan-magang.detail-konfirmasi', [
-            'pengajuan' => null,
-            'dosen' => $dosen ?? []
-        ])
+        @include('components.admin.pengajuan-magang.detail-konfirmasi')
+        @include('components.admin.pengajuan-magang.edit')
     </main>
 @endsection

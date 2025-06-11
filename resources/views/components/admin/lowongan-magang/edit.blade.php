@@ -3,11 +3,9 @@
         <form method="POST" id="form-edit-lowongan" class="max-h-[90vh] overflow-y-auto w-full max-w-2xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('PUT')
-            <figcaption class="flex items-center justify-between mb-4">
+            <figcaption class="flex items-center justify-between mb-3">
                 <h2 class="text-lg font-semibold text-[#5955B2]">Edit Lowongan Magang</h2>
-                <button id="close-edit-lowongan" type="button" class="text-gray-400 hover:text-gray-600">
-                    <i class="fa-solid fa-xmark close"></i>
-                </button>
+                <i id="close-edit-lowongan" class="fa-solid fa-xmark cursor-pointer transition-all duraion-300 ease-in-out text-gray-400 lg:hover:text-gray-600"></i>
             </figcaption>
             <hr class="border border-[var(--primary)] mb-6 " />
             <figcaption class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">

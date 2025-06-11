@@ -50,7 +50,7 @@
             </figcaption>
             <figcaption class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-800 mb-4">
                 <span>
-                    <h5 class="font-semibold mb-3">Perkiraan Gaji:</h5>
+                    <h5 class="font-semibold mb-3">Gaji:</h5>
                     <h5 id="gaji" class="text-gray-600"></h5>
                 </span>
                 <span>

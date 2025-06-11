@@ -14,6 +14,7 @@
             @include('components.student.log-aktivitas.informasi')
             @include('components.student.log-aktivitas.daftar')
             @include('components.student.log-aktivitas.tambah')
+            @include('components.student.log-aktivitas.detail')
         @else
             <section class="mt-6 text-center shadow-lg p-10 rounded-lg border border-[var(--stroke)] bg-white text-gray-500">
                 <i class="fa-solid fa-circle-info text-2xl"></i>

@@ -8,7 +8,7 @@ use App\Http\Controllers\DataPerusahaan;
 use App\Http\Controllers\DataProdi;
 use App\Http\Controllers\LogAktivitas;
 use App\Http\Controllers\Lowongan;
-use App\Http\Controllers\PeriodeMagang;
+use App\Http\Controllers\Periode;
 use App\Http\Controllers\RekomendasiMagang;
 use App\Http\Controllers\Pengajuan;
 use App\Http\Controllers\Profil;
@@ -82,14 +82,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/ekspor-excel', [DataPerusahaan::class, 'export_excel'])->name('admin.data-perusahaan.ekspor-excel');
         });
 
-        Route::prefix('periode-magang')->group(function () {
-            Route::get('/', [PeriodeMagang::class, 'index'])->name('admin.periode-magang');
-            Route::post('/tambah', [PeriodeMagang::class, 'create'])->name('admin.periode-magang.tambah');
-            Route::get('/{id}/detail', [PeriodeMagang::class, 'show'])->name('admin.periode-magang.detail');
-            Route::get('/{id}/edit', [PeriodeMagang::class, 'edit'])->name('admin.periode-magang.edit');
-            Route::get('/ekspor-excel', [PeriodeMagang::class, 'export_excel'])->name('admin.periode-magang.ekspor-excel');
-            Route::put('/{id}/perbarui', [PeriodeMagang::class, 'update'])->name('admin.periode-magang.perbarui');
-            Route::delete('/{id}/hapus', [PeriodeMagang::class, 'destroy'])->name('admin.periode-magang.hapus');
+        Route::prefix('periode')->group(function () {
+            Route::get('/', [Periode::class, 'index'])->name('admin.periode');
+            Route::post('/tambah', [Periode::class, 'create'])->name('admin.periode.tambah');
+            Route::get('/{id}/detail', [Periode::class, 'show'])->name('admin.periode.detail');
+            Route::get('/{id}/edit', [Periode::class, 'edit'])->name('admin.periode.edit');
+            Route::get('/ekspor-excel', [Periode::class, 'export_excel'])->name('admin.periode.ekspor-excel');
+            Route::put('/{id}/perbarui', [Periode::class, 'update'])->name('admin.periode.perbarui');
+            Route::delete('/{id}/hapus', [Periode::class, 'destroy'])->name('admin.periode.hapus');
         });
 
         Route::prefix('lowongan-magang')->group(function () {
@@ -106,9 +106,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [Pengajuan::class, 'index'])->name('admin.pengajuan-magang');
             Route::get('/{id}/detail', [Pengajuan::class, 'detail'])->name('admin.pengajuan-magang.detail');
             Route::get('/{id}/edit', [Pengajuan::class, 'edit'])->name('admin.pengajuan-magang.edit');
+            Route::put('/{id}/perbarui', [Pengajuan::class, 'update'])->name('admin.pengajuan-magang.perbarui');
             Route::put('/{id}/status', [Pengajuan::class, 'update_status'])->name('admin.pengajuan-magang.perbarui-status');
-            Route::post('/{id}/edit', [Pengajuan::class, 'update'])->name('admin.pengajuan-magang.perbarui');
-            Route::post('/konfirmasi/{id}', [Pengajuan::class, 'konfirmasi'])->name('admin.pengajuan-magang.konfirmasi');
+            Route::put('/{id}/konfirmasi', [Pengajuan::class, 'confirmation'])->name('admin.pengajuan-magang.konfirmasi');
         });
 
         Route::prefix('profil')->group(function () {

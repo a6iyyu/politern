@@ -4,20 +4,23 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Bidang;
+use App\Models\Dosen;
 use App\Models\LogAktivitas as LogAktivitasModel;
+use App\Models\Lokasi;
+use App\Models\LowonganMagang;
 use App\Models\Magang;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanMagang;
-use App\Models\Perusahaan;
+use App\Models\Pengguna;
 use App\Models\PeriodeMagang;
+use App\Models\Perusahaan;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
@@ -32,57 +35,59 @@ class LogAktivitas extends Controller
 
         switch ($pengguna) {
             case 'ADMIN':
-                return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
+                $perusahaan = $log_aktivitas->pluck('magang.pengajuan_magang.lowongan.perusahaan')->unique('id_perusahaan_mitra')->mapWithKeys(fn($p) => [$p['id_perusahaan_mitra'] => $p['nama']])->toArray();
+                return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'periode_magang', 'perusahaan', 'status_aktivitas'));
             case 'DOSEN':
                 $perusahaan = $log_aktivitas->pluck('magang.pengajuan_magang.lowongan.perusahaan')->unique('id_perusahaan_mitra')->mapWithKeys(fn($p) => [$p['id_perusahaan_mitra'] => $p['nama']])->toArray();
                 return view('pages.lecturer.log-aktivitas', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
             case 'MAHASISWA':
-                $mahasiswa = DB::table('mahasiswa')->where('id_pengguna', Auth::user()->id_pengguna)->first();
+                $mahasiswa = Mahasiswa::where('id_pengguna', Auth::user()->id_pengguna)->first();
                 if (!$mahasiswa) return view('pages.student.log-aktivitas', ['log_aktivitas' => null]);
 
-                $pengajuan = DB::table('pengajuan_magang')->where('id_mahasiswa', $mahasiswa->id_mahasiswa)->first();
+                $pengajuan = PengajuanMagang::where('id_mahasiswa', $mahasiswa->id_mahasiswa)->first();
                 if (!$pengajuan) return view('pages.student.log-aktivitas', ['log_aktivitas' => null]);
 
-                $magang = DB::table('magang')->where('id_pengajuan_magang', $pengajuan->id_pengajuan_magang)->where('status', 'AKTIF')->first();
+                $magang = Magang::where('id_pengajuan_magang', $pengajuan->id_pengajuan_magang)->where('status', 'AKTIF')->first();
                 if (!$magang) return view('pages.student.log-aktivitas', ['log_aktivitas' => null]);
 
-                $lowongan = DB::table('lowongan_magang')->where('id_lowongan', $pengajuan->id_lowongan)->first();
+                $lowongan = LowonganMagang::where('id_lowongan', $pengajuan->id_lowongan)->first();
 
                 $perusahaan = "N/A";
                 if ($lowongan && $lowongan->id_perusahaan_mitra) {
-                    $perusahaan_mitra = DB::table('perusahaan_mitra')->where('id_perusahaan_mitra', $lowongan->id_perusahaan_mitra)->first();
+                    $perusahaan_mitra = Perusahaan::where('id_perusahaan_mitra', $lowongan->id_perusahaan_mitra)->first();
                     $perusahaan = $perusahaan_mitra->nama ?? "N/A";
                 }
 
                 $lokasi = "N/A";
-                if (isset($perusahaan_mitra) && $perusahaan_mitra && $perusahaan_mitra->id_lokasi) {
-                    $lokasi = DB::table('lokasi')->where('id_lokasi', $perusahaan_mitra->id_lokasi)->first();
+                if (!empty($perusahaan_mitra?->id_lokasi)) {
+                    $lokasi = Lokasi::where('id_lokasi', $perusahaan_mitra->id_lokasi)->first();
                     $lokasi = $lokasi->nama_lokasi ?? "N/A";
                 }
 
                 $periode = "N/A";
                 if ($lowongan && $lowongan->id_periode) {
-                    $periode = DB::table('periode_magang')->where('id_periode', $lowongan->id_periode)->first();
+                    $periode = PeriodeMagang::where('id_periode', $lowongan->id_periode)->first();
                     $periode = $periode->nama_periode ?? "N/A";
                 }
 
                 $posisi = "N/A";
                 if ($lowongan && $lowongan->id_bidang) {
-                    $bidang = DB::table('bidang')->where('id_bidang', $lowongan->id_bidang)->first();
+                    $bidang = Bidang::where('id_bidang', $lowongan->id_bidang)->first();
                     $posisi = $bidang->nama_bidang ?? "N/A";
                 }
 
                 $dospem = "N/A";
                 if ($magang->id_dosen_pembimbing) {
-                    $dosen = DB::table('dosen')->where('id_dosen', $magang->id_dosen_pembimbing)->first();
-                    if ($dosen && $dosen->id_pengguna) $dospem = DB::table('pengguna')->where('id_pengguna', $dosen->id_pengguna)->first()->nama_pengguna ?? "N/A";
+                    $dosen = Dosen::where('id_dosen', $magang->id_dosen_pembimbing)->first();
+                    if ($dosen && $dosen->id_pengguna) $dospem = Pengguna::where('id_pengguna', $dosen->id_pengguna)->first()->nama_pengguna ?? "N/A";
                 }
 
                 $status = $magang->status ?? "N/A";
-                $total_log = DB::table('log_aktivitas')->where('id_magang', $magang->id_magang)->count();
+                $total_log = LogAktivitasModel::where('id_magang', $magang->id_magang)->count();
                 $log_aktivitas = LogAktivitasModel::where('id_magang', $magang->id_magang)->get();
+                $minggu = LogAktivitasModel::where('id_magang', $magang->id_magang)->orderBy('minggu')->value('minggu');
 
-                return view('pages.student.log-aktivitas', compact('dospem', 'log_aktivitas', 'periode', 'perusahaan', 'posisi', 'status', 'total_log', 'lokasi'));
+                return view('pages.student.log-aktivitas', compact('dospem', 'log_aktivitas', 'periode', 'perusahaan', 'posisi', 'status', 'total_log', 'lokasi', 'minggu'));
             default:
                 abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
@@ -98,13 +103,13 @@ class LogAktivitas extends Controller
                 'foto'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             ]);
 
-            $mahasiswa = DB::table('mahasiswa')->where('id_pengguna', Auth::user()->id_pengguna)->first();
+            $mahasiswa = Mahasiswa::where('id_pengguna', Auth::user()->id_pengguna)->first();
             if (!$mahasiswa) return back()->withErrors(['errors' => 'Mahasiswa tidak ditemukan.']);
 
-            $pengajuan = DB::table('pengajuan_magang')->where('id_mahasiswa', $mahasiswa->id_mahasiswa)->first();
+            $pengajuan = PengajuanMagang::where('id_mahasiswa', $mahasiswa->id_mahasiswa)->first();
             if (!$pengajuan) return back()->withErrors(['errors' => 'Pengajuan magang tidak ditemukan.']);
 
-            $magang = DB::table('magang')->where('id_pengajuan_magang', $pengajuan->id_pengajuan_magang)->where('status', 'AKTIF')->first();
+            $magang = Magang::where('id_pengajuan_magang', $pengajuan->id_pengajuan_magang)->where('status', 'AKTIF')->first();
             if (!$magang) return back()->withErrors(['errors' => 'Magang aktif tidak ditemukan.']);
 
             $foto = null;
@@ -113,7 +118,7 @@ class LogAktivitas extends Controller
                 $foto = '/shared/log-aktivitas/' . $request->file('foto')->getClientOriginalName();
             }
 
-            DB::table('log_aktivitas')->insert([
+            LogAktivitasModel::insert([
                 'id_magang'  => $magang->id_magang,
                 'minggu'     => $validated['minggu'],
                 'judul'      => $validated['judul'],
@@ -167,7 +172,7 @@ class LogAktivitas extends Controller
         }
     }
 
-    public function detail() {}
+    public function detail($id) {}
 
     public function show(string $id): JsonResponse
     {

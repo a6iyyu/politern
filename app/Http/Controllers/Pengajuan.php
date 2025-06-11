@@ -9,6 +9,7 @@ use App\Models\PeriodeMagang;
 use App\Models\Perusahaan;
 use App\Models\ProgramStudi;
 use App\Models\Magang;
+use App\Models\Dosen;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,7 +18,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 
 class Pengajuan extends Controller
 {
@@ -38,123 +38,6 @@ class Pengajuan extends Controller
         }
     }
 
-    public function update_status(Request $request, string $id): RedirectResponse
-    {
-        try {
-            $pengajuan = PengajuanMagang::findOrFail($id);
-            $status = $request->input('status');
-            if (!in_array($status, ['DISETUJUI', 'DITOLAK'])) return back()->withErrors('Status tidak valid!');
-
-            $pengajuan->status = $status;
-            $pengajuan->save();
-
-            $message = $status === 'DISETUJUI' ? 'disetujui' : 'ditolak';
-            return to_route('admin.pengajuan-magang')->with('success', "Pengajuan magang berhasil {$message}");
-        } catch (Exception $exception) {
-            report($exception);
-            return back()->withErrors('Gagal memperbarui status pengajuan magang.');
-        }
-    }
-
-    public function detail($id): JsonResponse
-    {
-        $pengajuan = PengajuanMagang::with([
-            'mahasiswa.program_studi',
-            'mahasiswa.keahlian',
-            'mahasiswa.pengalaman',
-            'mahasiswa.sertifikasi_pelatihan',
-            'mahasiswa.proyek',
-            'lowongan.bidang',
-            'lowongan.perusahaan.lokasi',
-        ])->findOrFail($id);
-
-        $mahasiswa = $pengajuan->mahasiswa;
-        $lowongan = $pengajuan->lowongan;
-
-        $logo = null;
-        if ($lowongan->perusahaan->logo) {
-            $logo = str_starts_with($lowongan->perusahaan->logo, 'storage/')
-                ? '/' . $lowongan->perusahaan->logo
-                : (str_starts_with($lowongan->perusahaan->logo, '/storage/')
-                    ? $lowongan->perusahaan->logo
-                    : '/storage/' . $lowongan->perusahaan->logo);
-        }
-
-        return response()->json([
-            'pengajuan' => [
-                'bidang_posisi'         => $lowongan->bidang->nama_bidang ?? '-',
-                'logo'                  => $logo,
-                'nama_perusahaan_mitra' => $lowongan->perusahaan->nama,
-                'lokasi'                => $lowongan->perusahaan->lokasi->nama_lokasi ?? '-',
-            ],
-            'mahasiswa' => [
-                'nim'           => $mahasiswa->nim,
-                'nama_lengkap'  => $mahasiswa->nama_lengkap,
-                'angkatan'      => $mahasiswa->angkatan,
-                'semester'      => $mahasiswa->semester,
-                'program_studi' => $mahasiswa->program_studi->nama,
-                'ipk'           => $mahasiswa->ipk,
-                'nomor_telepon' => $mahasiswa->nomor_telepon,
-                'deskripsi'     => $mahasiswa->deskripsi,
-                'status'        => $mahasiswa->status,
-                'cv' => [
-                    'nama_file' => $mahasiswa->cv_file ?? 'CV_' . str_replace(' ', '_', $mahasiswa->nama_lengkap) . '.pdf',
-                    'url'       => $mahasiswa->cv_file,
-                ],
-                'keahlian'      => $mahasiswa->keahlian->pluck('nama_keahlian')->toArray(),
-            ]
-        ]);
-    }
-
-    public function konfirmasi(Request $request, $id): JsonResponse
-    {
-        $request->validate([
-            'dosen_pembimbing_id' => 'required_if:status,DISETUJUI|exists:dosen,id_dosen',
-            'status'              => 'required|in:DISETUJUI,DITOLAK',
-        ]);
-
-        $pengajuan = PengajuanMagang::findOrFail($id);
-
-        try {
-            DB::beginTransaction();
-
-            if ($request->status === 'DISETUJUI') {
-                $magang = new Magang();
-                $magang->id_mahasiswa = $pengajuan->id_mahasiswa;
-                $magang->id_lowongan = $pengajuan->id_lowongan;
-                $magang->id_dosen = $request->dosen_pembimbing_id;
-                $magang->status = 'AKTIF';
-                $magang->tgl_mulai = now();
-                $magang->save();
-
-                $pengajuan->status = 'DISETUJUI';
-                $pengajuan->save();
-
-                DB::commit();
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Pengajuan magang berhasil disetujui'
-                ]);
-            } else {
-                $pengajuan->status = 'DITOLAK';
-                $pengajuan->save();
-
-                DB::commit();
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Pengajuan magang berhasil ditolak'
-                ]);
-            }
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::error($e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memproses pengajuan magang karena kesalahan pada server.',
-            ], 500);
-        }
-    }
-
     private function admin(Request $request): View
     {
         $program_studi = ProgramStudi::all();
@@ -162,6 +45,7 @@ class Pengajuan extends Controller
         $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
         $program_studi_yang_dipilih = $request->program_studi;
         $total_pengajuan_magang = PengajuanMagang::count();
+        $dosen_pembimbing = Dosen::pluck('nama', 'id_dosen')->toArray();
 
         /** @var LengthAwarePaginator $paginasi */
         $paginasi = PengajuanMagang::with('mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi')->paginate(request('per_page', default: 10));
@@ -189,7 +73,7 @@ class Pengajuan extends Controller
             ];
         })->toArray();
 
-        return view('pages.admin.pengajuan-magang', compact('data', 'paginasi', 'program_studi', 'perusahaan', 'periode_magang', 'program_studi_yang_dipilih', 'total_pengajuan_magang'));
+        return view('pages.admin.pengajuan-magang', compact('data', 'paginasi', 'program_studi', 'perusahaan', 'periode_magang', 'program_studi_yang_dipilih', 'total_pengajuan_magang', 'dosen_pembimbing'));
     }
 
     private function student(): View
@@ -219,5 +103,158 @@ class Pengajuan extends Controller
         $periode_magang = PeriodeMagang::where('status', 'AKTIF')->pluck('nama_periode', 'id_periode')->toArray();
         $total_pengajuan_magang = PengajuanMagang::count();
         return view('pages.student.kelola-lamaran', compact('data', 'paginasi', 'periode_magang', 'total_pengajuan_magang'));
+    }
+
+    public function edit(string $id): JsonResponse
+    {
+        $pengajuan = PengajuanMagang::with([
+            'mahasiswa.program_studi',
+            'lowongan.bidang',
+            'lowongan.perusahaan.lokasi',
+        ])->findOrFail($id);
+
+        $mahasiswa = $pengajuan->mahasiswa;
+        $lowongan = $pengajuan->lowongan;
+
+        return response()->json([
+            'pengajuan' => [
+                'id' => $pengajuan->id_pengajuan_magang,
+                'status' => $pengajuan->status,
+                'bidang_posisi' => $lowongan->bidang->nama_bidang ?? '-',
+                'nama_perusahaan_mitra' => $lowongan->perusahaan->nama,
+                'lokasi' => $lowongan->perusahaan->lokasi->nama_lokasi ?? '-',
+            ],
+            'mahasiswa' => [
+                'nim' => $mahasiswa->nim,
+                'nama_lengkap' => $mahasiswa->nama_lengkap,
+                'program_studi' => $mahasiswa->program_studi->nama,
+                'ipk' => $mahasiswa->ipk,
+                'nomor_telepon' => $mahasiswa->nomor_telepon,
+                'deskripsi' => $mahasiswa->deskripsi,
+            ]
+        ]);
+    }
+
+    public function update(Request $request, string $id): JsonResponse
+    {
+        $status = strtoupper($request->input('status'));
+        $request->merge(['status' => $status]);
+
+        $request->validate([
+            'status' => 'required|in:MENUNGGU,DISETUJUI,DITOLAK',
+            'catatan' => 'nullable|string|max:1000',
+        ]);
+
+        try {
+            $pengajuan = PengajuanMagang::findOrFail($id);
+
+            $pengajuan->update([
+                'status' => $status,
+                'catatan' => $request->catatan,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data pengajuan berhasil diperbarui'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui data pengajuan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function detail(string $id): JsonResponse
+    {
+        $pengajuan = PengajuanMagang::with([
+            'mahasiswa.program_studi',
+            'mahasiswa.keahlian',
+            'mahasiswa.pengalaman',
+            'mahasiswa.sertifikasi_pelatihan',
+            'mahasiswa.proyek',
+            'lowongan.bidang',
+            'lowongan.perusahaan.lokasi',
+        ])->findOrFail($id);
+
+        $mahasiswa = $pengajuan->mahasiswa;
+        $lowongan = $pengajuan->lowongan;
+
+        $logo = null;
+        if ($lowongan->perusahaan->logo) {
+            $logo = str_starts_with($lowongan->perusahaan->logo, 'storage/')
+                ? '/' . $lowongan->perusahaan->logo
+                : (str_starts_with($lowongan->perusahaan->logo, '/storage/')
+                    ? $lowongan->perusahaan->logo
+                    : '/storage/' . $lowongan->perusahaan->logo);
+        }
+
+        return response()->json([
+            'pengajuan' => [
+                'bidang_posisi' => $lowongan->bidang->nama_bidang ?? '-',
+                'logo' => $logo,
+                'nama_perusahaan_mitra' => $lowongan->perusahaan->nama,
+                'lokasi' => $lowongan->perusahaan->lokasi->nama_lokasi ?? '-',
+            ],
+            'mahasiswa' => [
+                'nim' => $mahasiswa->nim,
+                'nama_lengkap' => $mahasiswa->nama_lengkap,
+                'angkatan' => $mahasiswa->angkatan,
+                'semester' => $mahasiswa->semester,
+                'program_studi' => $mahasiswa->program_studi->nama,
+                'ipk' => $mahasiswa->ipk,
+                'nomor_telepon' => $mahasiswa->nomor_telepon,
+                'deskripsi' => $mahasiswa->deskripsi,
+                'status' => $mahasiswa->status,
+                'cv' => [
+                    'nama_file' => $mahasiswa->cv ?? 'CV_' . str_replace(' ', '_', $mahasiswa->nama_lengkap) . '.pdf',
+                    'url' => $mahasiswa->cv,
+                ],
+                'keahlian' => $mahasiswa->keahlian->pluck('nama_keahlian')->toArray(),
+            ]
+        ]);
+    }
+
+    public function confirmation(Request $request, string $id): RedirectResponse
+    {
+        $request->validate([
+            'dosen_pembimbing' => 'exists:dosen,id_dosen',
+            'status'           => 'in:DISETUJUI,DITOLAK',
+        ]);
+
+        $pengajuan = PengajuanMagang::findOrFail($id);
+        if ($pengajuan->status !== 'MENUNGGU') return redirect()->back()->with('error', 'Pengajuan ini sudah tidak dalam status "MENUNGGU".');
+
+        try {
+            if ($request->status === 'DISETUJUI') {
+                $magang = new Magang([
+                    'id_pengajuan_magang' => $pengajuan->id_pengajuan_magang,
+                    'id_dosen_pembimbing' => $request->dosen_pembimbing,
+                    'status'              => 'AKTIF',
+                ]);
+
+                $magang->save();
+                $pengajuan->status = 'DISETUJUI';
+                $pengajuan->save();
+
+                $lowongan = $pengajuan->lowongan;
+                if ($lowongan) {
+                    $lowongan->kuota = max(0, $lowongan->kuota - 1);
+                    $lowongan->save();
+                }
+
+                return redirect()->back()->with('success', 'Data pengajuan berhasil diperbarui.');
+            }
+
+            if ($request->status === 'DITOLAK') {
+                $pengajuan->status = 'DITOLAK';
+                $pengajuan->save();
+                return redirect()->back()->with('success', 'Data pengajuan berhasil diperbarui.');
+            }
+
+            return redirect()->back()->with('error', 'Status tidak valid.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Gagal memperbarui data pengajuan: ' . $e->getMessage());
+        }
     }
 }

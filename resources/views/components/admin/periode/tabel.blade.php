@@ -1,9 +1,9 @@
-<section class="flex items-center justify-between mb-5">
+<section class="flex flex-col justify-between mb-5 gap-4 lg:flex-row lg:items-center">
     <h2 class="cursor-default text-base font-semibold text-[var(--primary-text)]">
         Daftar Periode Magang
     </h2>
     <div class="flex items-center gap-4">
-        <a href="{{ route('admin.periode-magang.ekspor-excel') }}" class="text-xs bg-[var(--primary)] text-white font-medium px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
+        <a href="{{ route('admin.periode.ekspor-excel') }}" class="text-xs bg-[var(--primary)] text-white font-medium px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
             <i class="fa fa-file-excel mr-2"></i> Ekspor Data
         </a>
         <a href="javascript:void(0)" data-target="tambah-periode" class="open text-xs bg-[var(--primary)] text-white font-medium px-4 py-3 rounded-md cursor-pointer hover:bg-[var(--primary)]/90 transition-colors">
@@ -22,7 +22,7 @@
         @endforeach
     </ul>
 @endif
-@include('components.admin.periode-magang.filter')
+@include('components.admin.periode.filter')
 <x-table :headers="['No', 'Nama Periode', 'Tanggal Mulai', 'Tanggal Selesai', 'Status', 'Aksi']" :sortable="['Nama Periode']" :rows="$data" />
 @if ($paginasi->hasPages())
     <div class="mt-4">

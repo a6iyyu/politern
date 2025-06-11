@@ -49,7 +49,19 @@ class Dasbor extends Controller
                 $total_dosen = Dosen::count();
                 $total_perusahaan_mitra = Perusahaan::count();
                 $total_lowongan = LowonganMagang::count();
-                return view('pages.admin.dasbor', compact('nama', 'nip', 'total_mahasiswa', 'total_dosen', 'total_perusahaan_mitra', 'total_lowongan'));
+
+                $log_aktivitas = LogAktivitas::with('magang.pengajuan_magang.mahasiswa')
+                ->latest()
+                ->take(2)
+                ->get()
+                ->map(fn($log, $index) => [
+                    $index + 1,
+                    $log->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? '-',
+                    '<a href="' . route('admin.aktivitas-magang.detail', $log->id_log) . '" class="px-5 py-2 bg-[var(--blue-tertiary)] text-white rounded-md transition-all duration-300 ease-in-out lg:hover:bg-[var(--blue-tertiary)]/80">Lihat</a>',
+                ])
+                ->toArray();
+
+                return view('pages.admin.dasbor', compact('log_aktivitas', 'nama', 'nip', 'total_mahasiswa', 'total_dosen', 'total_perusahaan_mitra', 'total_lowongan'));
             })(),
             'MAHASISWA' => (function () use ($pengguna): View {
                 $lowongan = LowonganMagang::with('perusahaan')->orderBy('created_at', 'desc')->get();
@@ -91,9 +103,11 @@ class Dasbor extends Controller
                 /** @var SupportCollection<int, Mahasiswa> $mahasiswa_bimbingan */
                 $data = $mahasiswa_bimbingan->map(function (Mahasiswa $mhs): array {
                     $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status) {
-                        'AKTIF'         => 'bg-green-200 text-green-800',
-                        'SELESAI'       => 'bg-yellow-200 text-yellow-800',
+                        'AKTIF'   => 'bg-green-200 text-green-800',
+                        'SELESAI' => 'bg-yellow-200 text-yellow-800',
+                        default   => 'bg-gray-200 text-gray-800',
                     };
+
                     $pengajuan = $mhs->pengajuan_magang->first();
                     $magang = $pengajuan?->magang;
                     $lowongan = $pengajuan?->lowongan;
@@ -156,8 +170,6 @@ class Dasbor extends Controller
     public function chart(): JsonResponse|View
     {
         try {
-            /** Mengembalikan semua data yang dibutuhkan pada grafik lingkaran */
-            /** @var Collection<string, Bidang> $bidang */
             $total = BidangMahasiswa::count();
             $kategori_bidang_magang_terbanyak = BidangMahasiswa::with('bidang')
                 ->get()
@@ -228,24 +240,5 @@ class Dasbor extends Controller
         $mahasiswa = $this->mahasiswa();
         if ($mahasiswa === null) return 0;
         return LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_mahasiswa', $mahasiswa->id_mahasiswa))->count();
-    }
-
-    /**
-     * @return int
-     *
-     * Menghitung jumlah mahasiswa yang masih menunggu evaluasi magang
-     * berdasarkan dosen pembimbing saat ini.
-     */
-    private function evaluasi_magang(): int
-    {
-        $pengguna = Auth::user();
-        $id_dosen = $pengguna->dosen->id_dosen;
-        return LogAktivitas::whereHas('magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))
-            ->where('log_aktivitas.status', 'MENUNGGU')
-            ->join('magang', 'log_aktivitas.id_magang', '=', 'magang.id_magang')
-            ->join('pengajuan_magang', 'magang.id_pengajuan_magang', '=', 'pengajuan_magang.id_pengajuan_magang')
-            ->select('pengajuan_magang.id_mahasiswa')
-            ->distinct()
-            ->count();
     }
 }
