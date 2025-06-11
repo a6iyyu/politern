@@ -14,7 +14,6 @@ use App\Models\Magang;
 use App\Models\Dosen;
 use App\Models\Perusahaan;
 use Exception;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
