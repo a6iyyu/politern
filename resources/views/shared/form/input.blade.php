@@ -27,7 +27,7 @@
             @if ($type === 'number') step="any" oninput="this.value = this.value.replace(/[^0-9.,]/g, ''); if ((this.value.match(/,/g) || []).length > 1) this.value = this.value.slice(0, -1))" onwheel="this.blur()" @endif
             @if ($type === 'text') oninput="this.value = this.value.replace(/[^a-zA-Z0-9\s.,?!:;'\-&quot;\-\()\/]/g, '')" @endif
             @if (!empty($required)) required @endif
-            {{ $attributes ?? '' }}
+            {{ $attributes }}
         />
         @if ($type === 'password')
             <i class="fa-solid fa-eye cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 pr-4 text-gray-500"></i>

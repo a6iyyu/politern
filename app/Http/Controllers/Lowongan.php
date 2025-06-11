@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class Lowongan extends Controller
 {
@@ -50,9 +52,10 @@ class Lowongan extends Controller
 
             $data = collect($paginasi->items())->map(function (LowonganMagang $lowongan): array {
                 $status = match ($lowongan->status) {
-                    'DIBUKA'         => 'bg-green-200 text-green-800',
+                    'DIBUKA'    => 'bg-green-200 text-green-800',
                     'DITUTUP'   => 'bg-yellow-200 text-yellow-800',
                 };
+
                 return [
                     $lowongan->id_lowongan,
                     $lowongan->perusahaan->nama ?? '-',
@@ -64,6 +67,7 @@ class Lowongan extends Controller
                     view('components.admin.lowongan-magang.aksi', compact('lowongan'))->render(),
                 ];
             })->toArray();
+
             return view('pages.admin.lowongan-magang', compact(
                 'data',
                 'paginasi',
@@ -307,5 +311,53 @@ class Lowongan extends Controller
             Log::error($exception->getMessage());
             abort(500, 'Terjadi kesalahan pada server.');
         }
+    }
+
+    public function export_excel(): never
+    {
+        $lowongan = LowonganMagang::with(['perusahaan', 'periode_magang', 'bidang', 'keahlian', 'jenis_lokasi'])->get();
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->fromArray([
+            ['No', 'Nama Lowongan', 'Nama Perusahaan Mitra', 'Periode', 'Keahlian', 'Jenis Lokasi', 'Kuota', 'Gaji', 'Status', 'Tanggal Mulai Pendaftaran', 'Tanggal Selesai Pendaftaran']
+        ]);
+
+        $baris = 2;
+        $no = 1;
+
+        foreach ($lowongan as $value) {
+            $sheet->setCellValue("A$baris", $no);
+            $sheet->setCellValue("B$baris", $value->bidang->nama_bidang ?? '-');
+            $sheet->setCellValue("C$baris", $value->perusahaan->nama ?? '-');
+            $sheet->setCellValue("D$baris", $value->periode_magang->nama_periode ?? '-');
+            $sheet->setCellValue("E$baris", $value->keahlian->pluck('nama_keahlian')->join(', ') ?? '-');
+            $sheet->setCellValue("F$baris", $value->jenis_lokasi->nama_jenis_lokasi ?? '-');
+            $sheet->setCellValue("G$baris", $value->kuota);
+            $sheet->setCellValue("H$baris", $value->gaji);
+            $sheet->setCellValue("I$baris", $value->status);
+            $sheet->setCellValue("J$baris", $value->tanggal_mulai_pendaftaran);
+            $sheet->setCellValue("K$baris", $value->tanggal_selesai_pendaftaran);
+            $baris++;
+            $no++;
+        }
+
+        foreach (range('A', 'K') as $col) $sheet->getColumnDimension($col)->setAutoSize(true);
+        $sheet->setTitle("Data Lowongan Magang");
+
+        if (ob_get_length()) ob_end_clean();
+        $filename = 'Data Lowongan Magang ' . date("Y-m-d_H-i-s") . '.xlsx';
+
+        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header("Cache-Control: max-age=0");
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate('D, d M Y H:i:s') . ' GMT');
+        header("Cache-Control: cache, must-revalidate");
+        header("Pragma: public");
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+        exit;
     }
 }

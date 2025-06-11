@@ -14,6 +14,7 @@
         @endif
         <select
             name="{{ $name }}"
+            {{ $attributes }}
             class="{{ $name }} w-full appearance-none rounded-lg text-[var(--secondary-text)] border border-[var(--stroke)] bg-transparent pl-4 pr-10 py-2.5 focus:ring-1 focus:ring-[var(--primary)] focus:outline-none {{ $icon ? 'pl-12' : '' }}"
             {{ $required ? 'required' : '' }}
         >

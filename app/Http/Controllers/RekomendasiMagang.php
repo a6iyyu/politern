@@ -11,14 +11,14 @@ use App\Models\Mahasiswa;
 use App\Models\PreferensiDurasiMahasiswa;
 use App\Models\PreferensiJenisLokasiMagang;
 use App\Models\PreferensiLokasiMagang;
-use Illuminate\Database\Eloquent\Collection as TModel;
 use Illuminate\Support\Collection;
+use Illuminate\View\View;
 
 class RekomendasiMagang extends Controller
 {
     /**
      * @param int $id
-     * @return array{lowongan: TModel|Collection, skor: float[]}
+     * @return array{lowongan: Collection<int, mixed>, skor: Collection<int, float>}
      */
     public function index(int $id): array
     {
@@ -31,13 +31,11 @@ class RekomendasiMagang extends Controller
         $preferensi_jenis_lokasi = PreferensiJenisLokasiMagang::where('id_mahasiswa', $id)->pluck('id_jenis_lokasi')->toArray();
         $preferensi_durasi = PreferensiDurasiMahasiswa::where('id_mahasiswa', $id)->pluck('id_durasi_magang')->toArray();
 
-        // Ambil semua lowongan magang yang aktif dan relasinya
         $lowongan_magang = LowonganMagang::with(['keahlian:id_keahlian,nama_keahlian', 'perusahaan.lokasi', 'jenis_lokasi:id_jenis_lokasi,nama_jenis_lokasi', 'bidang:id_bidang,nama_bidang', 'durasi:id_durasi_magang'])
             ->where('status', 'DIBUKA')
             ->where('tanggal_selesai_pendaftaran', '>=', now())
             ->get();
 
-        // dd($lowongan_magang);
         $matriks_alternatif = [];
 
         foreach ($lowongan_magang as $lowongan) {
@@ -69,7 +67,7 @@ class RekomendasiMagang extends Controller
             $matriks_alternatif[$lowongan->id_lowongan] = $baris;
         }
 
-        if (empty($matriks_alternatif)) return ['lowongan' => collect(), 'skor' => []];
+        if (empty($matriks_alternatif)) return ['lowongan' => collect(), 'skor' => collect()];
 
         // Langkah 2: Normalisasi matriks
         $kolom = array_keys(reset($matriks_alternatif));
@@ -131,83 +129,66 @@ class RekomendasiMagang extends Controller
             if ($lowongan) $rekomendasi[] = ['lowongan' => $lowongan, 'skor' => round($skor, 4)];
         }
 
-        
-            // dd([
-            //     'matriks_alternatif' => $matriks_alternatif,
-            //     'matriks_normalisasi' => $matriks_normalisasi,
-            //     'matriks_terbobot' => $matriks_terbobot,
-            //     'solusi_ideal_positif' => $solusi_ideal_positif,
-            //     'solusi_ideal_negatif' => $solusi_ideal_negatif,
-            //     'nilai_preferensi' => $nilai_preferensi,
-            //     'rekomendasi' => $rekomendasi
-            // ]);
-
-            return [
-                'lowongan' => collect($rekomendasi)->pluck('lowongan'),
-                'skor'     => collect($rekomendasi)->pluck('skor'),
-            ];
+        return [
+            'lowongan' => collect($rekomendasi)->pluck('lowongan'),
+            'skor'     => collect($rekomendasi)->pluck('skor'),
+        ];
     }
 
-    public function tampilkan(int $id)
-{
-    // Ambil data mahasiswa dan preferensi
-    $mahasiswa = Mahasiswa::findOrFail($id);
-    $bidang_mahasiswa = BidangMahasiswa::where('id_mahasiswa', $id)->pluck('id_bidang')->toArray();
-    $keahlian_mahasiswa = KeahlianMahasiswa::where('id_mahasiswa', $id)->pluck('id_keahlian')->toArray();
-    $preferensi_lokasi = PreferensiLokasiMagang::where('id_mahasiswa', $id)->pluck('id_lokasi')->toArray();
-    $preferensi_jenis_lokasi = PreferensiJenisLokasiMagang::where('id_mahasiswa', $id)->pluck('id_jenis_lokasi')->toArray();
-    $preferensi_durasi = PreferensiDurasiMahasiswa::where('id_mahasiswa', $id)->pluck('id_durasi_magang')->toArray();
+    public function tampilkan(int $id): View
+    {
+        $mahasiswa = Mahasiswa::findOrFail($id);
+        $bidang_mahasiswa = BidangMahasiswa::where('id_mahasiswa', $id)->pluck('id_bidang')->toArray();
+        $keahlian_mahasiswa = KeahlianMahasiswa::where('id_mahasiswa', $id)->pluck('id_keahlian')->toArray();
+        $preferensi_lokasi = PreferensiLokasiMagang::where('id_mahasiswa', $id)->pluck('id_lokasi')->toArray();
+        $preferensi_jenis_lokasi = PreferensiJenisLokasiMagang::where('id_mahasiswa', $id)->pluck('id_jenis_lokasi')->toArray();
+        $preferensi_durasi = PreferensiDurasiMahasiswa::where('id_mahasiswa', $id)->pluck('id_durasi_magang')->toArray();
 
-    // Ambil semua lowongan magang yang aktif
-    $lowongan_magang = LowonganMagang::with([
-        'keahlian:id_keahlian,nama_keahlian',
-        'perusahaan.lokasi',
-        'jenis_lokasi:id_jenis_lokasi,nama_jenis_lokasi',
-        'bidang:id_bidang,nama_bidang',
-        'durasi:id_durasi_magang'
-    ])
-    ->where('status', 'DIBUKA')
-    ->where('tanggal_selesai_pendaftaran', '>=', now())
-    ->get();
+        $lowongan_magang = LowonganMagang::with([
+            'keahlian:id_keahlian,nama_keahlian',
+            'perusahaan.lokasi',
+            'jenis_lokasi:id_jenis_lokasi,nama_jenis_lokasi',
+            'bidang:id_bidang,nama_bidang',
+            'durasi:id_durasi_magang'
+        ])
+            ->where('status', 'DIBUKA')
+            ->where('tanggal_selesai_pendaftaran', '>=', now())
+            ->get();
 
-    $matriks_alternatif = [];
+        $matriks_alternatif = [];
 
-    foreach ($lowongan_magang as $lowongan) {
-        $baris = [];
+        foreach ($lowongan_magang as $lowongan) {
+            $baris = [];
 
-        // C1: Keahlian (jumlah keahlian yang cocok / total keahlian lowongan)
-        $keahlian_lowongan = $lowongan->keahlian->pluck('id_keahlian')->toArray();
-        $jumlah_cocok = count(array_intersect($keahlian_mahasiswa, $keahlian_lowongan));
-        $baris['C1'] = count($keahlian_lowongan) > 0 ? $jumlah_cocok / count($keahlian_lowongan) : 0;
+            // C1: Keahlian (jumlah keahlian yang cocok / total keahlian lowongan)
+            $keahlian_lowongan = $lowongan->keahlian->pluck('id_keahlian')->toArray();
+            $jumlah_cocok = count(array_intersect($keahlian_mahasiswa, $keahlian_lowongan));
+            $baris['C1'] = count($keahlian_lowongan) > 0 ? $jumlah_cocok / count($keahlian_lowongan) : 0;
 
-        // C2: Lokasi (sesuai preferensi lokasi mahasiswa)
-        $lokasi_perusahaan = $lowongan->perusahaan->lokasi->id_lokasi ?? null;
-        $baris['C2'] = in_array($lokasi_perusahaan, $preferensi_lokasi) ? 1 : 0;
+            // C2: Lokasi (sesuai preferensi lokasi mahasiswa)
+            $lokasi_perusahaan = $lowongan->perusahaan->lokasi->id_lokasi ?? null;
+            $baris['C2'] = in_array($lokasi_perusahaan, $preferensi_lokasi) ? 1 : 0;
 
-        // C3: Jenis Lokasi (sesuai preferensi jenis lokasi mahasiswa)
-        $jenis_lokasi_lowongan = $lowongan->jenis_lokasi->id_jenis_lokasi ?? null;
-        $baris['C3'] = in_array($jenis_lokasi_lowongan, $preferensi_jenis_lokasi) ? 1 : 0;
+            // C3: Jenis Lokasi (sesuai preferensi jenis lokasi mahasiswa)
+            $jenis_lokasi_lowongan = $lowongan->jenis_lokasi->id_jenis_lokasi ?? null;
+            $baris['C3'] = in_array($jenis_lokasi_lowongan, $preferensi_jenis_lokasi) ? 1 : 0;
 
-        // C4: Bidang (cek apakah bidang lowongan ada di bidang mahasiswa)
-        $bidang_lowongan = $lowongan->bidang->id_bidang ?? null;
-        $baris['C4'] = in_array($bidang_lowongan, $bidang_mahasiswa) ? 1 : 0;
+            // C4: Bidang (cek apakah bidang lowongan ada di bidang mahasiswa)
+            $bidang_lowongan = $lowongan->bidang->id_bidang ?? null;
+            $baris['C4'] = in_array($bidang_lowongan, $bidang_mahasiswa) ? 1 : 0;
 
-        // C5: Durasi (sesuai preferensi durasi mahasiswa)
-        $durasi_lowongan = $lowongan->durasi->id_durasi_magang ?? null;
-        $baris['C5'] = in_array($durasi_lowongan, $preferensi_durasi) ? 1 : 0;
+            // C5: Durasi (sesuai preferensi durasi mahasiswa)
+            $durasi_lowongan = $lowongan->durasi->id_durasi_magang ?? null;
+            $baris['C5'] = in_array($durasi_lowongan, $preferensi_durasi) ? 1 : 0;
 
-        // C6: Gaji (1 jika sama, 0 jika beda)
-        $baris['C6'] = ($mahasiswa->gaji === $lowongan->gaji) ? 1 : 0;
-        $matriks_alternatif[$lowongan->id_lowongan] = $baris;
-    }
+            // C6: Gaji (1 jika sama, 0 jika beda)
+            $baris['C6'] = ($mahasiswa->gaji === $lowongan->gaji) ? 1 : 0;
+            $matriks_alternatif[$lowongan->id_lowongan] = $baris;
+        }
 
-        dd($matriks_alternatif, $lowongan_magang);
-
-        // Kembalikan data matriks alternatif ke view
         return view('student.dasbor.table', [
-        'matriks_alternatif' => $matriks_alternatif,
-        'lowongan_magang' => $lowongan_magang,
-    ]);
-}
-
+            'matriks_alternatif' => $matriks_alternatif,
+            'lowongan_magang' => $lowongan_magang,
+        ]);
+    }
 }

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\DurasiMagang as DurasiMagangModel;
 use App\Models\PeriodeMagang as PeriodeMagangModel;
-use App\Models\periode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -15,39 +13,38 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Exception;
-use Illuminate\Http\JsonResponse;
 
-class PeriodeMagang extends Controller
+class Periode extends Controller
 {
     public function index(): View
-{
-    $pengguna = Auth::user()->tipe;
-    if ($pengguna === "ADMIN") {
-        $total_periode = PeriodeMagangModel::count();
-        $status = ['AKTIF' => 'Aktif', 'SELESAI' => 'Selesai'];
+    {
+        $pengguna = Auth::user()->tipe;
+        if ($pengguna === "ADMIN") {
+            $total_periode = PeriodeMagangModel::count();
+            $status = ['AKTIF' => 'Aktif', 'SELESAI' => 'Selesai'];
 
-        $paginasi = PeriodeMagangModel::paginate(request('per_page', 10));
-        $data = collect($paginasi->items())->map(function (PeriodeMagangModel $periode) {
-            $statusClass = match ($periode->status) {
-                'AKTIF' => 'bg-green-200 text-green-800',  
-                'SELESAI' => 'bg-red-200 text-yellow-800',  
-            };
-            return [
-                $periode->id_periode,
-                $periode->nama_periode,
-                $periode->tanggal_mulai,
-                $periode->tanggal_selesai,
-                // Menampilkan status dengan kelas CSS yang sesuai
-                '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $statusClass . '">' . ($periode->status ?? "N/A") . '</div>',
-                view('components.admin.periode-magang.aksi', compact('periode'))->render(),
-            ];
-        })->toArray();
+            $paginasi = PeriodeMagangModel::paginate(request('per_page', 10));
+            $data = collect($paginasi->items())->map(function (PeriodeMagangModel $periode) {
+                $status = match ($periode->status) {
+                    'AKTIF' => 'bg-green-200 text-green-800',
+                    'SELESAI' => 'bg-red-200 text-yellow-800',
+                };
 
-        return view('pages.admin.periode-magang', compact('data', 'paginasi', 'total_periode', 'status'));
-    } else {
-        abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
+                return [
+                    $periode->id_periode,
+                    $periode->nama_periode,
+                    $periode->tanggal_mulai,
+                    $periode->tanggal_selesai,
+                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($periode->status ?? "N/A") . '</div>',
+                    view('components.admin.periode.aksi', compact('periode'))->render(),
+                ];
+            })->toArray();
+
+            return view('pages.admin.periode', compact('data', 'paginasi', 'total_periode', 'status'));
+        } else {
+            abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
+        }
     }
-}
 
 
     public function create(Request $request): RedirectResponse
@@ -67,7 +64,7 @@ class PeriodeMagang extends Controller
                 'status'            => $request->status
             ]);
 
-            return to_route('admin.periode-magang')->with('success', 'Periode Magang berhasil ditambahkan');
+            return to_route('admin.periode')->with('success', 'Periode Magang berhasil ditambahkan');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
@@ -90,7 +87,7 @@ class PeriodeMagang extends Controller
     public function edit(string $id): array
     {
         $periode = PeriodeMagangModel::findOrFail($id);
-        return compact( 'periode');
+        return compact('periode');
     }
 
     public function update(Request $request, string $id): RedirectResponse
@@ -111,7 +108,7 @@ class PeriodeMagang extends Controller
             $periode->status            = $request->status;
             $periode->save();
 
-            return to_route('admin.periode-magang')->with('success', 'Data periode akademik berhasil diubah');
+            return to_route('admin.periode')->with('success', 'Data periode akademik berhasil diubah');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
@@ -124,7 +121,7 @@ class PeriodeMagang extends Controller
         try {
             $periode = PeriodeMagangModel::findOrFail($id);
             $periode->delete();
-            return to_route('admin.periode-magang')->with('success', 'Periode Magang berhasil dihapus.');
+            return to_route('admin.periode')->with('success', 'Periode Magang berhasil dihapus.');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());

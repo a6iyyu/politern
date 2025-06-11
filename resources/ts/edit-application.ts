@@ -1,171 +1,123 @@
 interface Pengajuan {
-    id: number;
-    status: string;
-    catatan: string | null;
-    bidang_posisi: string;
-    nama_perusahaan_mitra: string;
-    lokasi: string;
+  id: number;
+  status: string;
+  catatan: string | null;
+  bidang_posisi: string;
+  nama_perusahaan_mitra: string;
+  lokasi: string;
 }
 
 interface Mahasiswa {
-    nim: string;
-    nama_lengkap: string;
-    program_studi: string;
-    ipk: number;
-    nomor_telepon: string;
-    deskripsi: string;
+  nim: string;
+  nama_lengkap: string;
+  program_studi: string;
+  ipk: number;
+  nomor_telepon: string;
+  deskripsi: string;
 }
 
 interface ApiResponse {
-    pengajuan: Pengajuan;
-    mahasiswa: Mahasiswa;
+  pengajuan: Pengajuan;
+  mahasiswa: Mahasiswa;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const buttons = document.querySelectorAll<HTMLAnchorElement>('.edit[data-id]');
-    const modal = document.querySelector<HTMLElement>('.modal-edit-pengajuan');
-    const closeButtons = document.querySelectorAll<HTMLElement>('.close-edit');
-    const form = document.getElementById('editPengajuanForm') as HTMLFormElement | null;
+  const buttons = document.querySelectorAll<HTMLAnchorElement>('.edit[data-id]');
+  const modal = document.querySelector<HTMLElement>('.modal-edit-pengajuan');
+  const close = document.querySelectorAll<HTMLElement>('.close-edit');
+  const form = document.getElementById('edit-formulir-pengajuan') as HTMLFormElement | null;
 
-    if (!modal || !form) return;
+  if (!modal || !form) return;
 
-    // Open modal when edit button is clicked
-    buttons.forEach((button: Element) => {
-        button.addEventListener('click', async (e: Event) => {
-            e.preventDefault();
-            const id = button.getAttribute('data-id');
-            if (!id) return;
+  buttons.forEach((button) => {
+    button.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const id = button.getAttribute('data-id');
+      if (!id) return;
 
-            try {
-                // Show loading state
-                const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
-                }
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (!submit) return;
+      submit.disabled = true;
+      submit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
 
-                // Fetch pengajuan data
-                const response = await fetch(`/admin/pengajuan-magang/${id}/edit`, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Gagal memuat data pengajuan');
-                }
-
-                const { pengajuan, mahasiswa } = await response.json() as ApiResponse;
-
-                // Populate form
-                const pengajuanIdInput = document.getElementById('editPengajuanId') as HTMLInputElement;
-                const nimInput = document.getElementById('editNim') as HTMLInputElement;
-                const namaInput = document.getElementById('editNama') as HTMLInputElement;
-                const prodiInput = document.getElementById('editProdi') as HTMLInputElement;
-                const ipkInput = document.getElementById('editIpk') as HTMLInputElement;
-                const statusSelect = document.getElementById('editStatus') as HTMLSelectElement;
-                const catatanTextarea = document.getElementById('editCatatan') as HTMLTextAreaElement;
-
-                if (pengajuanIdInput) pengajuanIdInput.value = pengajuan.id.toString();
-                if (nimInput) nimInput.value = mahasiswa.nim;
-                if (namaInput) namaInput.value = mahasiswa.nama_lengkap;
-                if (prodiInput) prodiInput.value = mahasiswa.program_studi;
-                if (ipkInput) ipkInput.value = mahasiswa.ipk.toString();
-                if (statusSelect) statusSelect.value = pengajuan.status;
-                if (catatanTextarea) catatanTextarea.value = pengajuan.catatan || '';
-
-                // Update form action
-                form.action = `/admin/pengajuan-magang/${id}`;
-
-                // Show modal
-                modal.classList.remove('hidden');
-
-            } catch (error) {
-                console.error('Error:', error);
-                alert(error instanceof Error ? error.message : 'Terjadi kesalahan saat memuat data');
-            } finally {
-                // Reset button state
-                const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Simpan Perubahan';
-                }
-            }
+      try {
+        const response = await fetch(`/admin/pengajuan-magang/${id}/edit`, {
+          headers: {
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
         });
+
+        if (!response.ok) throw new Error('Gagal memuat data pengajuan');
+        const { pengajuan, mahasiswa } = (await response.json()) as ApiResponse;
+
+        const id_edit_pengajuan = document.getElementById('id_edit_pengajuan') as HTMLInputElement | null;
+        const edit_nim = document.getElementById('edit_nim') as HTMLInputElement | null;
+        const edit_nama = document.getElementById('edit_nama') as HTMLInputElement | null;
+        const edit_prodi = document.getElementById('edit_prodi') as HTMLInputElement | null;
+        const edit_ipk = document.getElementById('edit_ipk') as HTMLInputElement | null;
+        const edit_status = document.getElementById('edit_status') as HTMLSelectElement | null;
+        const catatan = document.getElementById('catatan') as HTMLTextAreaElement | null;
+        if (id_edit_pengajuan == null || edit_nim == null || edit_nama == null || edit_prodi == null || edit_ipk == null || edit_status == null || catatan == null) return;
+
+        id_edit_pengajuan.value = pengajuan.id.toString();
+        edit_nim.value = mahasiswa.nim;
+        edit_nama.value = mahasiswa.nama_lengkap;
+        edit_prodi.value = mahasiswa.program_studi;
+        edit_ipk.value = mahasiswa.ipk.toString();
+        edit_status.value = pengajuan.status;
+        catatan.value = pengajuan.catatan || '';
+
+        form.action = `/admin/pengajuan-magang/${id}/perbarui`;
+        modal.classList.remove('hidden');
+      } catch (error) {
+        console.error(`Terjadi kesalahan: ${error}`);
+        throw error;
+      } finally {
+        submit.disabled = false;
+        submit.innerHTML = 'Simpan Perubahan';
+      }
     });
+  });
 
-    // Close modal
-    closeButtons.forEach((button: Element) => {
-        button.addEventListener('click', () => {
-            if (modal) modal.classList.add('hidden');
-        });
-    });
+  close.forEach((button) => button.addEventListener('click', () => modal.classList.add('hidden')));
 
-    // Close when clicking outside modal
-    modal.addEventListener('click', (e: Event) => {
-        if (e.target === modal) {
-            modal.classList.add('hidden');
-        }
-    });
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.add('hidden');
+  });
 
-    // Handle form submission
-    form.addEventListener('submit', async (e: Event) => {
-        e.preventDefault();
-        
-        if (!form.action) {
-            console.error('Form action is not set');
-            return;
-        }
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-        const formData = new FormData(form);
-        const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-        const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content;
-        
-        if (!csrfToken) {
-            console.error('CSRF token not found');
-            return;
-        }
+    const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const csrf = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
+    if (!submit || !csrf) return;
 
-        try {
-            // Show loading state
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-            }
+    try {
+      submit.disabled = true;
+      submit.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...';
 
-            const response = await fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json',
-                },
-                body: formData
-            });
+      const response = await fetch(form.action, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'X-CSRF-TOKEN': csrf.content,
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: new FormData(form),
+      });
 
-            const data = await response.json();
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Terjadi kesalahan saat menyimpan');
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Terjadi kesalahan saat menyimpan data');
-            }
-
-            // Show success message
-            alert('Data berhasil diperbarui');
-            
-            // Close modal and refresh page
-            modal.classList.add('hidden');
-            window.location.reload();
-
-        } catch (error) {
-            console.error('Error:', error);
-            alert(error instanceof Error ? error.message : 'Terjadi kesalahan saat menyimpan data');
-        } finally {
-            // Reset button state
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Simpan Perubahan';
-            }
-        }
-    });
+      modal.classList.add('hidden');
+      window.location.reload();
+    } catch (error) {
+      console.error(`Terjadi kesalahan: ${error}`);
+      throw error;
+    } finally {
+      submit.disabled = false;
+      submit.innerHTML = 'Simpan Perubahan';
+    }
+  });
 });

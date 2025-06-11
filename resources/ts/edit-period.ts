@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const fetchPeriodeData = async (id: string): Promise<Modal | null> => {
     try {
-      const response = await fetch(`/admin/periode-magang/${id}/edit`, {
+      const response = await fetch(`/admin/periode/${id}/edit`, {
         headers: {
           Accept: 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await fetchPeriodeData(id);
       if (!data) return;
 
-      form.action = `/admin/periode-magang/${id}/perbarui`;
+      form.action = `/admin/periode/${id}/perbarui`;
       if (nama_periode) nama_periode.value = data.periode.nama_periode;
       if (tanggal_mulai) tanggal_mulai.value = formattedDate(data.periode.tanggal_mulai);
       if (tanggal_selesai) tanggal_selesai.value = formattedDate(data.periode.tanggal_selesai);

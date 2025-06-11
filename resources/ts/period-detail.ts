@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!id) return;
       modal.classList.remove('hidden');
 
-      const data = await fetch(`/admin/periode-magang/${id}/detail`, {
+      const data = await fetch(`/admin/periode/${id}/detail`, {
         headers: {
           Accept: 'application/json',
           'X-Requested-With': 'XMLHttpRequest',

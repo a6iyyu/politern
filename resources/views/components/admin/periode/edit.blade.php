@@ -8,6 +8,7 @@
             </h2>
             <hr class="mb-4 border border-[var(--primary)]" />
             <x-input
+                icon="fa-solid fa-clock"
                 label="Nama Periode"
                 type="text"
                 name="nama_periode"
@@ -16,6 +17,7 @@
             />
             <div class="mb-3 mt-6 flex items-center justify-between gap-4">
                 <x-input
+                    icon="fa-solid fa-calendar"
                     label="Tanggal Mulai"
                     type="date"
                     name="tanggal_mulai"
@@ -23,6 +25,7 @@
                     :required="true"
                 />
                 <x-input
+                    icon="fa-solid fa-calendar"
                     label="Tanggal Selesai"
                     type="date"
                     name="tanggal_selesai"

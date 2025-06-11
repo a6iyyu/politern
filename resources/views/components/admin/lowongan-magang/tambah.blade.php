@@ -39,7 +39,7 @@
                                 <option value="{{ $id }}">{{ $nama }}</option>
                             @endforeach
                         </select>
-                        <button type="button" id="tambah-keahlian" class="w-full bg-[var(--primary)] text-white px-4 py-2 rounded transition sm:w-auto lg:hover:bg-[var(--primary)]/80">
+                        <button type="button" id="tambah-keahlian" class="cursor-pointer w-full bg-[var(--primary)] text-white px-4 py-2 rounded transition-all duration-300 ease-in-out sm:w-auto lg:hover:bg-[var(--primary)]/80">
                             Tambah
                         </button>
                     </div>
@@ -106,58 +106,59 @@
                 <x-input icon="fa-solid fa-calendar" label="Tanggal Selesai Pendaftaran" type="date" name="tanggal_selesai_pendaftaran" :required="true" />
             </div>
             <div class="mt-8">
-                <button type="submit" class="w-full bg-[var(--primary)] text-sm text-white px-5 py-3 rounded transition-all duration-300 ease-in-out hover:bg-[var(--primary)]/80">
+                <button type="submit" class="cursor-pointer w-full bg-[var(--primary)] text-sm text-white px-5 py-3 rounded transition-all duration-300 ease-in-out hover:bg-[var(--primary)]/80">
                     Tambah
                 </button>
             </div>
         </form>
     </figure>
 </section>
+
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const select = document.getElementById('keahlian-select');
-    const tambahBtn = document.getElementById('tambah-keahlian');
-    const badgeContainer = document.getElementById('badge-keahlian');
-    const inputContainer = document.getElementById('input-keahlian');
-    let selectedKeahlian = [];
+    document.addEventListener('DOMContentLoaded', function () {
+        const select = document.getElementById('keahlian-select');
+        const tambahBtn = document.getElementById('tambah-keahlian');
+        const badgeContainer = document.getElementById('badge-keahlian');
+        const inputContainer = document.getElementById('input-keahlian');
+        let selectedKeahlian = [];
 
-    function renderBadges() {
-        badgeContainer.innerHTML = '';
-        inputContainer.innerHTML = '';
-        selectedKeahlian.forEach(({id, nama}) => {
-            // Badge
-            const badge = document.createElement('span');
-            badge.className = 'inline-flex items-center px-3 py-1 rounded-full border border-pink-400 text-pink-500 text-sm mb-1';
-            badge.innerHTML = `<span class="mr-2" style="cursor:pointer;">&times;</span> ${nama}`;
-            badge.querySelector('span').onclick = () => {
-                selectedKeahlian = selectedKeahlian.filter(k => k.id !== id);
-                renderBadges();
-            };
-            badgeContainer.appendChild(badge);
-            // Hidden input
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'id_keahlian[]';
-            input.value = id;
-            inputContainer.appendChild(input);
+        function renderBadges() {
+            badgeContainer.innerHTML = '';
+            inputContainer.innerHTML = '';
+            selectedKeahlian.forEach(({id, nama}) => {
+                // Badge
+                const badge = document.createElement('span');
+                badge.className = 'inline-flex items-center px-3 py-1 rounded-full border border-pink-400 text-pink-500 text-sm mb-1';
+                badge.innerHTML = `<span class="mr-2" style="cursor:pointer;">&times;</span> ${nama}`;
+                badge.querySelector('span').onclick = () => {
+                    selectedKeahlian = selectedKeahlian.filter(k => k.id !== id);
+                    renderBadges();
+                };
+                badgeContainer.appendChild(badge);
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'id_keahlian[]';
+                input.value = id;
+                inputContainer.appendChild(input);
+            });
+        }
+
+        tambahBtn.addEventListener('click', function () {
+            const id = select.value;
+            const nama = select.options[select.selectedIndex]?.text;
+            if (!id || selectedKeahlian.some(k => k.id === id)) return;
+            selectedKeahlian.push({id, nama});
+            renderBadges();
+            select.value = '';
         });
-    }
 
-    tambahBtn.addEventListener('click', function () {
-        const id = select.value;
-        const nama = select.options[select.selectedIndex]?.text;
-        if (!id || selectedKeahlian.some(k => k.id === id)) return;
-        selectedKeahlian.push({id, nama});
-        renderBadges();
-        select.value = '';
+        // Jika ada old value dari validasi gagal
+        @if(is_array(old('id_keahlian')))
+            @foreach(old('id_keahlian') as $id)
+                selectedKeahlian.push({id: '{{ $id }}', nama: '{{ $keahlian[$id] ?? $id }}'});
+            @endforeach
+            renderBadges();
+        @endif
     });
-
-    // Jika ada old value dari validasi gagal
-    @if(is_array(old('id_keahlian')))
-        @foreach(old('id_keahlian') as $id)
-            selectedKeahlian.push({id: '{{ $id }}', nama: '{{ $keahlian[$id] ?? $id }}'});
-        @endforeach
-        renderBadges();
-    @endif
-});
 </script>
