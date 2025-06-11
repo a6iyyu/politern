@@ -93,12 +93,12 @@ class RekomendasiMagang extends Controller
 
         // Langkah 3: Bobot kriteria
         $bobot = [
-            'C1' => 0.25, // Keahlian
-            'C2' => 0.25, // Lokasi
-            'C3' => 0.1,  // Jenis Lokasi
-            'C4' => 0.2,  // Bidang
-            'C5' => 0.1,  // Durasi
-            'C6' => 0.1,  // Gaji
+            'C1' => 0.2196, // Keahlian
+            'C2' => 0.1463, // Lokasi
+            'C3' => 0.1219,  // Jenis Lokasi
+            'C4' => 0.2439,  // Bidang
+            'C5' => 0.0976,  // Durasi
+            'C6' => 0.1707,  // Gaji
         ];
 
         // Langkah 4: Matriks terbobot
@@ -142,15 +142,26 @@ class RekomendasiMagang extends Controller
         // Langkah 7: Urutkan hasil rekomendasi berdasarkan nilai preferensi
         arsort($nilai_preferensi);
 
+        // Tambahkan peringkat berdasarkan urutan hasil preferensi
         $rekomendasi = [];
+        $peringkat = 1; // Mulai dari peringkat 1
         foreach ($nilai_preferensi as $id => $skor) {
             $lowongan = $lowongan_magang->find($id);
-            if ($lowongan) $rekomendasi[] = ['lowongan' => $lowongan, 'skor' => round($skor, 4)];
+            if ($lowongan) {
+                $rekomendasi[] = [
+                    'lowongan' => $lowongan,
+                    'skor' => round($skor, 4),
+                    'peringkat' => $peringkat, // Menambahkan peringkat
+                ];
+                $peringkat++; // Increment peringkat untuk lowongan berikutnya
+            }
         }
 
+        Log::info('Rekomendasi:', $rekomendasi);
         return [
             'lowongan' => collect($rekomendasi)->pluck('lowongan'),
             'skor'     => collect($rekomendasi)->pluck('skor'),
+            'peringkat' => collect($rekomendasi)->pluck('peringkat'),
             'debug'    => [
                 'matriks_alternatif' => $matriks_alternatif,
                 'matriks_normalisasi' => $matriks_normalisasi,
@@ -172,7 +183,7 @@ class RekomendasiMagang extends Controller
             abort(404, "Lowongan tidak ditemukan dalam hasil rekomendasi untuk mahasiswa ini.");
         }
 
-        return view('pages.student.perhitungan', [
+        return view('pages.student.perhitungan-lowongan', [
             'lowongan' => $hasil['lowongan']->firstWhere('id_lowongan', $id->id_lowongan),
             'skor' => $hasil['skor']->get($id->id_lowongan),
             'matriks_alternatif' => [$id->id_lowongan => $hasil['debug']['matriks_alternatif'][$id->id_lowongan]],
@@ -182,6 +193,19 @@ class RekomendasiMagang extends Controller
             'solusi_ideal_negatif' => $hasil['debug']['solusi_ideal_negatif'],
             'jarak_data' => [$id->id_lowongan => $hasil['debug']['jarak_data'][$id->id_lowongan]],
             'nilai_preferensi' => [$id->id_lowongan => $hasil['debug']['nilai_preferensi'][$id->id_lowongan]],
+        ]);
+    }
+
+    public function calculationAll(): View
+    {
+        // Ambil ID mahasiswa yang sedang login
+        $mahasiswa = Auth::user()->mahasiswa;
+        $hasil = $this->index($mahasiswa->id_mahasiswa);
+
+        return view('pages.student.perhitungan-keseluruhan', [
+            'lowongan' => $hasil['lowongan'],
+            'skor'     => $hasil['skor'],
+            'debug'    => $hasil['debug'], // Menyertakan data debug untuk referensi tambahan
         ]);
     }
 }

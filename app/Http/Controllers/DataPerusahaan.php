@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class DataPerusahaan extends Controller
 {
@@ -200,7 +201,7 @@ class DataPerusahaan extends Controller
             $sheet->setCellValue("A$baris", $nomor);
             $sheet->setCellValue("B$baris", $value->lokasi->nama_lokasi ?? '-');
             $sheet->setCellValue("C$baris", $value->nama);
-            $sheet->setCellValue("D$baris", $value->nib);
+            $sheet->setCellValueExplicit("E$baris", $value->nib, DataType::TYPE_STRING);
             $sheet->setCellValue("E$baris", $value->nomor_telepon);
             $sheet->setCellValue("F$baris", $value->email);
             $sheet->setCellValue("G$baris", $value->website);

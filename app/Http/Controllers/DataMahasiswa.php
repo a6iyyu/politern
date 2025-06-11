@@ -24,6 +24,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Crypt;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class DataMahasiswa extends Controller
 {
@@ -285,7 +286,7 @@ class DataMahasiswa extends Controller
             $sheet->setCellValue("B$baris", $value->pengguna ? $value->pengguna->nama_pengguna : '-');
             $sheet->setCellValue("C$baris", $value->pengguna ? $value->pengguna->email : '-');
             $sheet->setCellValue("D$baris", $value->nama_lengkap);
-            $sheet->setCellValue("E$baris", $value->nim);
+            $sheet->setCellValueExplicit("E$baris", $value->nim, DataType::TYPE_STRING);
             $sheet->setCellValue("F$baris", $value->program_studi ? $value->program_studi->nama : '-');
             $sheet->setCellValue("G$baris", $value->angkatan);
             $sheet->setCellValue("H$baris", $value->semester);
