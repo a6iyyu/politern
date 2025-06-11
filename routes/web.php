@@ -124,7 +124,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('rekomendasi-magang')->group(function () {
             Route::get('/{id?}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang')->where('id', '[0-9]+');
             Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail')->where('id', '[0-9]+');
-            Route::get('/{id}/perhitungan', [RekomendasiMagang::class, 'tampilkan'])->name('mahasiswa.rekomendasi-magang.perhitungan')->where('id', '[0-9]+');
+            Route::get('/{id}/perhitungan', [RekomendasiMagang::class, 'perhitungan'])->name('mahasiswa.rekomendasi-magang.perhitungan')->where('id', '[0-9]+');
         });
 
         Route::prefix('kelola-lamaran')->group(function () {
