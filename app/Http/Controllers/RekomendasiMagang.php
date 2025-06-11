@@ -11,8 +11,9 @@ use App\Models\Mahasiswa;
 use App\Models\PreferensiDurasiMahasiswa;
 use App\Models\PreferensiJenisLokasiMagang;
 use App\Models\PreferensiLokasiMagang;
-use Illuminate\Database\Eloquent\Collection as TModel;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class RekomendasiMagang extends Controller
@@ -24,6 +25,10 @@ class RekomendasiMagang extends Controller
     public function index(int $id): array
     {
         $mahasiswa = Mahasiswa::findOrFail($id);
+        if ($mahasiswa == null) {
+            Log::error("Mahasiswa dengan ID {$id} tidak ditemukan");
+            return ['lowongan' => collect(), 'skor' => collect()];
+        }
 
         // Ambil data preferensi dan bidang mahasiswa
         $bidang_mahasiswa = BidangMahasiswa::where('id_mahasiswa', $id)->pluck('id_bidang')->toArray();
@@ -36,6 +41,11 @@ class RekomendasiMagang extends Controller
             ->where('status', 'DIBUKA')
             ->where('tanggal_selesai_pendaftaran', '>=', now())
             ->get();
+
+        if ($lowongan_magang->count() == 0) {
+            Log::warning("Tidak ada lowongan tersedia untuk mahasiswa ID {$id}");
+            return ['lowongan' => collect(), 'skor' => collect()];
+        }
 
         $matriks_alternatif = [];
 
@@ -141,26 +151,37 @@ class RekomendasiMagang extends Controller
         return [
             'lowongan' => collect($rekomendasi)->pluck('lowongan'),
             'skor'     => collect($rekomendasi)->pluck('skor'),
+            'debug'    => [
+                'matriks_alternatif' => $matriks_alternatif,
+                'matriks_normalisasi' => $matriks_normalisasi,
+                'matriks_terbobot' => $matriks_terbobot,
+                'solusi_ideal_positif' => $solusi_ideal_positif,
+                'solusi_ideal_negatif' => $solusi_ideal_negatif,
+                'jarak_data' => $jarak_data,
+                'nilai_preferensi' => $nilai_preferensi,
+            ]
         ];
     }
 
-    public function perhitungan(int $id)
+    public function calculation(LowonganMagang $id): View
     {
-        $result = $this->index($id);
+        $hasil = $this->index(Auth::user()->mahasiswa->id_mahasiswa);
 
-        // Debugging untuk memeriksa data yang dikirimkan ke view
-        //dd($result['debug']['matriks_alternatif']); // Pastikan data ini ada dan benar
+        if (!array_key_exists($id->id_lowongan, $hasil['debug']['nilai_preferensi'])) {
+            Log::error("Lowongan tidak ditemukan dalam hasil rekomendasi untuk mahasiswa ini. ID Lowongan: {$id->id_lowongan}");
+            abort(404, "Lowongan tidak ditemukan dalam hasil rekomendasi untuk mahasiswa ini.");
+        }
 
-        return view('components.student.dasbor.table', [
-            'lowongan' => $result['lowongan'],
-            'skor' => $result['skor'],
-            'matriks_alternatif' => $result['debug']['matriks_alternatif'],
-            'matriks_normalisasi' => $result['debug']['matriks_normalisasi'],
-            'matriks_terbobot' => $result['debug']['matriks_terbobot'],
-            'solusi_ideal_positif' => $result['debug']['solusi_ideal_positif'],
-            'solusi_ideal_negatif' => $result['debug']['solusi_ideal_negatif'],
-            'jarak_data' => $result['debug']['jarak_data'],
-            'nilai_preferensi' => $result['debug']['nilai_preferensi']
+        return view('pages.student.perhitungan', [
+            'lowongan' => $hasil['lowongan']->firstWhere('id_lowongan', $id->id_lowongan),
+            'skor' => $hasil['skor']->get($id->id_lowongan),
+            'matriks_alternatif' => [$id->id_lowongan => $hasil['debug']['matriks_alternatif'][$id->id_lowongan]],
+            'matriks_normalisasi' => [$id->id_lowongan => $hasil['debug']['matriks_normalisasi'][$id->id_lowongan]],
+            'matriks_terbobot' => [$id->id_lowongan => $hasil['debug']['matriks_terbobot'][$id->id_lowongan]],
+            'solusi_ideal_positif' => $hasil['debug']['solusi_ideal_positif'],
+            'solusi_ideal_negatif' => $hasil['debug']['solusi_ideal_negatif'],
+            'jarak_data' => [$id->id_lowongan => $hasil['debug']['jarak_data'][$id->id_lowongan]],
+            'nilai_preferensi' => [$id->id_lowongan => $hasil['debug']['nilai_preferensi'][$id->id_lowongan]],
         ]);
     }
 }

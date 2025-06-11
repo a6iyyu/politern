@@ -3,7 +3,7 @@
         <i class="fa-solid fa-clock-rotate-left mr-2"></i> Progres Magang Mingguan
     </h5>
     <hr class="my-3 border border-[#cecece]" />
-    <figcaption class="relative h-[250px] my-4 w-full flex flex-col items-center gap-6 xl:flex-col xl:flex-row">
+    <figcaption class="relative h-[250px] my-4 w-full flex flex-col items-center gap-6 xl:flex-row">
         <canvas id="progres-magang-mingguan"></canvas>
     </figcaption>
     <x-table
