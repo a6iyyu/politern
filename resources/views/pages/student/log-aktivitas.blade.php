@@ -25,3 +25,5 @@
         @endif
     </main>
 @endsection
+
+@vite('resources/ts/log-detail.ts')

@@ -34,11 +34,13 @@
             </div>
             <div class="flex-shrink-0 ml-4">
                 <p class="text-sm text-[var(--secondary-text)] mb-2">Bukti Foto :</p>
-                @if ($aktivitas->foto)
-                    <img src="{{ $aktivitas->foto }}" alt="Foto Aktivitas" class="rounded-lg">
-                @else
-                    <img src="{{ asset('build/assets/shared/aktivitas.png') }}" alt="No Photo" class="rounded-lg">
-                @endif
+                @php
+                    $fotoPath = $aktivitas->foto;
+                    $fotoUrl = $fotoPath && file_exists(public_path('storage/' . $fotoPath)) 
+                        ? asset('storage/' . $fotoPath) 
+                        : asset('shared/aktivitas.png');
+                @endphp
+                <img src="{{ $fotoUrl }}" alt="Foto Aktivitas" class="rounded-lg">
             </div>
         </div>
 
@@ -64,8 +66,10 @@
             </div>
             
             <div class="flex justify-end gap-2">
-                <button type="button" class="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
-                    onclick="showDetail({{ $aktivitas->id_log }})">Detail</button>
+                <button type="button" class="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition log-detail"
+                    data-id="{{ $aktivitas->id_log }}">
+                    Detail
+                </button>
                 <button type="button" class="px-4 py-2 text-sm font-medium rounded-md bg-yellow-400 text-white hover:bg-yellow-500 transition"
                     onclick="editAktivitas({{ $aktivitas->id_log }})">Edit</button>
                 <form method="POST" action="{{ route('mahasiswa.log-aktivitas.hapus', $aktivitas->id_log) }}" onsubmit="return confirm('Yakin ingin menghapus log ini?');">

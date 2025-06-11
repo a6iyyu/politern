@@ -80,8 +80,8 @@ class LogAktivitas extends Controller
 
                 $dospem = "N/A";
                 if ($magang->id_dosen_pembimbing) {
-                    $dosen = Dosen::where('id_dosen', $magang->id_dosen_pembimbing)->first();
-                    if ($dosen && $dosen->id_pengguna) $dospem = Pengguna::where('id_pengguna', $dosen->id_pengguna)->first()->nama_pengguna ?? "N/A";
+                    $dosen = Dosen::select('nama')->where('id_dosen', $magang->id_dosen_pembimbing)->first();
+                    $dospem = $dosen->nama ?? "N/A";
                 }
 
                 $status = $magang->status ?? "N/A";
@@ -174,7 +174,33 @@ class LogAktivitas extends Controller
         }
     }
 
-    public function detail($id) {}
+    public function detail(string $id): JsonResponse
+    {
+        try {
+            $log_aktivitas = LogAktivitasModel::with([
+                'magang.pengajuan_magang.lowongan.perusahaan.lokasi',
+                'magang.pengajuan_magang.lowongan.bidang',
+                'magang.dosen_pembimbing.dosen'
+            ])->findOrFail($id);
+
+            return response()->json([
+                'minggu' => $log_aktivitas->minggu ?? 'N/A',
+                'judul' => $log_aktivitas->judul ?? 'N/A',
+                'deskripsi' => $log_aktivitas->deskripsi ?? 'N/A',
+                'foto' => $log_aktivitas->foto ?? null,
+                'nama_perusahaan' => $log_aktivitas->magang->pengajuan_magang->lowongan->perusahaan->nama ?? 'N/A',
+                'nama_lokasi' => $log_aktivitas->magang->pengajuan_magang->lowongan->perusahaan->lokasi->nama_lokasi ?? 'N/A',
+                'nama_bidang' => $log_aktivitas->magang->pengajuan_magang->lowongan->bidang->nama_bidang ?? 'N/A',
+                'nama_dosen' => $log_aktivitas->magang->dosen_pembimbing->dosen->nama ?? 'N/A',
+            ]);
+        } catch (ModelNotFoundException $e) {
+            report($e);
+            return response()->json(['error' => 'Log aktivitas tidak ditemukan.'], 404);
+        } catch (Exception $e) {
+            report($e);
+            return response()->json(['error' => 'Terjadi kesalahan pada server.'], 500);
+        }
+    }
 
     public function show(string $id): JsonResponse
     {
