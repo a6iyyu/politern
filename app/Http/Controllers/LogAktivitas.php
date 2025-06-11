@@ -41,6 +41,8 @@ class LogAktivitas extends Controller
                 $perusahaan = $log_aktivitas->pluck('magang.pengajuan_magang.lowongan.perusahaan')->unique('id_perusahaan_mitra')->mapWithKeys(fn($p) => [$p['id_perusahaan_mitra'] => $p['nama']])->toArray();
                 return view('pages.lecturer.log-aktivitas', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
             case 'MAHASISWA':
+                $status = LogAktivitasModel::pluck('status')->unique()->toArray();
+
                 $mahasiswa = Mahasiswa::where('id_pengguna', Auth::user()->id_pengguna)->first();
                 if (!$mahasiswa) return view('pages.student.log-aktivitas', ['log_aktivitas' => null]);
 
@@ -87,7 +89,7 @@ class LogAktivitas extends Controller
                 $log_aktivitas = LogAktivitasModel::where('id_magang', $magang->id_magang)->get();
                 $minggu = LogAktivitasModel::where('id_magang', $magang->id_magang)->orderBy('minggu')->value('minggu');
 
-                return view('pages.student.log-aktivitas', compact('dospem', 'log_aktivitas', 'periode', 'perusahaan', 'posisi', 'status', 'total_log', 'lokasi', 'minggu'));
+                return view('pages.student.log-aktivitas', compact('dospem', 'log_aktivitas', 'periode', 'perusahaan', 'posisi', 'status', 'total_log', 'lokasi', 'minggu', 'status_aktivitas'));
             default:
                 abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
