@@ -6,6 +6,7 @@
 
 import './application-confirmation';
 import './application-detail';
+import './application-management-detail';
 import './bootstrap';
 import './chart';
 import './company-detail';
