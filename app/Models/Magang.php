@@ -26,8 +26,8 @@ class Magang extends Model
         return $this->belongsTo(Mahasiswa::class, 'id_mahasiswa');
     }
 
-    public function dosen(): BelongsTo
+    public function dosen_pembimbing(): BelongsTo
     {
-        return $this->belongsTo(Dosen::class, 'id_dosen');
+        return $this->belongsTo(DosenPembimbing::class, 'id_dosen_pembimbing');
     }
 }

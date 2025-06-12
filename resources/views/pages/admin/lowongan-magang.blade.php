@@ -18,5 +18,3 @@
         @include('components.admin.lowongan-magang.tambah')
     </main>
 @endsection
-
-@vite('resources/ts/edit-intern.ts')

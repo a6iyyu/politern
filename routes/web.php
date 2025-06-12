@@ -122,7 +122,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('mahasiswa.dasbor');
 
         Route::prefix('rekomendasi-magang')->group(function () {
-            Route::get('/{id}/perhitungan', [RekomendasiMagang::class, 'calculation'])->name('mahasiswa.rekomendasi-magang.perhitungan')->where('lowongan', '[0-9]+');
+            Route::get('/{id}/perhitungan', [RekomendasiMagang::class, 'calculation'])->name('mahasiswa.rekomendasi-magang.perhitungan-lowongan')->where('lowongan', '[0-9]+');
+            Route::get('/topsis', [RekomendasiMagang::class, 'topsis'])->name('mahasiswa.rekomendasi-magang.perhitungan-keseluruhan')->where('lowongan', '[0-9]+');
             Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail')->where('id', '[0-9]+');
             Route::get('/{id?}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang')->where('id', '[0-9]+');
         });
@@ -137,10 +138,10 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('log-aktivitas')->group(function () {
             Route::get('/', [LogAktivitas::class, 'index'])->name('mahasiswa.log-aktivitas');
-            Route::post('/tambah', [LogAktivitas::class, 'create'])->name('mahasiswa.log-aktivitas.tambah');
             Route::get('/{id}/detail', [LogAktivitas::class, 'detail'])->name('mahasiswa.log-aktivitas.detail');
-            Route::get('/{id}/edit', [LogAktivitas::class, 'edit'])->name('mahasiswa.log-aktivitas.edit');
-            Route::post('/{id}/edit', [LogAktivitas::class, 'update'])->name('mahasiswa.log-aktivitas.perbarui');
+            Route::get('/{id}/edit', [LogAktivitas::class, 'detail'])->name('mahasiswa.log-aktivitas.edit');
+            Route::post('/tambah', [LogAktivitas::class, 'create'])->name('mahasiswa.log-aktivitas.tambah');
+            Route::put('/{id}/perbarui', [LogAktivitas::class, 'update'])->name('mahasiswa.log-aktivitas.perbarui');
             Route::delete('/{id}/hapus', [LogAktivitas::class, 'destroy'])->name('mahasiswa.log-aktivitas.hapus');
         });
 
