@@ -12,7 +12,6 @@ use App\Models\LowonganMagang;
 use App\Models\Magang;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanMagang;
-use App\Models\Pengguna;
 use App\Models\PeriodeMagang;
 use App\Models\Perusahaan;
 use Exception;
@@ -114,10 +113,10 @@ class LogAktivitas extends Controller
             $magang = Magang::where('id_pengajuan_magang', $pengajuan->id_pengajuan_magang)->where('status', 'AKTIF')->first();
             if (!$magang) return back()->withErrors(['errors' => 'Magang aktif tidak ditemukan.']);
 
-            $foto = null;
             if ($request->hasFile('foto')) {
-                $foto = $request->file('foto')->storeAs('shared/log-aktivitas', $request->file('foto')->getClientOriginalName(), 'public');
-                $foto = '/shared/log-aktivitas/' . $request->file('foto')->getClientOriginalName();
+                $filename = time() . '.' . $request->file('foto')->getClientOriginalExtension();
+                $path = $request->file('foto')->storeAs('logs', $filename, 'public');
+                $foto = "/storage/{$path}";
             }
 
             LogAktivitasModel::insert([
@@ -139,14 +138,27 @@ class LogAktivitas extends Controller
         }
     }
 
-    public function edit() {}
-
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, string $id): RedirectResponse
     {
         try {
-            $request->validate([]);
+            $validated = $request->validate([
+                'minggu'     => 'required|integer|min:1',
+                'judul'      => 'required|string|max:255',
+                'deskripsi'  => 'required|string',
+                'foto'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            ]);
 
-            return to_route('mahasiswa.log-aktivitas');
+            $log = LogAktivitasModel::findOrFail($id);
+
+            if ($request->hasFile('foto')) {
+                $filename = time() . '.' . $request->file('foto')->getClientOriginalExtension();
+                $path = $request->file('foto')->storeAs('logs', $filename, 'public');
+                $validated['foto'] = "/storage/{$path}";
+            }
+
+            $log->update($validated);
+
+            return to_route('mahasiswa.log-aktivitas')->with('success', 'Log aktivitas berhasil diperbarui.');
         } catch (ModelNotFoundException $exception) {
             report($exception);
             Log::error($exception->getMessage());
@@ -184,14 +196,14 @@ class LogAktivitas extends Controller
             ])->findOrFail($id);
 
             return response()->json([
-                'minggu' => $log_aktivitas->minggu ?? 'N/A',
-                'judul' => $log_aktivitas->judul ?? 'N/A',
-                'deskripsi' => $log_aktivitas->deskripsi ?? 'N/A',
-                'foto' => $log_aktivitas->foto ?? null,
+                'minggu'          => $log_aktivitas->minggu ?? 'N/A',
+                'judul'           => $log_aktivitas->judul ?? 'N/A',
+                'deskripsi'       => $log_aktivitas->deskripsi ?? 'N/A',
+                'foto'            => $log_aktivitas->foto ? asset($log_aktivitas->foto) : null,
                 'nama_perusahaan' => $log_aktivitas->magang->pengajuan_magang->lowongan->perusahaan->nama ?? 'N/A',
-                'nama_lokasi' => $log_aktivitas->magang->pengajuan_magang->lowongan->perusahaan->lokasi->nama_lokasi ?? 'N/A',
-                'nama_bidang' => $log_aktivitas->magang->pengajuan_magang->lowongan->bidang->nama_bidang ?? 'N/A',
-                'nama_dosen' => $log_aktivitas->magang->dosen_pembimbing->dosen->nama ?? 'N/A',
+                'nama_lokasi'     => $log_aktivitas->magang->pengajuan_magang->lowongan->perusahaan->lokasi->nama_lokasi ?? 'N/A',
+                'nama_bidang'     => $log_aktivitas->magang->pengajuan_magang->lowongan->bidang->nama_bidang ?? 'N/A',
+                'nama_dosen'      => $log_aktivitas->magang->dosen_pembimbing->dosen->nama ?? 'N/A',
             ]);
         } catch (ModelNotFoundException $e) {
             report($e);

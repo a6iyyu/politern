@@ -138,10 +138,10 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('log-aktivitas')->group(function () {
             Route::get('/', [LogAktivitas::class, 'index'])->name('mahasiswa.log-aktivitas');
-            Route::post('/tambah', [LogAktivitas::class, 'create'])->name('mahasiswa.log-aktivitas.tambah');
             Route::get('/{id}/detail', [LogAktivitas::class, 'detail'])->name('mahasiswa.log-aktivitas.detail');
-            Route::get('/{id}/edit', [LogAktivitas::class, 'edit'])->name('mahasiswa.log-aktivitas.edit');
-            Route::post('/{id}/edit', [LogAktivitas::class, 'update'])->name('mahasiswa.log-aktivitas.perbarui');
+            Route::get('/{id}/edit', [LogAktivitas::class, 'detail'])->name('mahasiswa.log-aktivitas.edit');
+            Route::post('/tambah', [LogAktivitas::class, 'create'])->name('mahasiswa.log-aktivitas.tambah');
+            Route::put('/{id}/perbarui', [LogAktivitas::class, 'update'])->name('mahasiswa.log-aktivitas.perbarui');
             Route::delete('/{id}/hapus', [LogAktivitas::class, 'destroy'])->name('mahasiswa.log-aktivitas.hapus');
         });
 

@@ -32,12 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('button.log-detail[data-id]').forEach((button) => {
     button.addEventListener('click', async () => {
       const id = button.getAttribute('data-id');
-      console.log(`Fetching data for ID: ${id}`); // Debugging
       if (!id) return;
 
       try {
         const response = await axios.get<LogDetail>(`/mahasiswa/log-aktivitas/${id}/detail`);
-        console.log(response.data); // Debugging
         const data = response.data;
 
         fields.nama_perusahaan.textContent = data.nama_perusahaan;
@@ -49,11 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
         fields.deskripsi.textContent = data.deskripsi;
 
         if (data.foto) {
-          const imagePath = `/storage/${data.foto}`;
-          fields.foto.src = imagePath;
+          fields.foto.src = data.foto;
 
           fields.foto.onerror = () => {
-            console.warn(`Failed to load image: ${imagePath}. Using default image.`);
+            console.warn(`Failed to load image ${data.foto}. Using default image.`);
             fields.foto.src = `/shared/aktivitas.png`;
           };
 
@@ -65,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
       } catch (err) {
-        console.error('Error fetching log detail:', err);
-        fields.nama_perusahaan.textContent = 'Error fetching data';
+        console.error(`Gagal mengambil data log aktivitas: ${err}`);
+        fields.nama_perusahaan.textContent = 'Gagal mengambil data.';
         modal.classList.remove('hidden');
         modal.classList.add('flex');
       }
