@@ -14,8 +14,7 @@
             @include('components.student.kelola-lamaran.filter')
             @include('components.student.kelola-lamaran.tabel')
         </section>
-            @include('components.student.kelola-lamaran.detail')
-            @include('components.student.kelola-lamaran.aksi')
+        @include('components.student.kelola-lamaran.detail')
+        @include('components.student.kelola-lamaran.aksi')
     </main> 
-
 @endsection

@@ -123,7 +123,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('rekomendasi-magang')->group(function () {
             Route::get('/{id}/perhitungan', [RekomendasiMagang::class, 'calculation'])->name('mahasiswa.rekomendasi-magang.perhitungan-lowongan')->where('lowongan', '[0-9]+');
-            Route::get('/topsis', [RekomendasiMagang::class, 'calculationAll'])->name('mahasiswa.rekomendasi-magang.perhitungan-keseluruhan')->where('lowongan', '[0-9]+');
+            Route::get('/topsis', [RekomendasiMagang::class, 'topsis'])->name('mahasiswa.rekomendasi-magang.perhitungan-keseluruhan')->where('lowongan', '[0-9]+');
             Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail')->where('id', '[0-9]+');
             Route::get('/{id?}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang')->where('id', '[0-9]+');
         });

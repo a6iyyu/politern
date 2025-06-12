@@ -196,16 +196,15 @@ class RekomendasiMagang extends Controller
         ]);
     }
 
-    public function calculationAll(): View
+    public function topsis(): View
     {
-        // Ambil ID mahasiswa yang sedang login
         $mahasiswa = Auth::user()->mahasiswa;
         $hasil = $this->index($mahasiswa->id_mahasiswa);
 
         return view('pages.student.perhitungan-keseluruhan', [
             'lowongan' => $hasil['lowongan'],
             'skor'     => $hasil['skor'],
-            'debug'    => $hasil['debug'], // Menyertakan data debug untuk referensi tambahan
+            'debug'    => $hasil['debug'],
         ]);
     }
 }

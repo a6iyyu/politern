@@ -38,73 +38,6 @@ class Pengajuan extends Controller
         }
     }
 
-    private function admin(Request $request): View
-    {
-        $program_studi = ProgramStudi::all();
-        $perusahaan = Perusahaan::all();
-        $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
-        $program_studi_yang_dipilih = $request->program_studi;
-        $total_pengajuan_magang = PengajuanMagang::count();
-        $dosen_pembimbing = Dosen::pluck('nama', 'id_dosen')->toArray();
-
-        /** @var LengthAwarePaginator $paginasi */
-        $paginasi = PengajuanMagang::with('mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi')->paginate(request('per_page', default: 10));
-        $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan): array {
-            $keterangan = match ($pengajuan->status) {
-                'DISETUJUI' => 'bg-green-200 text-green-800',
-                'MENUNGGU'  => 'bg-yellow-200 text-yellow-800',
-                'DITOLAK'   => 'bg-red-200 text-red-800',
-            };
-
-            $konfirmasi = '';
-            if ($pengajuan->status === 'MENUNGGU') $konfirmasi = view('components.admin.pengajuan-magang.konfirmasi', compact('pengajuan'))->render();
-            return [
-                $pengajuan->id_pengajuan_magang,
-                $pengajuan->created_at->format('d/m/Y'),
-                $pengajuan->mahasiswa->nama_lengkap,
-                $pengajuan->mahasiswa->program_studi->kode,
-                $pengajuan->lowongan->perusahaan->nama,
-                $pengajuan->lowongan->bidang->nama_bidang ?? '-',
-                '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
-                    . ($pengajuan->status ?? "N/A") .
-                    '</div>',
-                view('components.admin.pengajuan-magang.aksi', compact('pengajuan'))->render(),
-                $konfirmasi,
-            ];
-        })->toArray();
-
-        return view('pages.admin.pengajuan-magang', compact('data', 'paginasi', 'program_studi', 'perusahaan', 'periode_magang', 'program_studi_yang_dipilih', 'total_pengajuan_magang', 'dosen_pembimbing'));
-    }
-
-    private function student(): View
-    {
-        /** @var LengthAwarePaginator $paginasi */
-        $paginasi = PengajuanMagang::with('mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi')->paginate(request('per_page', default: 10));
-        $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan): array {
-            $keterangan = match ($pengajuan->status) {
-                'DISETUJUI' => 'bg-[var(--green-tertiary)]',
-                'MENUNGGU'  => 'bg-[var(--yellow-tertiary)]',
-                'DITOLAK'   => 'bg-[var(--red-tertiary)]',
-            };
-
-            return [
-                $pengajuan->id_pengajuan_magang,
-                $pengajuan->lowongan->perusahaan->nama,
-                $pengajuan->lowongan->bidang->nama_bidang ?? '-',
-                $pengajuan->lowongan->periode_magang->nama_periode ?? '-',
-                $pengajuan->created_at->format('d/m/Y'),
-                '<div class="text-xs text-white font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
-                    . ($pengajuan->status ?? "N/A") .
-                    '</div>',
-                view('components.student.kelola-lamaran.aksi', compact('pengajuan'))->render(),
-            ];
-        })->toArray();
-
-        $periode_magang = PeriodeMagang::where('status', 'AKTIF')->pluck('nama_periode', 'id_periode')->toArray();
-        $total_pengajuan_magang = PengajuanMagang::count();
-        return view('pages.student.kelola-lamaran', compact('data', 'paginasi', 'periode_magang', 'total_pengajuan_magang'));
-    }
-
     public function edit(string $id): JsonResponse
     {
         $pengajuan = PengajuanMagang::with([
@@ -256,5 +189,75 @@ class Pengajuan extends Controller
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Gagal memperbarui data pengajuan: ' . $e->getMessage());
         }
+    }
+
+    private function admin(Request $request): View
+    {
+        $program_studi = ProgramStudi::all();
+        $perusahaan = Perusahaan::all();
+        $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
+        $program_studi_yang_dipilih = $request->program_studi;
+        $total_pengajuan_magang = PengajuanMagang::count();
+        $dosen_pembimbing = Dosen::pluck('nama', 'id_dosen')->toArray();
+
+        /** @var LengthAwarePaginator $paginasi */
+        $paginasi = PengajuanMagang::with('mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi')->paginate(request('per_page', default: 10));
+        $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan): array {
+            $keterangan = match ($pengajuan->status) {
+                'DISETUJUI' => 'bg-green-200 text-green-800',
+                'MENUNGGU'  => 'bg-yellow-200 text-yellow-800',
+                'DITOLAK'   => 'bg-red-200 text-red-800',
+            };
+
+            $konfirmasi = '';
+            if ($pengajuan->status === 'MENUNGGU') $konfirmasi = view('components.admin.pengajuan-magang.konfirmasi', compact('pengajuan'))->render();
+            return [
+                $pengajuan->id_pengajuan_magang,
+                $pengajuan->created_at->format('d/m/Y'),
+                $pengajuan->mahasiswa->nama_lengkap,
+                $pengajuan->mahasiswa->program_studi->kode,
+                $pengajuan->lowongan->perusahaan->nama,
+                $pengajuan->lowongan->bidang->nama_bidang ?? '-',
+                '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
+                    . ($pengajuan->status ?? "N/A") .
+                    '</div>',
+                view('components.admin.pengajuan-magang.aksi', compact('pengajuan'))->render(),
+                $konfirmasi,
+            ];
+        })->toArray();
+
+        return view('pages.admin.pengajuan-magang', compact('data', 'paginasi', 'program_studi', 'perusahaan', 'periode_magang', 'program_studi_yang_dipilih', 'total_pengajuan_magang', 'dosen_pembimbing'));
+    }
+
+    private function student(): View
+    {
+        $baris = 1;
+        $id_mahasiswa = Auth::user()->mahasiswa->id_mahasiswa;
+
+        /** @var LengthAwarePaginator $paginasi */
+        $paginasi = PengajuanMagang::with('mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi')->where('id_mahasiswa', $id_mahasiswa)->paginate(request('per_page', default: 10));
+        $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan) use (&$baris): array {
+            $keterangan = match ($pengajuan->status) {
+                'DISETUJUI' => 'bg-[var(--green-tertiary)]',
+                'MENUNGGU'  => 'bg-[var(--yellow-tertiary)]',
+                'DITOLAK'   => 'bg-[var(--red-tertiary)]',
+            };
+
+            return [
+                $baris++,
+                $pengajuan->lowongan->perusahaan->nama,
+                $pengajuan->lowongan->bidang->nama_bidang ?? '-',
+                $pengajuan->lowongan->periode_magang->nama_periode ?? '-',
+                $pengajuan->created_at->format('d/m/Y'),
+                '<div class="text-xs text-white font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
+                    . ($pengajuan->status ?? "N/A") .
+                    '</div>',
+                view('components.student.kelola-lamaran.aksi', compact('pengajuan'))->render(),
+            ];
+        })->toArray();
+
+        $periode_magang = PeriodeMagang::where('status', 'AKTIF')->pluck('nama_periode', 'id_periode')->toArray();
+        $total_pengajuan_magang = PengajuanMagang::count();
+        return view('pages.student.kelola-lamaran', compact('data', 'paginasi', 'periode_magang', 'total_pengajuan_magang'));
     }
 }
