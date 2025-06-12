@@ -1,7 +1,7 @@
 <aside class="fixed pb-12 z-50 translate-x-0 left-0 top-0 h-full w-76 flex-col space-y-4 border-r-2 border-[#6d6adc] p-5 shadow-2xl bg-[var(--primary)] transition-all duration-300 ease-in-out">
     <section class="mb-5 flex items-center">
         <img src="{{ asset('shared/logo.png') }}" alt="Logo" class="w-14" />
-        <div class="cursor-default flex flex-col justify-between text-[var(--stroke)]">
+        <div class="cursor-default flex flex-col justify-between text-white/80">
             <h4 class="font-bold text-sm lg:text-base">POLITERN</h4>
             <h6 class="font-medium italic text-xs">Polinema Intern</h6>
         </div>

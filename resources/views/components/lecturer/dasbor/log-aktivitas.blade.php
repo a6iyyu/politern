@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-4 items-start justify-between mb-6 lg:flex-row">
+<div class="flex flex-col gap-4 justify-between mb-6 lg:flex-row">
     <h3 class="cursor-default text-[var(--primary-text)] font-medium text-base flex items-center gap-2">
         <i class="fa-regular fa-clock"></i> Aktivitas Mahasiswa Terbaru
     </h3>
@@ -6,8 +6,7 @@
         Lihat Semua
     </a>
 </div>
-@if (isset($log_aktivitas) || !empty($log_aktivitas))
-@if (isset($log_aktivitas) || !empty($log_aktivitas))
+@if (isset($log_aktivitas) && !empty($log_aktivitas))
     @foreach ($log_aktivitas as $log)
         <article class="border border-[var(--stroke)] px-6 py-4 rounded-lg mb-4">
             <section class="flex items-center justify-between text-sm">
@@ -38,16 +37,8 @@
             </section>
         </article>
     @endforeach
-@else
-    <div class="mt-12 flex flex-col items-center justify-center h-full">
-        <i class="fa-solid fa-triangle-exclamation text-5xl text-center text-[var(--primary)]"></i>
-        <h5 class="text-xs text-[var(--secondary-text)] mt-3">
-            Tidak ada aktivitas magang mahasiswa
-        </h5>
-    </div>
-@endif
     <h5 class="text-xs text-[var(--secondary-text)] mt-3">
-        Menampilkan {{ count($log_aktivitas) }} dari {{ $total_aktivitas }} aktivitas magang mahasiswa
+        Menampilkan {{ count($log_aktivitas) }} dari {{ $total_aktivitas ?? 0 }} aktivitas magang mahasiswa
     </h5>
 @else
     <div class="mt-12 flex flex-col items-center justify-center h-full">

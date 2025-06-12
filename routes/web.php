@@ -178,9 +178,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('dosen.dasbor');
         Route::get('/mahasiswa-bimbingan/{id}', [Dasbor::class, 'detail'])->name('dosen.mahasiswa-bimbingan');
         Route::get('/data-mahasiswa', [DataMahasiswa::class, 'index'])->name('dosen.data-mahasiswa');
-        Route::get('/data-mahasiswa/{id}', [DataMahasiswa::class, 'show'])->name('dosen.data-mahasiswa.detail');
+        Route::get('/data-mahasiswa/detail/{id}', [DataMahasiswa::class, 'showDetailBimbingan'])->name('dosen.data-mahasiswa.detail');
         Route::get('/log-aktivitas', [LogAktivitas::class, 'index'])->name('dosen.log-aktivitas');
-        Route::get('/log-aktivitas/{id}', [LogAktivitas::class, 'show'])->name('dosen.log-aktivitas.detail');
+        Route::get('/log-aktivitas/{id}', [LogAktivitas::class, 'showLog'])->name('dosen.log-aktivitas.detail');
 
         Route::prefix('profil')->group(function () {
             Route::get('/', [Profil::class, 'index'])->name('dosen.profil');

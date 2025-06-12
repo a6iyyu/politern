@@ -10,6 +10,7 @@ use App\Models\Magang;
 use App\Models\Mahasiswa;
 use App\Models\PeriodeMagang;
 use App\Models\Pengguna;
+
 use App\Models\ProgramStudi;
 use Carbon\Carbon;
 use Exception;
@@ -335,5 +336,60 @@ class DataMahasiswa extends Controller
         }
 
         return $query;
+    }
+
+    public function showDetailBimbingan($id): JsonResponse
+    {
+        $magang = Magang::with([
+            'pengajuan_magang',
+            'pengajuan_magang.lowongan.perusahaan.lokasi',
+            'pengajuan_magang.lowongan.bidang',
+            'pengajuan_magang.mahasiswa',
+            'pengajuan_magang.mahasiswa.program_studi',
+            'pengajuan_magang.mahasiswa.keahlian',
+        ])->whereHas('pengajuan_magang', fn($q) => $q->where('id_mahasiswa', $id))->first();
+        Log::info($magang);
+        $lowongan = $magang->pengajuan_magang->lowongan ?? null;
+        $perusahaan = $lowongan->perusahaan ?? null;
+
+        $logo = null;
+        if ($perusahaan?->logo) {
+            $logo = str_starts_with($perusahaan->logo, 'storage/')
+                ? '/' . $perusahaan->logo
+                : (str_starts_with($perusahaan->logo, '/storage/')
+                    ? $perusahaan->logo
+                    : '/storage/' . $perusahaan->logo);
+        }
+
+        return response()->json([
+            'magang' => [
+                'bidang_posisi' => $lowongan?->bidang?->nama_bidang ?? '-',
+                'logo' => $logo,
+                'nama_perusahaan_mitra' => $perusahaan?->nama ?? '-',
+                'lokasi' => $perusahaan?->lokasi?->nama_lokasi ?? '-',
+            ],
+            'mahasiswa' => [
+                'nim' => $magang->pengajuan_magang->mahasiswa->nim,
+                'nama_lengkap' => $magang->pengajuan_magang->mahasiswa->nama_lengkap,
+                'angkatan' => (string)$magang->pengajuan_magang->mahasiswa->angkatan,
+                'semester' => (string)$magang->pengajuan_magang->mahasiswa->semester,
+                'program_studi' => $magang->pengajuan_magang->mahasiswa->program_studi->nama,
+                'ipk' => (float)$magang->pengajuan_magang->mahasiswa->ipk,
+                'nomor_telepon' => $magang->pengajuan_magang->mahasiswa->nomor_telepon ?? '-',
+                'deskripsi' => $magang->pengajuan_magang->mahasiswa->deskripsi ?? 'Tidak ada deskripsi',
+                'status' => $magang->pengajuan_magang->mahasiswa->status,
+                'keahlian' => $magang->pengajuan_magang->mahasiswa->keahlian->pluck('nama_keahlian')->toArray(),
+                'cv' => [
+                    'nama_file' => $magang->pengajuan_magang->mahasiswa->cv ?? 'CV_' . str_replace(' ', '_', $magang->pengajuan_magang->mahasiswa->nama_lengkap) . '.pdf',
+                    'url' => $magang->pengajuan_magang->mahasiswa->cv ? (
+                        str_starts_with($magang->pengajuan_magang->mahasiswa->cv, 'storage/')
+                            ? '/' . $magang->pengajuan_magang->mahasiswa->cv
+                            : (str_starts_with($magang->pengajuan_magang->mahasiswa->cv, '/storage/')
+                                ? $magang->pengajuan_magang->mahasiswa->cv
+                                : '/storage/' . $magang->pengajuan_magang->mahasiswa->cv)
+                    ) : null,
+                ]
+            ]
+        ]);
     }
 }

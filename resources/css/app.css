@@ -6,12 +6,12 @@
     --primary: #5955b2;
     --secondary: #ff77c3;
     --primary-text: #4f4f4f;
-    --secondary-text: #757575;
+    --secondary-text: #6b6b6b;
     --green-tertiary: #10b981;
     --red-tertiary: #ef4545;
     --yellow-tertiary: #f59e0b;
     --blue-tertiary: #2c6cd3;
-    --stroke: #dadada;
+    --stroke: #bebdbd;
 }
 
 @media screen and (max-width: 3120px) {

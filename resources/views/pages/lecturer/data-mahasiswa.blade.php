@@ -13,5 +13,6 @@
         <section class="py-6 px-12 mt-2 rounded-lg overflow-hidden bg-white border border-[var(--stroke)]">
             @include('components.lecturer.data-mahasiswa.tabel')
         </section>
+        @include('components.lecturer.data-mahasiswa.detail')
     </main>
 @endsection
