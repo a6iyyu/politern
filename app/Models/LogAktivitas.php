@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 class LogAktivitas extends Model
 {
@@ -14,7 +15,22 @@ class LogAktivitas extends Model
 
     protected $table = 'log_aktivitas';
     protected $primaryKey = 'id_log';
-    protected $fillable = ['id_magang', 'judul', 'minggu', 'deskripsi', 'foto', 'status', 'komentar', 'tanggal_evaluasi'];
+    protected $fillable = [
+        'id_magang', 
+        'judul', 
+        'minggu', 
+        'deskripsi', 
+        'foto', 
+        'status', 
+        'komentar', 
+        'tanggal_evaluasi'
+    ];
+    
+    protected $casts = [
+        'tanggal_evaluasi' => 'datetime:Y-m-d H:i:s',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
 
     public function magang(): BelongsTo
     {

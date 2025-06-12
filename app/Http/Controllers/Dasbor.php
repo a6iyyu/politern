@@ -75,7 +75,11 @@ class Dasbor extends Controller
                 $nama_pengguna = $pengguna->nama_pengguna;
                 $nama_prodi = $prodi->nama;
                 $semester = $mahasiswa->semester;
-                $status = $mahasiswa->status;
+                $status = 'Belum Magang';
+                $latestPengajuan = $mahasiswa->pengajuan_magang->sortByDesc('created_at')->first();
+if ($latestPengajuan && $latestPengajuan->magang) {
+    $status = $latestPengajuan->magang->status;
+}
                 $rekomendasi = (new RekomendasiMagang())->index($mahasiswa->id_mahasiswa);
                 return view('pages.student.dasbor', compact('ipk', 'jenjang', 'log_aktivitas', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status', 'rekomendasi', 'id_mahasiswa'));
             })(),
@@ -120,7 +124,6 @@ class Dasbor extends Controller
                         $perusahaan?->nama ?? '-',
                         $lowongan?->bidang->nama_bidang ?? '-',
                         '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($magang?->status ?? 'BELUM MAGANG') . '</div>',
-                        view('components.lecturer.dasbor.aksi', compact('mhs'))->render(),
                     ];
                 })->toArray();
 

@@ -20,7 +20,7 @@
     @foreach ($log_aktivitas as $log)
         <x-log
             :comment="($log->status === 'DITOLAK' || $log->status === 'DISETUJUI') ? ($log->komentar ?? null) : null"
-            :confirmation_date="$log->tanggal_konfirmasi ? $log->tanggal_konfirmasi->format('d/m/Y') : null"
+            :confirmation_date="$log->tanggal_evaluasi ? $log->tanggal_evaluasi->format('d/m/Y') : null"
             :description="$log->deskripsi ?? 'N/A'"
             :id="$log->id_log ?? 'N/A'"
             :name="$log->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? 'N/A'"

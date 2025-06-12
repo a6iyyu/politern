@@ -1,6 +1,4 @@
 @php
-    use Carbon\Carbon;
-    $tanggal_evaluasi ??= Carbon::now()->format('d/m/Y');
 @endphp
 
 <figure class="border border-[var(--stroke)] px-6 py-4 rounded-lg mb-4">
@@ -30,13 +28,13 @@
             <img src="{{ $profile_photo }}" alt="Profil" class="w-10 h-10 rounded-full object-cover">
             <span class="flex gap-4 items-end">
                 <h5 class="font-medium">{{ $name ?? 'N/A' }}</h5>
-                <h6>{{ $nim ?? 'N/A' }}</h6>
+                <h6>{{ $nim ?? 'N/A' }}</h6>    
             </span>
         </div>
         <div class="flex text-sm gap-2 mt-5">
             <h5 class="text-[var(--secondary-text)]">Deskripsi:</h5>
             <h5 class="text-[var(--primary-text)] font-medium leading-relaxed max-w-3/4">
-                {{ $description ?? 'N/A' }}
+                {{ $description ?? 'N/A' }}. 
             </h5>
         </div>
         <div class="flex gap-2 mt-5">
@@ -52,19 +50,19 @@
             @endif
         </div>
     </section>
-    @if (in_array(strtoupper($status ?? ''), ['DITOLAK', 'DISETUJUI']))
+    @if (in_array(strtoupper($statusStr ?? ''), ['DITOLAK', 'DISETUJUI']))
         <section class="cursor-default mt-5 px-6 py-4 bg-[#f3f3f3] rounded-md">
             <h5 class="text-sm text-[var(--primary-text)]">
                 Komentar Dosen:
             </h5>
             <h6 class="mt-2 text-sm text-[var(--primary-text)] font-medium leading-relaxed">
-                {{ $comment ?? 'N/A' }}
+                {{ $comment ?? '--Tidak ada Komentar--' }}
             </h6>
         </section>
+        <div class="mt-2 text-right">
+            <span class="text-xs text-[var(--secondary-text)]">
+                Dikonfirmasi Pada: {{ $confirmation_date ?? 'N/A' }}
+            </span>
+        </div>
     @endif
-    <div class="mt-2 text-right">
-        <span class="text-xs text-[var(--secondary-text)]">
-            Dikonfirmasi Pada: {{ $confirmation_date }}
-        </span>
-    </div>
 </figure>

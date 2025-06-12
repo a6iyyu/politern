@@ -9,11 +9,13 @@ use Illuminate\View\Component;
 class Log extends Component
 {
     public array $info;
-    public ?string $comment, $confirmation_date, $description, $id, $name, $nim, $photo, $profile_photo, $status, $title, $week;
+    public ?string $comment, $description, $id, $name, $nim, $photo, $profile_photo, $status, $title, $week;
+    public ?string $statusStr;
+    public $confirmation_date;
 
     public function __construct(
         ?string $comment = null,
-        ?string $confirmation_date = null,
+        $confirmation_date = null,
         ?string $description = null,
         ?string $id = null,
         ?string $name = null,
@@ -23,9 +25,10 @@ class Log extends Component
         ?string $status = null,
         ?string $title = null,
         ?string $week = null,
+        ?string $statusStr = null,
     ) {
         $this->comment = $comment;
-        $this->confirmation_date = $confirmation_date;
+        $this->confirmation_date = $confirmation_date ;
         $this->description = $description;
         $this->id = $id;
         $this->name = $name;
@@ -35,10 +38,10 @@ class Log extends Component
         $this->status = is_string($status) ? trim(strtoupper($status)) : null;
         $this->title = $title;
         $this->week = $week;
+        $this->statusStr = $status;
 
         $this->info = [
             'DISETUJUI'    => 'border border-green-500 text-green-500 hover:bg-green-500 hover:text-white',
-            'DIKONFIRMASI' => 'border border-green-500 text-green-500 hover:bg-green-500 hover:text-white',
             'DITOLAK'      => 'border border-red-500 text-red-500 hover:bg-red-500 hover:text-white',
             'MENUNGGU'     => 'border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white',
         ];
@@ -57,7 +60,6 @@ class Log extends Component
         if (!is_string($this->status) || empty($this->status)) return 'N/A';
         $status = trim(strtoupper($this->status));
         return match ($status) {
-            'DIKONFIRMASI'  => 'Dikonfirmasi',
             'DISETUJUI'     => 'Disetujui',
             'DITOLAK'       => 'Ditolak',
             'MENUNGGU'      => 'Menunggu',
