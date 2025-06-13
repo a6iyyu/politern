@@ -355,10 +355,10 @@ class DataMahasiswa extends Controller
         $logo = null;
         if ($perusahaan?->logo) {
             $logo = str_starts_with($perusahaan->logo, 'storage/')
-                ? '/' . $perusahaan->logo
+                ? "/{$perusahaan->logo}"
                 : (str_starts_with($perusahaan->logo, '/storage/')
                     ? $perusahaan->logo
-                    : '/storage/' . $perusahaan->logo);
+                    : "/storage/{$perusahaan->logo}");
         }
 
         return response()->json([

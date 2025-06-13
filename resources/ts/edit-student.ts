@@ -24,7 +24,7 @@ interface Status {
   status: string;
 }
 
-interface Modal {
+interface Edit {
   mahasiswa: Student;
   pengguna: User;
   prodi: Prodi;
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ipk = form.querySelector<HTMLInputElement>("input[name='ipk']");
   const status = form.querySelector<HTMLSelectElement>("select[name='status']");
 
-  const fetchMahasiswaData = async (id: string): Promise<Modal | null> => {
+  const fetchMahasiswaData = async (id: string): Promise<Edit | null> => {
     try {
       const response = await fetch(`/admin/data-mahasiswa/${id}/edit`, {
         headers: {
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (!response.ok) throw new Error('Gagal mengambil data mahasiswa.');
-      return (await response.json()) as Modal;
+      return (await response.json()) as Edit;
     } catch (error) {
       console.error(error);
       return null;

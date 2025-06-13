@@ -8,11 +8,18 @@ use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class Pengalaman extends Seeder
 {
     public function run(): void
     {
+        $destination = storage_path('app/public/experience');
+        $source = public_path('shared/aktivitas.png');
+
+        if (!File::exists($destination)) File::makeDirectory($destination, 0755, true);
+        if (File::exists($source)) File::copy($source, "$destination/aktivitas.png");
+
         $pengalaman = [];
         for ($i = 1; $i <= 20; $i++) {
             $pengalaman[] = [
@@ -23,7 +30,7 @@ class Pengalaman extends Seeder
                 'deskripsi'         => Factory::create()->text(),
                 'tanggal_mulai'     => Carbon::parse("202$i-01-01"),
                 'tanggal_selesai'   => Carbon::parse("202$i-06-30"),
-                'bukti_pendukung'   => "https://example.com/bukti$i",
+                'bukti_pendukung'   => 'experience/aktivitas.png',
                 'created_at'        => Carbon::now(),
                 'updated_at'        => Carbon::now(),
             ];
