@@ -8,6 +8,7 @@ use App\Models\Pengguna;
 use App\Models\Dosen;
 use App\Models\DosenPembimbing;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -30,27 +31,26 @@ class DataDosen extends Controller
             $total_dosen_pembimbing = DosenPembimbing::count();
 
             $query = Dosen::query();
-        
+
             if ($request->has('nama') && !empty($request->nama)) {
-                $query->where('nama', 'like', '%' . $request->nama . '%');
-            }
-            
-            if ($request->has('nip') && !empty($request->nip)) {
-                $query->where('nip', 'like', '%' . $request->nip . '%');
+                $query->where('nama', 'like', "%{$request->nama}%");
             }
 
+            if ($request->has('nip') && !empty($request->nip)) {
+                $query->where('nip', 'like', "%{$request->nip}%");
+            }
+
+            /** @var LengthAwarePaginator $paginasi */
             $paginasi = $query->paginate(request('per_page', 10))->withQueryString();
-            $data = collect($paginasi->items())->map(callback: function (Dosen $dosen) use (&$baris) {
-                return [
-                    $baris++,
-                    '<div class="flex items-center gap-2">
-                        <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($dosen->nama) . '
-                    </div>',
-                    $dosen->nip,
-                    $dosen->nomor_telepon,
-                    view('components.admin.data-dosen.aksi', compact('dosen'))->render(),
-                ];
-            })->toArray();
+            $data = collect($paginasi->items())->map(fn(Dosen $dosen) => [
+                $baris++,
+                '<div class="flex items-center gap-2">
+                    <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($dosen->nama) . '
+                </div>',
+                $dosen->nip,
+                $dosen->nomor_telepon,
+                view('components.admin.data-dosen.aksi', compact('dosen'))->render(),
+            ])->toArray();
             return view('pages.admin.data-dosen', compact('data', 'paginasi', 'total_dosen', 'total_dosen_pembimbing'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");

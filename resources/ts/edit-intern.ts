@@ -19,9 +19,7 @@ interface LowonganEdit {
 
 declare global {
   interface Window {
-    keahlian?: (
-      keahlian: { id_keahlian: string; nama_keahlian: string }[]
-    ) => void;
+    keahlian?: (keahlian: { id_keahlian: string; nama_keahlian: string }[]) => void;
     edit_keahlian?: { id_keahlian: string; nama_keahlian: string }[];
   }
 }

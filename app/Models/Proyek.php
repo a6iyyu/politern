@@ -15,6 +15,8 @@ class Proyek extends Model
 
     protected $table = 'proyek';
     protected $primaryKey = 'id_proyek';
+    protected $fillable = ['nama_proyek', 'peran', 'deskripsi', 'tautan', 'alat', 'tanggal_mulai', 'tanggal_selesai'];
+
     protected $casts = [
         'alat' => 'array'
     ];

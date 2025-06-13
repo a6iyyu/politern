@@ -81,7 +81,7 @@ class Profil extends Controller
     {
         try {
             $mahasiswa = Auth::user()->mahasiswa;
-            $keahlian = Keahlian::pluck('nama_keahlian', 'id_keahlian')->toArray();
+            $keahlian = array_combine(array_values(Keahlian::pluck('nama_keahlian', 'id_keahlian')->toArray()), array_values(Keahlian::pluck('nama_keahlian', 'id_keahlian')->toArray()));
 
             /** @var Mahasiswa $pengalaman */
             $pengalaman = $mahasiswa->pengalaman()->first();

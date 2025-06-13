@@ -21,7 +21,7 @@
                 />
                 <x-input
                     icon="fa-solid fa-building"
-                    label="Nama Lembaga"
+                    label="Nama Proyek"
                     name="tambah_peran_proyek"
                     placeholder="Cth. Manajer Proyek"
                     type="text"
@@ -29,7 +29,7 @@
                 />
             </span>
             <fieldset class="my-4 flex flex-col gap-1">
-                <label for="tambah_deskripsi_proyek" class="text-sm font-medium text-gray-700">
+                <label for="tambah_deskripsi_proyek" class="text-sm font-medium text-[var(--primary-text)]">
                     Deskripsi <span class="text-red-500">*</span>
                 </label>
                 <textarea
@@ -49,43 +49,62 @@
                 type="text"
                 :required="true"
             />
-            <fieldset class="my-4 md:col-span-2">
-                <label for="keahlian-select" class="block text-sm font-medium text-gray-700 mb-1">
-                    Pilih Keahlian <span class="text-red-500">*</span>
+            <fieldset class="my-4 text-[var(--primary-text)] md:col-span-2">
+                <label for="tools-select" class="block text-sm font-medium mb-4">
+                    Alat <span class="text-red-500">*</span>
                 </label>
                 <div class="flex gap-2 flex-col text-sm sm:flex-row">
-                    <select id="keahlian-select" class="appearance-none flex-1 border rounded-lg p-2">
-                        <option value="">Pilih jenis keahlian magang</option>
+                    <select id="tools-select" class="appearance-none flex-1 border rounded-lg p-2">
+                        <option value="">Pilih beberapa alat</option>
                         @foreach($keahlian ?? [] as $id => $nama)
                             <option value="{{ $id }}">{{ $nama }}</option>
                         @endforeach
                     </select>
-                    <button type="button" id="tambah-keahlian" class="cursor-pointer w-fit bg-[var(--primary)] text-white px-4 py-2 rounded transition-all duration-300 ease-in-out sm:w-auto lg:hover:bg-[var(--primary)]/80">
+                    <button type="button" id="add-tools" class="cursor-pointer w-fit bg-[var(--primary)] text-white px-4 py-2 rounded transition-all duration-300 ease-in-out sm:w-auto lg:hover:bg-[var(--primary)]/80">
                         Tambah
                     </button>
                 </div>
-                <div id="badge-keahlian" class="flex flex-wrap gap-2 mt-3">
+                <div id="badge-tools" class="flex flex-wrap gap-2 mt-3">
                     {{-- Badge akan muncul di sini --}}
                 </div>
-                <div id="input-keahlian">
+                <div id="input-tools">
                     {{-- Hidden input array --}}
                 </div>
             </fieldset>
+            <span class="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <x-input
+                    icon="fa-solid fa-calendar"
+                    label="Tanggal Mulai"
+                    type="date"
+                    name="tambah_tanggal_mulai_proyek"
+                    :required="true"
+                />
+                <x-input
+                    icon="fa-solid fa-calendar"
+                    label="Tanggal Selesai"
+                    type="date"
+                    name="tambah_tanggal_selesai_proyek"
+                    :required="true"
+                />
+            </span>
+            <button type="submit" class="cursor-pointer mt-8 mb-2 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">
+                Simpan
+            </button>
         </form>
     </div>
 </section>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const select = document.getElementById('keahlian-select');
-        const tambah_keahlian = document.getElementById('tambah-keahlian');
-        const badge_container = document.getElementById('badge-keahlian');
-        const input_container = document.getElementById('input-keahlian');
+        const select = document.getElementById('tools-select');
+        const add_tools = document.getElementById('add-tools');
+        const badge_tools = document.getElementById('badge-tools');
+        const input_tools = document.getElementById('input-tools');
         let keahlian_yang_terpilih = [];
 
         function renderBadges() {
-            badge_container.innerHTML = '';
-            input_container.innerHTML = '';
+            badge_tools.innerHTML = '';
+            input_tools.innerHTML = '';
             keahlian_yang_terpilih.forEach(({id, nama}) => {
                 const badge = document.createElement('span');
                 badge.className = 'inline-flex items-center px-3 py-1 rounded-full border border-pink-400 text-pink-500 text-sm mb-1';
@@ -95,17 +114,17 @@
                     renderBadges();
                 };
 
-                badge_container.appendChild(badge);
+                badge_tools.appendChild(badge);
 
                 const input = document.createElement('input');
                 input.type = 'hidden';
-                input.name = 'id_keahlian[]';
+                input.name = 'tambah_alat_proyek[]';
                 input.value = id;
-                input_container.appendChild(input);
+                input_tools.appendChild(input);
             });
         }
 
-        tambah_keahlian.addEventListener('click', function () {
+        add_tools.addEventListener('click', function () {
             const id = select.value;
             const nama = select.options[select.selectedIndex]?.text;
             if (!id || keahlian_yang_terpilih.some(k => k.id === id)) return;

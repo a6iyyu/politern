@@ -28,8 +28,8 @@
                     :options="$bidang ?? ['Tidak ada data.']"
                     :required="true"
                 />
-                <fieldset class="md:col-span-2">
-                    <label for="keahlian-select" class="block text-sm font-medium text-gray-700 mb-1">
+                <fieldset class="text-[var(--primary-text)] md:col-span-2">
+                    <label for="keahlian-select" class="block text-sm font-medium mb-1">
                         Pilih Keahlian <span class="text-red-500">*</span>
                     </label>
                     <div class="flex gap-2 flex-col text-sm sm:flex-row">

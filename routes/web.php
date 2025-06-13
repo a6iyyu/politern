@@ -13,6 +13,7 @@ use App\Http\Controllers\RekomendasiMagang;
 use App\Http\Controllers\Pengajuan;
 use App\Http\Controllers\PengalamanMahasiswa;
 use App\Http\Controllers\Profil;
+use App\Http\Controllers\ProyekMahasiswa;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -157,8 +158,8 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('pengalaman')->group(function () {
                 Route::get('{id}/edit', [PengalamanMahasiswa::class, 'edit'])->name('mahasiswa.profil.pengalaman.edit');
-                Route::put('{id}/edit', [PengalamanMahasiswa::class, 'update'])->name('mahasiswa.profil.pengalaman.perbarui');
                 Route::post('/tambah', [PengalamanMahasiswa::class, 'create'])->name('mahasiswa.profil.pengalaman.tambah');
+                Route::put('{id}/edit', [PengalamanMahasiswa::class, 'update'])->name('mahasiswa.profil.pengalaman.perbarui');
                 Route::delete('/{id}/hapus', [PengalamanMahasiswa::class, 'destroy'])->name('mahasiswa.profil.pengalaman.hapus');
             });
 
@@ -171,11 +172,10 @@ Route::middleware('auth')->group(function () {
             });
 
             Route::prefix('proyek')->group(function () {
-                Route::get('/edit', [Profil::class, 'edit'])->name('mahasiswa.profil.proyek.edit');
-                Route::get('/tambah', [Profil::class, 'create'])->name('mahasiswa.profil.proyek.buat');
-                Route::post('/edit', [Profil::class, 'update'])->name('mahasiswa.profil.proyek.perbarui');
-                Route::post('/tambah', [Profil::class, 'store'])->name('mahasiswa.profil.proyek.tambah');
-                Route::delete('/hapus', [Profil::class, 'destroy'])->name('mahasiswa.profil.proyek.hapus');
+                Route::get('{id}/edit', [ProyekMahasiswa::class, 'edit'])->name('mahasiswa.profil.proyek.edit');
+                Route::post('/tambah', [ProyekMahasiswa::class, 'create'])->name('mahasiswa.profil.proyek.tambah');
+                Route::put('{id}/edit', [ProyekMahasiswa::class, 'update'])->name('mahasiswa.profil.proyek.perbarui');
+                Route::delete('{id}/hapus', [ProyekMahasiswa::class, 'destroy'])->name('mahasiswa.profil.proyek.hapus');
             });
         });
     });

@@ -18,6 +18,7 @@ import './edit-lecturer';
 import './edit-log-activity';
 import './edit-major';
 import './edit-period';
+import './edit-project';
 import './edit-student';
 import './form';
 import './hamburger-menu';

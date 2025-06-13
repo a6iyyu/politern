@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Keahlian;
 use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
@@ -19,7 +20,7 @@ class Proyek extends Seeder
                 'peran'             => Factory::create()->jobTitle(),
                 'deskripsi'         => Factory::create()->text(),
                 'tautan'            => "https://example.com/proyek$i",
-                'alat'              => json_encode(Factory::create()->randomElements(['Laravel', 'Figma', 'MySQL', 'React', 'Vue.js', 'Docker', 'Postman'], rand(1, 3))),
+                'alat'              => json_encode(Factory::create()->randomElements(Keahlian::pluck('nama_keahlian')->toArray(), rand(2, 4))),
                 'tanggal_mulai'     => Carbon::parse("202$i-01-01"),
                 'tanggal_selesai'   => Carbon::parse("202$i-06-30"),
                 'bukti_pendukung'   => "https://example.com/bukti$i",
