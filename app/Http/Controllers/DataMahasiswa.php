@@ -29,7 +29,7 @@ use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class DataMahasiswa extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $pengguna = Auth::user()->tipe;
         $total_mahasiswa = Mahasiswa::count();
@@ -51,8 +51,29 @@ class DataMahasiswa extends Controller
                 ->toArray();
 
             $baris = 1;
+            
+            $query = Mahasiswa::with('program_studi');
+            
+            if ($request->has('nama_lengkap') && !empty($request->nama_lengkap)) {
+                $query->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
+            }
+            
+            if ($request->has('program_studi') && !empty($request->program_studi)) {
+                $query->where('id_prodi', $request->program_studi);
+            }
+            
+            if ($request->has('status') && !empty($request->status)) {
+                if ($request->status === 'BELUM MAGANG') {
+                    $query->where('status', 'BELUM MAGANG');
+                } else {
+                    $query->whereHas('pengajuan_magang.magang', function($q) use ($request) {
+                        $q->where('status', $request->status);
+                    });
+                }
+            }
+            
             /** @var LengthAwarePaginator $paginasi */
-            $paginasi = Mahasiswa::with('program_studi')->paginate(request('per_page', default: 10));
+            $paginasi = $query->paginate(request('per_page', 10))->withQueryString();
             $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
                 $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') {
                     'AKTIF'         => 'bg-green-200 text-green-800',
@@ -348,7 +369,6 @@ class DataMahasiswa extends Controller
             'pengajuan_magang.mahasiswa.program_studi',
             'pengajuan_magang.mahasiswa.keahlian',
         ])->whereHas('pengajuan_magang', fn($q) => $q->where('id_mahasiswa', $id))->first();
-        Log::info($magang);
         $lowongan = $magang->pengajuan_magang->lowongan ?? null;
         $perusahaan = $lowongan->perusahaan ?? null;
 
@@ -361,10 +381,16 @@ class DataMahasiswa extends Controller
                     : '/storage/' . $perusahaan->logo);
         }
 
+        $status = $magang->status ?? 'BELUM MAGANG';
+        $status_class = match($status) {
+            'AKTIF' => 'bg-green-200 text-green-800',
+            'SELESAI' => 'bg-yellow-200 text-yellow-800',
+        };
+
         return response()->json([
             'magang' => [
                 'bidang_posisi' => $lowongan?->bidang?->nama_bidang ?? '-',
-                'logo' => $logo,
+                'logo' => $perusahaan?->logo,
                 'nama_perusahaan_mitra' => $perusahaan?->nama ?? '-',
                 'lokasi' => $perusahaan?->lokasi?->nama_lokasi ?? '-',
             ],
@@ -379,16 +405,10 @@ class DataMahasiswa extends Controller
                 'deskripsi' => $magang->pengajuan_magang->mahasiswa->deskripsi ?? 'Tidak ada deskripsi',
                 'status' => $magang->pengajuan_magang->mahasiswa->status,
                 'keahlian' => $magang->pengajuan_magang->mahasiswa->keahlian->pluck('nama_keahlian')->toArray(),
-                'cv' => [
-                    'nama_file' => $magang->pengajuan_magang->mahasiswa->cv ?? 'CV_' . str_replace(' ', '_', $magang->pengajuan_magang->mahasiswa->nama_lengkap) . '.pdf',
-                    'url' => $magang->pengajuan_magang->mahasiswa->cv ? (
-                        str_starts_with($magang->pengajuan_magang->mahasiswa->cv, 'storage/')
-                            ? '/' . $magang->pengajuan_magang->mahasiswa->cv
-                            : (str_starts_with($magang->pengajuan_magang->mahasiswa->cv, '/storage/')
-                                ? $magang->pengajuan_magang->mahasiswa->cv
-                                : '/storage/' . $magang->pengajuan_magang->mahasiswa->cv)
-                    ) : null,
-                ]
+                'status_magang' => [
+                    'status' => $status,
+                    'class' => $status_class
+                ],
             ]
         ]);
     }

@@ -12,7 +12,7 @@
 </div>
 <section class="grid grid-cols-1 gap-6">
     @foreach ($rekomendasi['lowongan'] as $index => $item)
-    <figure class="mb-4 w-full px-7 py-5 rounded-2xl border border-[var(--stroke)] custom-border-left" 
+    <figure class="mb-2 w-full px-7 py-5 rounded-2xl border border-[var(--stroke)] custom-border-left bg-white" 
     style="border-left: 6px solid 
         @if ($index == 0)
             #FFD700;

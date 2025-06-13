@@ -23,7 +23,23 @@ class Periode extends Controller
             $total_periode = PeriodeMagangModel::count();
             $status = ['AKTIF' => 'Aktif', 'SELESAI' => 'Selesai'];
 
-            $paginasi = PeriodeMagangModel::paginate(request('per_page', 10));
+            // Update Status Periode Magang
+            $today = now()->toDateString();
+            $periods = PeriodeMagangModel::all();
+            foreach ($periods as $period) {
+                $newStatus = ($today <= $period->tanggal_selesai) ? 'AKTIF' : 'SELESAI';
+                if ($period->status !== $newStatus) {
+                    $period->status = $newStatus;
+                    $period->save();
+                }
+            }
+
+            $query = PeriodeMagangModel::query();
+            if (request()->has('nama_periode') && !empty(request('nama_periode'))) {
+                $query->where('nama_periode', 'like', '%' . request('nama_periode') . '%');
+            }
+
+            $paginasi = $query->paginate(request('per_page', 10));
             $data = collect($paginasi->items())->map(function (PeriodeMagangModel $periode) {
                 $status = match ($periode->status) {
                     'AKTIF' => 'bg-green-200 text-green-800',

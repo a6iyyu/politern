@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Log;
 
 class DataDosen extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
@@ -29,7 +29,17 @@ class DataDosen extends Controller
             $total_dosen = Dosen::count();
             $total_dosen_pembimbing = DosenPembimbing::count();
 
-            $paginasi = Dosen::paginate(request('per_page', 10));
+            $query = Dosen::query();
+        
+            if ($request->has('nama') && !empty($request->nama)) {
+                $query->where('nama', 'like', '%' . $request->nama . '%');
+            }
+            
+            if ($request->has('nip') && !empty($request->nip)) {
+                $query->where('nip', 'like', '%' . $request->nip . '%');
+            }
+
+            $paginasi = $query->paginate(request('per_page', 10))->withQueryString();
             $data = collect($paginasi->items())->map(callback: function (Dosen $dosen) use (&$baris) {
                 return [
                     $baris++,

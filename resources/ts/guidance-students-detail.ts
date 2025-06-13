@@ -5,6 +5,11 @@ interface Magang {
     lokasi: string;
 }
   
+interface StatusMagang {
+    status: string;
+    class: string;
+}
+
 interface Mahasiswa {
     nim: string;
     nama_lengkap: string;
@@ -14,6 +19,7 @@ interface Mahasiswa {
     ipk: number;
     nomor_telepon: string;
     keahlian: string[];
+    status_magang: StatusMagang;
 }
   
 interface DetailMahasiswaBimbingan {
@@ -42,8 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const logo_perusahaan = document.getElementById('logo_perusahaan_bimbingan') as HTMLImageElement;
     const logo_placeholder = document.getElementById('logo_placeholder_bimbingan');
     const daftar_keahlian = document.getElementById('keahlian_list_bimbingan');
+    const status_magang = document.getElementById('status_magang_bimbingan');
   
-    if (!nama_mahasiswa || !nim || !prodi || !nama_perusahaan || !posisi || !lokasi || !ipk) return;
+    if (!nama_mahasiswa || !nim || !prodi || !nama_perusahaan || !posisi || !lokasi || !ipk || !status_magang) return;
   
     buttons.forEach(button => {
       button.addEventListener('click', async () => {
@@ -74,6 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (semester) semester.textContent = data.mahasiswa.semester;
           if (nomor_telepon) nomor_telepon.textContent = data.mahasiswa.nomor_telepon;
           if (deskripsi) deskripsi.textContent = data.mahasiswa.deskripsi;
+          if (status_magang) {
+              status_magang.textContent = data.mahasiswa.status_magang.status;
+              status_magang.className = `text-xs font-medium px-5 py-2 rounded-2xl ${data.mahasiswa.status_magang.class}`;
+          }
   
           if (logo_perusahaan) {
             if (data.magang.logo) {

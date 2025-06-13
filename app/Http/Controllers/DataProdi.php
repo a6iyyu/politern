@@ -18,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class DataProdi extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
@@ -27,7 +27,20 @@ class DataProdi extends Controller
             $jenjang = ['D1' => 'D1', 'D2' => 'D2', 'D3' => 'D3', 'D4' => 'D4', 'S2' => 'S2', 'S3' => 'S3'];
             $status = ['AKTIF' => 'Aktif', 'NONAKTIF' => 'Nonaktif'];
             
-            $paginasi = ProgramStudi::paginate(request('per_page', 10));
+            // Build the query with filters
+            $query = ProgramStudi::query();
+            
+            // Filter by program name
+            if ($request->has('nama_prodi') && !empty($request->nama_prodi)) {
+                $query->where('nama', 'like', '%' . $request->nama_prodi . '%');
+            }
+            
+            // Filter by education level
+            if ($request->has('jenjang') && !empty($request->jenjang)) {
+                $query->where('jenjang', $request->jenjang);
+            }
+            
+            $paginasi = $query->paginate(request('per_page', 10))->withQueryString();
             $data = collect($paginasi->items())->map(function (ProgramStudi $prodi) use (&$baris) {
                 $status = match ($prodi->status) {
                     'AKTIF'     => 'bg-green-200 text-green-800',

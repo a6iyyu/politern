@@ -68,6 +68,12 @@
                             <span class="font-semibold text-[var(--primary-text)] mb-1">Nomor Telepon:</span>
                             <span id="nomor_telepon_bimbingan" class="text-[var(--secondary-text)]">-</span>
                         </div>
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-[var(--primary-text)] mb-3">Status Magang:</span>
+                            <div>
+                                <span id="status_magang_bimbingan" class="text-[var(--secondary-text)] px-3">-</span>
+                            </div>
+                        </div>
                     </div>
 
                     <h5 class="text-sm font-semibold text-[var(--primary-text)] mt-5">Keahlian</h5>
