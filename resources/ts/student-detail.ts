@@ -30,7 +30,7 @@ interface Status {
   status: string;
 }
 
-interface Modal {
+interface ModalDetail {
   mahasiswa: Student;
   pengguna: User;
   prodi: Prodi;
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
 
       if (!data.ok) return;
-      const response = (await data.json()) as Modal;
+      const response = (await data.json()) as ModalDetail;
 
       nama_pengguna.textContent = response.pengguna.nama_pengguna;
       email.textContent = response.pengguna.email;

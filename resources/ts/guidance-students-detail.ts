@@ -1,8 +1,8 @@
 interface Magang {
-    bidang_posisi: string;
-    logo: string | null;
-    nama_perusahaan_mitra: string;
-    lokasi: string;
+  bidang_posisi: string;
+  logo: string | null;
+  nama_perusahaan_mitra: string;
+  lokasi: string;
 }
   
 interface StatusMagang {
@@ -21,12 +21,12 @@ interface Mahasiswa {
     keahlian: string[];
     status_magang: StatusMagang;
 }
-  
+
 interface DetailMahasiswaBimbingan {
-    magang: Magang;
-    mahasiswa: Mahasiswa;
+  magang: Magang;
+  mahasiswa: Mahasiswa;
 }
-  
+
 document.addEventListener('DOMContentLoaded', () => {
     const buttons = document.querySelectorAll<HTMLButtonElement>('.detail[data-id]');
     const modal = document.getElementById('modal-detail-mahasiswa-bimbingan');

@@ -1,17 +1,14 @@
 @php
-    use App\Models\Mahasiswa;
     use Carbon\Carbon;
-
-    /** @var Mahasiswa $mahasiswa */
-    foreach ($mahasiswa->proyek()->get() as $proyek) {
-        $mulai = Carbon::parse($proyek->tanggal_mulai)->translatedFormat('d F Y');
-        $selesai = Carbon::parse($proyek->tanggal_selesai)->translatedFormat('d F Y');
-    }
 @endphp
 
-@if ($mahasiswa->proyek)
+@if (isset($proyek) && $proyek->id_proyek > 0)
     @foreach ($mahasiswa->proyek()->get() as $proyek)
-        <div class="flex flex-col items-center justify-between lg:flex-row">
+        @php
+            $mulai = Carbon::parse($proyek->tanggal_mulai)->translatedFormat('d F Y');
+            $selesai = Carbon::parse($proyek->tanggal_selesai)->translatedFormat('d F Y');
+        @endphp
+        <div class="flex flex-col gap-2 justify-between md:items-center md:flex-row">
             <h5 class="cursor-default text-sm font-semibold text-[var(--primary)]">
                 {{ ucfirst($proyek->nama_proyek) }}
             </h5>

@@ -41,11 +41,42 @@
                 <textarea id="deskripsi-edit" name="deskripsi" class="p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring focus:border-blue-300" placeholder="Tuliskan deskripsi aktivitas di sini..." rows="4" required></textarea>
             </fieldset>
             <div class="grid grid-cols-1 gap-4 mt-6 lg:grid-cols-2">
-                <x-input icon="fa-solid fa-user-group" label="Jumlah Kuota" type="number" name="kuota" placeholder="Masukkan jumlah kuota" :required="true" />
-                <x-select icon="fa-solid fa-money-bill" label="Gaji" name="gaji" :required="true" :options="['PAID' => 'PAID', 'UNPAID' => 'UNPAID']" />
-                <x-select icon="fa-solid fa-toggle-on" label="Status" name="status" :required="true" :options="['DIBUKA' => 'DIBUKA', 'DITUTUP' => 'DITUTUP']" />
-                <x-input icon="fa-solid fa-calendar" label="Tanggal Mulai Pendaftaran" type="date" name="tanggal_mulai_pendaftaran" :required="true" />
-                <x-input icon="fa-solid fa-calendar" label="Tanggal Selesai Pendaftaran" type="date" name="tanggal_selesai_pendaftaran" :required="true" />
+                <x-input
+                    icon="fa-solid fa-user-group"
+                    label="Jumlah Kuota"
+                    type="number"
+                    name="kuota"
+                    placeholder="Masukkan jumlah kuota"
+                    :required="true"
+                />
+                <x-select
+                    icon="fa-solid fa-money-bill"
+                    label="Gaji"
+                    name="gaji"
+                    :required="true"
+                    :options="['PAID' => 'PAID', 'UNPAID' => 'UNPAID']"
+                />
+                <x-select
+                    icon="fa-solid fa-toggle-on"
+                    label="Status"
+                    name="status"
+                    :required="true"
+                    :options="['DIBUKA' => 'DIBUKA', 'DITUTUP' => 'DITUTUP']"
+                />
+                <x-input
+                    icon="fa-solid fa-calendar"
+                    label="Tanggal Mulai Pendaftaran"
+                    type="date"
+                    name="tanggal_mulai_pendaftaran"
+                    :required="true"
+                />
+                <x-input
+                    icon="fa-solid fa-calendar"
+                    label="Tanggal Selesai Pendaftaran"
+                    type="date"
+                    name="tanggal_selesai_pendaftaran"
+                    :required="true"
+                />
             </div>
             <div class="mt-8">
                 <button type="submit" class="cursor-pointer w-full bg-[var(--primary)] text-sm text-white px-5 py-3 rounded transition-all duration-300 ease-in-out hover:bg-[var(--primary)]/80">

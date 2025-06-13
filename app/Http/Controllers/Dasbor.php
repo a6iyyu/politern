@@ -50,15 +50,15 @@ class Dasbor extends Controller
                 $total_lowongan = LowonganMagang::count();
 
                 $log_aktivitas = LogAktivitas::with('magang.pengajuan_magang.mahasiswa')
-                ->latest()
-                ->take(2)
-                ->get()
-                ->map(fn($log, $index) => [
-                    $index + 1,
-                    $log->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? '-',
-                    '<a href="' . route('admin.aktivitas-magang.detail', $log->id_log) . '" class="px-5 py-2 bg-[var(--blue-tertiary)] text-white rounded-md transition-all duration-300 ease-in-out lg:hover:bg-[var(--blue-tertiary)]/80">Lihat</a>',
-                ])
-                ->toArray();
+                    ->latest()
+                    ->take(2)
+                    ->get()
+                    ->map(fn($log, $index) => [
+                        $index + 1,
+                        $log->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? '-',
+                        '<a href="' . route('admin.aktivitas-magang.detail', $log->id_log) . '" class="px-5 py-2 bg-[var(--blue-tertiary)] text-white rounded-md transition-all duration-300 ease-in-out lg:hover:bg-[var(--blue-tertiary)]/80">Lihat</a>',
+                    ])
+                    ->toArray();
 
                 return view('pages.admin.dasbor', compact('log_aktivitas', 'nama', 'nip', 'total_mahasiswa', 'total_dosen', 'total_perusahaan_mitra', 'total_lowongan'));
             })(),
@@ -76,10 +76,8 @@ class Dasbor extends Controller
                 $nama_prodi = $prodi->nama;
                 $semester = $mahasiswa->semester;
                 $status = 'Belum Magang';
-                $latestPengajuan = $mahasiswa->pengajuan_magang->sortByDesc('created_at')->first();
-if ($latestPengajuan && $latestPengajuan->magang) {
-    $status = $latestPengajuan->magang->status;
-}
+                $pengajuan_terakhir = $mahasiswa->pengajuan_magang->sortByDesc('created_at')->first();
+                if ($pengajuan_terakhir && $pengajuan_terakhir->magang) $status = $pengajuan_terakhir->magang->status;
                 $rekomendasi = (new RekomendasiMagang())->index($mahasiswa->id_mahasiswa);
                 return view('pages.student.dasbor', compact('ipk', 'jenjang', 'log_aktivitas', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status', 'rekomendasi', 'id_mahasiswa'));
             })(),

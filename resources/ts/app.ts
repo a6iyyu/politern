@@ -12,6 +12,7 @@ import './chart';
 import './company-detail';
 import './edit-application';
 import './edit-company';
+import './edit-experience';
 import './edit-intern';
 import './edit-lecturer';
 import './edit-log-activity';

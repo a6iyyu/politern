@@ -28,7 +28,7 @@
                     :options="$bidang ?? ['Tidak ada data.']"
                     :required="true"
                 />
-                <div class="md:col-span-2">
+                <fieldset class="md:col-span-2">
                     <label for="keahlian-select" class="block text-sm font-medium text-gray-700 mb-1">
                         Pilih Keahlian <span class="text-red-500">*</span>
                     </label>
@@ -48,7 +48,7 @@
                     </div>
                     {{-- Masukan tersembunyi untuk mengirimkan array keahlian saat dikirim. --}}
                     <div id="input-keahlian"></div>
-                </div>
+                </fieldset>
                 <x-select
                     label="Periode"
                     name="id_periode"
@@ -89,7 +89,9 @@
                     placeholder="Tuliskan deskripsi aktivitas di sini..."
                     rows="4"
                     required
-                >{{ old('deskripsi') }}</textarea>
+                >
+                    {{ old('deskripsi') }}
+                </textarea>
             </fieldset>
             <div class="grid grid-cols-1 gap-4 mt-6 lg:grid-cols-2">
                 <x-input icon="fa-solid fa-user-group" label="Jumlah Kuota" type="number" name="kuota" placeholder="Masukkan jumlah kuota" :required="true" />

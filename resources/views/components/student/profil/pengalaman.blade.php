@@ -1,28 +1,29 @@
 @php
-    use App\Models\Mahasiswa;
     use Carbon\Carbon;
-
-    /** @var Mahasiswa $mahasiswa */
-    foreach ($mahasiswa->pengalaman()->get() as $pengalaman) {
-        $mulai = Carbon::parse($pengalaman->tanggal_mulai)->translatedFormat('d F Y');
-        $selesai = Carbon::parse($pengalaman->tanggal_selesai)->translatedFormat('d F Y');
-    }
 @endphp
 
-@if ($mahasiswa->pengalaman)
+@if (isset($pengalaman) && $pengalaman->id_pengalaman > 0)
     @foreach ($mahasiswa->pengalaman()->get() as $pengalaman)
-        <div class="flex flex-col items-center justify-between lg:flex-row">
+        @php
+            $mulai = Carbon::parse($pengalaman->tanggal_mulai)->translatedFormat('d F Y');
+            $selesai = Carbon::parse($pengalaman->tanggal_selesai)->translatedFormat('d F Y');
+        @endphp
+        <div class="flex flex-col gap-2 justify-between md:items-center md:flex-row">
             <h5 class="cursor-default font-semibold text-[var(--primary)]">
                 {{ ucfirst($pengalaman->jenis_pengalaman) }}
             </h5>
             <span class="flex gap-3">
-                <button class="edit cursor-pointer w-fit text-xs bg-[var(--green-tertiary)] text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out lg:hover:bg-[#66c2a3]">
+                <button data-id="{{ $pengalaman->id_pengalaman }}" class="edit cursor-pointer w-fit text-xs bg-[var(--yellow-tertiary)] text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out lg:hover:bg-[var(--yellow-tertiary)]/80">
                     Edit
                 </button>
-                <form action="" method="POST">
+                <form action="{{ route('mahasiswa.profil.pengalaman.hapus', ['id' => $pengalaman->id_pengalaman]) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button class="delete cursor-pointer w-fit text-xs bg-red-500 text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out hover:bg-red-600">
+                    <button
+                        type="submit"
+                        onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')"
+                        class="delete cursor-pointer w-fit text-xs bg-red-500 text-[var(--background)] font-medium px-5 py-2.5 rounded transition-all duration-300 ease-in-out hover:bg-red-600"
+                    >
                         Hapus
                     </button>
                 </form>
@@ -41,8 +42,8 @@
                 <h5 class="cursor-default font-semibold text-[var(--secondary-text)]">
                     Bukti Pendukung
                 </h5>
-                <a href="{{ $pengalaman->bukti_pendukung }}" class="underline transition-all duration-300 ease-in-out text-[var(--primary)] lg:hover:text-[var(--primary)]/50">
-                    {{ $pengalaman->bukti_pendukung }}
+                <a href="{{ asset("storage/{$pengalaman->bukti_pendukung}") }}" target="_blank" class="underline transition-all duration-300 ease-in-out text-[var(--primary)] lg:hover:text-[var(--primary)]/50">
+                    Lihat Bukti
                 </a>
             </span>
         </div>
