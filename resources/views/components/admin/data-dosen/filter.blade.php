@@ -1,7 +1,7 @@
 <form action="" method="GET" class="mb-7 grid grid-cols-1 lg:grid-cols-3 gap-4">
     @csrf
     @method('GET')
-    <x-search
+    <livewire:search
         icon="fa-solid fa-magnifying-glass"
         label="Cari nama dosen"
         name="nama"
