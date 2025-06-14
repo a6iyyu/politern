@@ -2,7 +2,7 @@
     <div class="flex items-center justify-center min-h-screen px-4">
         <figure class="h-[90vh] w-9/10 rounded-xl bg-white p-7 shadow-lg border border-[var(--stroke)] overflow-y-auto md:w-3/4 lg:w-1/2">
             <span class="flex items-center justify-between mb-3">
-                <h2 class="text-sm font-semibold text-[var(--primary)] lg:text-base">Detail Pengajuan</h2>
+                <h2 class="text-sm font-semibold text-[var(--primary)] lg:text-base">Detail Pengajuan Magang</h2>
                 <button id="close-detail" aria-label="Tutup Detail" class="text-lg text-[var(--primary)]">
                     <i class="fa-solid fa-xmark cursor-pointer"></i>
                 </button>
@@ -68,29 +68,21 @@
                             <dt class="font-semibold text-[var(--primary-text)] mb-1">Status:</dt>
                             <dd id="status" class="text-[var(--secondary-text)]">-</dd>
                         </dl>
+                        <dl class="flex flex-col">
+                            <dt class="font-semibold text-[var(--primary-text)] mb-1">Deskripsi:</dt>
+                            <div class="mt-2 px-6 py-4 bg-[#f3f3f3] rounded-md">
+                                <h5 id="deskripsi" class="text-sm text-[var(--primary-text)] font-medium leading-relaxed"></h5>
+                            </div>
+                        </dl>
+                        <dl class="flex flex-col">
+                            <dt class="font-semibold text-[var(--primary-text)] mb-1">Daftar Riwayat Hidup:
+                                <div class="mt-2 px-6 py-4 border border-[var(--stroke)] rounded-md">
+                                    <h5 id="file-downloads" class="space-y-1 text-sm text-blue-700 underline">-</h5>
+                                </div>
+                            </dt>
+                        </dl>
                     </div>
                 </section>
-                <span class="mb-6">
-                    <h3 id="deskripsi-heading" class="text-sm font-semibold text-[var(--primary-text)] mt-5">
-                        Deskripsi:
-                    </h3>
-                    <div class="mt-2 px-6 py-4 bg-[#f3f3f3] rounded-md">
-                        <h5 id="deskripsi" class="text-sm text-[var(--primary-text)] font-medium leading-relaxed"></h5>
-                    </div>
-                </span>
-                <span>
-                    <h3 id="cv-heading" class="text-sm font-semibold text-[var(--primary-text)] mt-5">Daftar Riwayat
-                        Hidup:
-                    </h3>
-                    <div class="mt-2 px-6 py-4 border border-[var(--stroke)] rounded-md">
-                        <h5 id="file-downloads" class="space-y-1 text-sm text-blue-700 underline">-</h5>
-                    </div>
-                </span>
-                <span>
-                    <h3 id="keahlian-heading" class="text-sm font-semibold text-[var(--primary-text)] mt-5">Keahlian
-                    </h3>
-                    <div class="keahlian-container mt-3" id="keahlian_list"></div>
-                </span>
                 <section class="mb-6">
                     <div class="px-2 grid grid-cols-2 gap-y-4 gap-x-14 mt-5 text-sm">
                         <dl class="flex flex-col">
@@ -109,7 +101,11 @@
                             <dt class="font-semibold text-[var(--primary-text)] mb-1">Preferensi jenis lokasi</dt>
                             <dd id="jenis_lokasi" class="text-[var(--secondary-text)]">-</dd>
                         </dl>
-                    </div>
+                        <figcaption class="mb-4">
+                            <h3 class="font-semibold text-sm text-gray-800 mb-2">Keahlian</h3>
+                            <div id="nama_keahlian" class="flex flex-wrap gap-2 text-xs"></div>
+                        </figcaption>
+                    </div>  
                 </section>
             </figcaption>
         </figure>
