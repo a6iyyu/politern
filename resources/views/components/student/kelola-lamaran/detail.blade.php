@@ -91,6 +91,26 @@
                     </h3>
                     <div class="keahlian-container mt-3" id="keahlian_list"></div>
                 </span>
+                <section class="mb-6">
+                    <div class="px-2 grid grid-cols-2 gap-y-4 gap-x-14 mt-5 text-sm">
+                        <dl class="flex flex-col">
+                            <dt class="font-semibold text-[var(--primary-text)] mb-1">Preferensi lokasi magang</dt>
+                            <dd id="nama_lokasi" class="text-[var(--secondary-text)]">-</dd>
+                        </dl>
+                        <dl class="flex flex-col">
+                            <dt class="font-semibold text-[var(--primary-text)] mb-1">Preferensi bidang keahlian</dt>
+                            <dd id="bidang" class="text-[var(--secondary-text)]">-</dd>
+                        </dl>
+                        <dl class="flex flex-col">
+                            <dt class="font-semibold text-[var(--primary-text)] mb-1">Preferensi gaji</dt>
+                            <dd id="gaji" class="text-[var(--secondary-text)]">-</dd>
+                        </dl>
+                        <dl class="flex flex-col">
+                            <dt class="font-semibold text-[var(--primary-text)] mb-1">Preferensi jenis lokasi</dt>
+                            <dd id="jenis_lokasi" class="text-[var(--secondary-text)]">-</dd>
+                        </dl>
+                    </div>
+                </section>
             </figcaption>
         </figure>
     </div>

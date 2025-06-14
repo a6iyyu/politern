@@ -21,9 +21,14 @@ interface FileDownload {
   url: string;
 }
 
+interface lokasi {
+  nama_lokasi: string;
+}
+
 interface Modal {
   pengajuan: Pengajuan;
   mahasiswa: Mahasiswa;
+  lokasi: lokasi;
   file_downloads: FileDownload[];
 }
 
@@ -46,8 +51,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const ipk = document.getElementById('ipk');
   const nomor_telepon = document.getElementById('nomor_telepon');
   const status = document.getElementById('status');
+  const nama_lokasi = document.getElementById('nama_lokasi');
   const file_downloads = document.getElementById('file-downloads');
-  if (bidang_posisi == null || logo == null || nama_perusahaan == null || lokasi == null || nim == null || nama_lengkap == null || angkatan == null || semester == null || program_studi == null || ipk == null || nomor_telepon == null || status == null || file_downloads == null) return;
+  if (bidang_posisi == null || logo == null || nama_perusahaan == null || lokasi == null || nim == null || nama_lengkap == null || angkatan == null || semester == null || program_studi == null || ipk == null || nomor_telepon == null || status == null || file_downloads == null
+      || nama_lokasi == null) return;
 
   buttons.forEach((button) => {
     button.addEventListener('click', async () => {
@@ -77,6 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       ipk.textContent = response.mahasiswa.ipk.toFixed(2);
       nomor_telepon.textContent = response.mahasiswa.nomor_telepon;
       status.textContent = response.mahasiswa.status;
+      nama_lokasi.textContent = response.lokasi.nama_lokasi;
       file_downloads.innerHTML = '';
 
       response.file_downloads.forEach((file) => {
