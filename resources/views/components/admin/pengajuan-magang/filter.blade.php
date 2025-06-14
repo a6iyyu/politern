@@ -1,4 +1,4 @@
-<form action="" method="GET" class="mb-7 pt-2 grid grid-cols-1 gap-4 lg:grid-cols-4">
+<form action="" method="GET" class="mb-7 grid grid-cols-1 lg:grid-cols-5 gap-4 w-auto">
     @csrf
     @method('GET')
     <x-input
@@ -9,23 +9,28 @@
         type="text"
         :required="false"
     />
-        <x-select
+    <x-select
         label="Program Studi"
         name="program_studi"
-        placeholder="-- Semua Program Studi --"
-        :options="$program_studi->pluck('nama', 'id_prodi')->toArray() ?? 'Tidak ada data.'"
+        :options="['' => 'Semua Program Studi'] + ($program_studi->pluck('nama', 'id_prodi')->toArray() ?? 'Tidak ada data.')"
         :selected="request('program_studi')"
         :required="false"
     />
-        <x-select
+    <x-select
         label="Perusahaan"
         name="perusahaan"
-        placeholder="-- Semua Perusahaan --"
-        :options="$perusahaan->pluck('nama', 'id_perusahaan_mitra')->toArray()"
+        :options="['' => 'Semua Perusahaan'] + ($perusahaan->pluck('nama', 'id_perusahaan_mitra')->toArray() ?? 'Tidak ada data.')"
         :selected="request('perusahaan', '')"
         :required="false"
     />
-    <div class="flex items-end justify-start">
+    <x-select
+        label="Periode"
+        name="periode"
+        :options="['' => 'Semua Periode'] + ($periodes->pluck('nama_periode', 'id_periode')->toArray() ?? 'Tidak ada data.')"
+        :selected="request('periode', '')"
+        :required="false"
+    />
+    <div class="flex items-end">
         <button type="submit" class="cursor-pointer bg-[var(--secondary)] border border-[var(--secondary)] text-white px-12 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:py-2.5 lg:hover:bg-[#ff86cb] w-full sm:w-auto">
             Cari
         </button>

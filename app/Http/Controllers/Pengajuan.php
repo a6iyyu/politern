@@ -196,12 +196,44 @@ class Pengajuan extends Controller
         $program_studi = ProgramStudi::all();
         $perusahaan = Perusahaan::all();
         $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
+        $periodes = PeriodeMagang::orderBy('created_at', 'desc')->get();
         $program_studi_yang_dipilih = $request->program_studi;
         $total_pengajuan_magang = PengajuanMagang::count();
         $dosen_pembimbing = Dosen::pluck('nama', 'id_dosen')->toArray();
 
-        /** @var LengthAwarePaginator $paginasi */
-        $paginasi = PengajuanMagang::with('mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi')->paginate(request('per_page', default: 10));
+        $query = PengajuanMagang::with(['mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi', 'lowongan.periode_magang']);
+
+        if ($request->filled('nama_lengkap')) {
+            $query->whereHas('mahasiswa', function($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
+            });
+        }
+
+        if ($request->filled('program_studi')) {
+            $query->whereHas('mahasiswa', function($q) use ($request) {
+                $q->where('id_prodi', $request->program_studi);
+            });
+        }
+
+        if ($request->filled('perusahaan')) {
+            $query->whereHas('lowongan', function($q) use ($request) {
+                $q->where('id_perusahaan_mitra', $request->perusahaan);
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('periode')) {
+            $query->whereHas('lowongan', function($q) use ($request) {
+                $q->where('id_periode', $request->periode);
+            });
+        }
+
+        $paginasi = $query->orderBy('created_at', 'desc')
+                         ->paginate(request('per_page', 10))
+                         ->withQueryString();
         $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan): array {
             $keterangan = match ($pengajuan->status) {
                 'DISETUJUI' => 'bg-green-200 text-green-800',
@@ -226,7 +258,7 @@ class Pengajuan extends Controller
             ];
         })->toArray();
 
-        return view('pages.admin.pengajuan-magang', compact('data', 'paginasi', 'program_studi', 'perusahaan', 'periode_magang', 'program_studi_yang_dipilih', 'total_pengajuan_magang', 'dosen_pembimbing'));
+        return view('pages.admin.pengajuan-magang', compact('data', 'paginasi', 'program_studi', 'perusahaan', 'periode_magang', 'periodes', 'program_studi_yang_dipilih', 'total_pengajuan_magang', 'dosen_pembimbing'));
     }
 
     private function student(): View

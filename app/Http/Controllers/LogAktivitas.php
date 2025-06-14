@@ -25,16 +25,45 @@ use Illuminate\View\View;
 
 class LogAktivitas extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $pengguna = Auth::user()->tipe;
-        $log_aktivitas = LogAktivitasModel::with(['magang.pengajuan_magang.mahasiswa', 'magang.pengajuan_magang.mahasiswa.program_studi', 'magang.pengajuan_magang.lowongan.perusahaan'])->get();
+
+        $query = LogAktivitasModel::with([
+            'magang.pengajuan_magang.mahasiswa', 
+            'magang.pengajuan_magang.mahasiswa.program_studi', 
+            'magang.pengajuan_magang.lowongan.perusahaan'
+        ]);
+
+        if ($request->filled('nama_lengkap')) {
+            $query->whereHas('magang.pengajuan_magang.mahasiswa', function($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
+            });
+        }
+        
+        if ($request->filled('perusahaan') && $request->perusahaan !== '') {
+            $query->whereHas('magang.pengajuan_magang.lowongan', function($q) use ($request) {
+                $q->where('id_perusahaan_mitra', $request->perusahaan);
+            });
+        }
+        
+        if ($request->filled('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+        
+        $log_aktivitas = $query->get();
         $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
-        $status_aktivitas = LogAktivitasModel::pluck('status')->unique()->toArray();
+        $status_aktivitas = ['' => 'Semua Status'] + LogAktivitasModel::pluck('status', 'status')->unique()->toArray();
 
         switch ($pengguna) {
             case 'ADMIN':
-                $perusahaan = $log_aktivitas->pluck('magang.pengajuan_magang.lowongan.perusahaan')->unique('id_perusahaan_mitra')->mapWithKeys(fn($p) => [$p['id_perusahaan_mitra'] => $p['nama']])->toArray();
+                $perusahaan = ['' => 'Semua Perusahaan'] + $log_aktivitas
+                    ->pluck('magang.pengajuan_magang.lowongan.perusahaan')
+                    ->filter()
+                    ->unique('id_perusahaan_mitra')
+                    ->mapWithKeys(fn($p) => [$p['id_perusahaan_mitra'] => $p['nama']])
+                    ->toArray();
+                    
                 return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'periode_magang', 'perusahaan', 'status_aktivitas'));
             case 'DOSEN':
                 $perusahaan = $log_aktivitas->pluck('magang.pengajuan_magang.lowongan.perusahaan')

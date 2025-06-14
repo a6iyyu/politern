@@ -23,15 +23,23 @@ class DataPerusahaan extends Controller
     {
         $pengguna = Auth::user()->tipe;
         if ($pengguna === "ADMIN") {
-            $baris = 1;
-            $total_perusahaan = Perusahaan::count();
-            $perusahaan = Perusahaan::with('lokasi')->get();
+            $query = Perusahaan::with('lokasi');
+
+            if (request()->has('nama_perusahaan') && !empty(request('nama_perusahaan'))) {
+                $query->where('nama', 'like', '%' . request('nama_perusahaan') . '%');
+            }
+            if (request()->has('lokasi') && !empty(request('lokasi'))) {
+                $query->where('id_lokasi', request('lokasi'));
+            }
+
+            $total_perusahaan = $query->count();
+            $perusahaan = $query->get();
             $lokasi = Lokasi::pluck('nama_lokasi', 'id_lokasi')->toArray();
             $lokasi_filter = Lokasi::whereHas('perusahaan')
                 ->pluck('nama_lokasi', 'id_lokasi')
                 ->toArray();
 
-            $paginasi = Perusahaan::paginate(request('per_page', 10));
+            $paginasi = $query->paginate(request('per_page', 10))->withQueryString();
             $data = collect($paginasi->items())->map(function (Perusahaan $perusahaan) {
                 $status = match ($perusahaan->status) {
                     'AKTIF'         => 'bg-green-200 text-green-800',

@@ -1,4 +1,4 @@
-<form action="" method="GET" class="mb-7 grid grid-cols-1 lg:grid-cols-3 gap-4">
+<form action="" method="GET" class="mb-7 grid grid-cols-1 lg:grid-cols-4 gap-4 w-auto">
     @csrf
     @method('GET')
     <livewire:search
