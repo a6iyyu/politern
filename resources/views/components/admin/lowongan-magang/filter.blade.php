@@ -1,5 +1,4 @@
-<form action="" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-4">
-    @method('GET')
+<form action="{{ route('admin.lowongan-magang') }}" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-4">
     <x-select
         id="posisi"
         label="Posisi"

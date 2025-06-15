@@ -1,5 +1,4 @@
-<form action="" method="GET" class="mb-7 grid grid-cols-1 lg:grid-cols-4 gap-4 w-auto">
-    @method('GET')
+<form action="{{ route('dosen.log-aktivitas') }}" method="GET" class="mb-7 grid grid-cols-1 lg:grid-cols-4 gap-4 w-auto">
     <x-input
         icon="fa-solid fa-magnifying-glass"
         label="Cari Mahasiswa"

@@ -106,7 +106,7 @@ class Dasbor extends Controller
 
                 /** @var SupportCollection<int, Mahasiswa> $mahasiswa_bimbingan */
                 $data = $mahasiswa_bimbingan->map(function (Mahasiswa $mhs): array {
-                    $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status) {
+                    $status = match ($mhs->pengajuan_magang()->with('magang')->get()->sortByDesc('created_at')->first()?->magang?->status) {
                         'AKTIF'   => 'bg-green-200 text-green-800',
                         'SELESAI' => 'bg-yellow-200 text-yellow-800',
                         default   => 'bg-gray-200 text-gray-800',

@@ -1,6 +1,4 @@
 <form action="{{ route('admin.data-prodi') }}" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-5">
-    @csrf
-    @method('GET')
     <div class="lg:col-span-2">
         <x-input
             id="nama_prodi"

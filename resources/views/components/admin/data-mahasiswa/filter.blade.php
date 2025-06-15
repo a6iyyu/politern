@@ -1,6 +1,4 @@
 <form action="{{ route('admin.data-mahasiswa') }}" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-4">
-    @csrf
-    @method('GET')
     <x-input
         id="nama_lengkap"
         icon="fa-solid fa-magnifying-glass"
