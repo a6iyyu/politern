@@ -222,7 +222,7 @@ class DataMahasiswa extends Controller
                 'nama_lengkap'  => $mahasiswa->nama_lengkap,
                 'nim'           => $mahasiswa->nim,
                 'semester'      => $mahasiswa->semester,
-                'angkatan'      => $angkatan,
+                'angkatan'      => $mahasiswa->angkatan,
                 'ipk'           => $mahasiswa->ipk,
                 'nama_prodi'    => $mahasiswa->program_studi?->id_prodi ?? '-',
                 'status'        => $mahasiswa->status,

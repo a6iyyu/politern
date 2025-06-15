@@ -1,6 +1,6 @@
 <section class="modal modal-tambah-mahasiswa fixed inset-0 z-50 hidden items-center justify-center bg-black/20 backdrop-blur-[1px]" aria-modal="true" role="dialog">
     <div class="flex items-center justify-center min-h-screen px-4">
-        <form action="{{ route('admin.data-mahasiswa.tambah') }}" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white py-7 px-10 shadow-lg border border-[var(--stroke)]">
+        <form action="{{ route('admin.data-mahasiswa.tambah') }}" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-2xl rounded-xl bg-white py-7 px-10 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('POST')
             <span class="mb-3 flex items-center justify-between">
@@ -56,14 +56,6 @@
                     label="NIM"
                     name="nim"
                     placeholder="NIM"
-                    type="number"
-                    :required="true"
-                />
-                <x-input
-                    icon="fa-solid fa-id-card"
-                    label="IPK"
-                    name="ipk"
-                    placeholder="IPK"
                     type="number"
                     :required="true"
                 />

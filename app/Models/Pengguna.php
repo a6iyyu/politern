@@ -12,7 +12,7 @@ class Pengguna extends Authenticable
 
     protected $table = 'pengguna';
     protected $primaryKey = 'id_pengguna';
-    protected $fillable = ['nama_pengguna', 'email', 'kata_sandi', 'tipe'];
+    protected $fillable = ['nama_pengguna', 'email', 'kata_sandi', 'tipe', 'reset_token', 'reset_token_created_at'];
 
     public function admin(): HasOne
     {

@@ -16,21 +16,93 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordMail;
 
 class Autentikasi extends Controller
 {
     public function lupa_kata_sandi(): View
-    {
-        try {
-            return view('pages.auth.lupa-kata-sandi');
-        } catch (ModelNotFoundException $exception) {
-            report($exception);
-            abort(404, "Data pengguna tidak ditemukan.");
-        } catch (Exception $exception) {
-            report($exception);
-            abort(500, "Terjadi kesalahan pada server.");
-        }
+{
+    try {
+        return view('pages.auth.lupa-kata-sandi');
+    } catch (ModelNotFoundException $exception) {
+        report($exception);
+        abort(404, "Halaman tidak ditemukan.");
+    } catch (Exception $exception) {
+        report($exception);
+        abort(500, "Terjadi kesalahan pada server.");
     }
+}
+
+public function kirim_link_reset(Request $request): RedirectResponse
+{
+    try {
+        $request->validate([
+            'email' => 'required|email|exists:pengguna,email',
+        ], [
+            'email.required' => 'Email wajib diisi!',
+            'email.email' => 'Format email tidak valid!',
+            'email.exists' => 'Email tidak terdaftar di sistem kami.',
+        ]);
+
+        $pengguna = Pengguna::where('email', $request->email)->first();
+        
+        if (!$pengguna) {
+            return back()->withErrors(['email' => 'Email tidak terdaftar di sistem kami.'])->withInput();
+        }
+
+        $token = Str::random(60);
+        
+        // Save token to database
+        $pengguna->reset_token = $token;
+        $pengguna->reset_token_created_at = now();
+        $saved = $pengguna->save();
+
+        if (!$saved) {
+            Log::error('Gagal menyimpan token reset password untuk pengguna: ' . $pengguna->email);
+            return back()->withErrors([
+                'error' => 'Gagal menyimpan token reset password. Silakan coba lagi.'
+            ]);
+        }
+
+        // Log the email being sent
+        Log::info('Mengirim email reset password ke: ' . $pengguna->email);
+
+        try {
+            // Kirim email
+            Mail::to($pengguna->email)->send(new ResetPasswordMail($pengguna, $token));
+            Log::info('Email reset password berhasil dikirim ke: ' . $pengguna->email);
+            
+            return back()->with('status', 'Link reset password telah dikirim ke email Anda!');
+            
+        } catch (\Exception $mailException) {
+            Log::error('Gagal mengirim email reset password: ' . $mailException->getMessage());
+            Log::error($mailException);
+            
+            // Check if it's an authentication error
+            if (str_contains($mailException->getMessage(), 'Authentication')) {
+                return back()->withErrors([
+                    'error' => 'Gagal mengirim email. Silakan periksa konfigurasi email server.'
+                ])->withInput();
+            }
+            
+            return back()->withErrors([
+                'error' => 'Terjadi kesalahan saat mengirim email. Silakan coba beberapa saat lagi.'
+            ])->withInput();
+        }
+
+    } catch (ValidationException $validation) {
+        return back()->withErrors($validation->errors())->withInput();
+    } catch (\Exception $exception) {
+        Log::error('Error dalam kirim_link_reset: ' . $exception->getMessage());
+        Log::error($exception);
+        
+        return back()->withErrors([
+            'error' => 'Terjadi kesalahan sistem. Silakan coba lagi nanti.'
+        ])->withInput();
+    }
+}
 
     /**
      * @param Request $request
@@ -105,6 +177,96 @@ class Autentikasi extends Controller
      *
      * Fungsi ini bertujuan untuk melakukan proses keluar dari akun pengguna.
      */
+    public function tampilResetPassword($token)
+    {
+        try {
+            $pengguna = Pengguna::where('reset_token', $token)->first();
+            
+            $viewData = [
+                'token' => $token,
+                'email' => $pengguna->email ?? '',
+            ];
+
+            if (!$pengguna) {
+                Log::warning('Token tidak ditemukan: ' . $token);
+                $viewData['error'] = 'Link reset password tidak valid.';
+                return view('pages.auth.reset-password', $viewData);
+            }
+
+            // Cek apakah token masih berlaku (60 menit)
+            $tokenCreatedAt = \Carbon\Carbon::parse($pengguna->reset_token_created_at);
+            $expiryTime = $tokenCreatedAt->addMinutes(60);
+            
+            if (now()->gt($expiryTime)) {
+                Log::warning('Token sudah kadaluarsa untuk email: ' . $pengguna->email);
+                $viewData['error'] = 'Link reset password sudah kadaluarsa. Silakan request link yang baru.';
+                return view('pages.auth.reset-password', $viewData);
+            }
+
+            Log::info('Menampilkan form reset password untuk: ' . $pengguna->email);
+            
+            return view('pages.auth.reset-password', $viewData);
+
+        } catch (\Exception $e) {
+            Log::error('Error in tampilResetPassword: ' . $e->getMessage());
+            Log::error($e);
+            
+            return redirect()->route('lupa-kata-sandi')
+                ->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        try {
+            $request->validate([
+                'token' => 'required',
+                'email' => 'required|email|exists:pengguna,email',
+                'password' => 'required|min:6|confirmed',
+            ]);
+
+            // Cari pengguna berdasarkan email dan token
+            $pengguna = Pengguna::where('email', $request->email)
+                ->where('reset_token', $request->token)
+                ->first();
+
+            if (!$pengguna) {
+                Log::warning('Token tidak valid untuk email: ' . $request->email);
+                return back()->withErrors([
+                    'error' => 'Token tidak valid.'
+                ])->withInput();
+            }
+
+            // Cek apakah token masih berlaku (60 menit)
+            $tokenCreatedAt = \Carbon\Carbon::parse($pengguna->reset_token_created_at);
+            $expiryTime = $tokenCreatedAt->addMinutes(60);
+            
+            if (now()->gt($expiryTime)) {
+                Log::warning('Token sudah kadaluarsa untuk email: ' . $pengguna->email);
+                return back()->withErrors([
+                    'error' => 'Link reset password sudah kadaluarsa. Silakan request link yang baru.'
+                ])->withInput();
+            }
+
+            // Update password
+            $pengguna->update([
+                'kata_sandi' => Crypt::encrypt($request->password),
+                'reset_token' => null,
+                'reset_token_created_at' => null
+            ]);
+
+            return redirect()->route('masuk')
+                ->with('status', 'Password berhasil direset. Silakan masuk dengan password baru Anda.');
+
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error in resetPassword: ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
+        }
+    }
+
     public function keluar(Request $request): RedirectResponse
     {
         Auth::logout();

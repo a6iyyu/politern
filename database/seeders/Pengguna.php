@@ -25,7 +25,7 @@ class Pengguna extends Seeder
             [
                 'id_pengguna'   => 2,
                 'nama_pengguna' => 'ayleen',
-                'email'         => 'ayleen@gmail.com',
+                'email'         => 'qisthyayleen@gmail.com',
                 'kata_sandi'    => Crypt::encrypt('123'),
                 'tipe'          => 'MAHASISWA',
                 'created_at'    => Carbon::now(),
@@ -34,7 +34,7 @@ class Pengguna extends Seeder
             [
                 'id_pengguna'   => 3,
                 'nama_pengguna' => 'fais',
-                'email'         => 'faisrestu@gmail.com',
+                'email'         => 'restu.prtma05@gmail.com',
                 'kata_sandi'    => Crypt::encrypt('123'),
                 'tipe'          => 'MAHASISWA',
                 'created_at'    => Carbon::now(),

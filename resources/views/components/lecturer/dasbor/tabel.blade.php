@@ -18,7 +18,7 @@
     </ul>
 @endif
 
-<x-table :headers="['Mahasiswa', 'NIM', 'Perusahaan', 'Posisi', 'Status']" :sortable="['Mahasiswa', 'Status']" :rows="$data" />
+<x-table :headers="['Mahasiswa', 'Perusahaan', 'Posisi', 'Status']" :sortable="['Mahasiswa', 'Status']" :rows="$data" />
 <h5 class="mt-4 cursor-default text-xs font-light text-[var(--primary-text)]">
     Menampilkan {{ count($data) ?? 0 }} dari {{ $total_bimbingan ?? 'N/A' }} mahasiswa bimbingan
 </h5>

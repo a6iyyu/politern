@@ -14,13 +14,18 @@ use App\Http\Controllers\Pengajuan;
 use App\Http\Controllers\PengalamanMahasiswa;
 use App\Http\Controllers\Profil;
 use App\Http\Controllers\ProyekMahasiswa;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
+
 Route::middleware('guest')->group(function () {
+    Route::get('/reset-password/{token}', [Autentikasi::class, 'tampilResetPassword'])->name('password.reset');
+    Route::post('/reset-password', [Autentikasi::class, 'resetPassword'])->name('password.update');
     Route::get('/beranda', fn() => view('pages.unregistered.index'))->name('beranda')->withoutMiddleware('auth');
-    Route::get('/lupa-kata-sandi', fn() => view('pages.auth.lupa-kata-sandi'))->name('lupa-kata-sandi')->withoutMiddleware('auth');
+    Route::get('/lupa-kata-sandi', [Autentikasi::class, 'lupa_kata_sandi'])->name('lupa-kata-sandi')->withoutMiddleware('auth');
+    Route::post('/lupa-kata-sandi', [Autentikasi::class, 'kirim_link_reset'])->name('kirim-link-reset')->withoutMiddleware('auth');
     Route::get('/masuk', fn() => view('pages.auth.masuk'))->name('masuk')->withoutMiddleware('auth');
     Route::post('/masuk', [Autentikasi::class, 'masuk'])->name('login')->withoutMiddleware('auth');
 });

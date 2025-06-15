@@ -128,7 +128,6 @@ class Dasbor extends Controller
                         '<div class="flex items-center gap-2">
                             <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . $mhs->nama_lengkap . '
                         </div>',
-                        $mhs->nim,
                         $perusahaan?->nama ?? '-',
                         $lowongan?->bidang->nama_bidang ?? '-',
                         '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($magang?->status ?? 'BELUM MAGANG') . '</div>',
