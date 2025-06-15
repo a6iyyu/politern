@@ -1,7 +1,3 @@
-@php
-    use Carbon\Carbon;
-@endphp
-
 <section class="flex items-center justify-between py-2">
     <h5 class="cursor-default mt-4 font-medium text-sm">
         {{ $jumlah_lowongan ?? "N/A" }} lowongan
@@ -25,7 +21,7 @@
                     <img src="{{ asset($item->perusahaan->logo) ?? 'N/A' }}" alt="{{ $item->perusahaan->nama ?? 'N/A' }}" class="w-7 object-cover md:w-10" />
                     <span>
                         <h4 class="text-[#5955b2] font-semibold">
-                            {{ $item->bidang->first()->nama_bidang ?? 'N/A' }}
+                            {{ $item->bidang->nama_bidang ?? 'N/A' }}
                         </h4>
                         <h5 class="text-[#585858] text-sm font-medium">
                             {{ $item->perusahaan->nama ?? 'N/A' }}
