@@ -37,3 +37,4 @@ import './submission-detail';
 import './guidance-students-detail';
 import './toggle-profile-photo-menu';
 import './lecturer-log-activity-detail';
+import './admin-log-activity-detail';

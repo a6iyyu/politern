@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 interface LecturerLogDetail {
   minggu: number;
@@ -40,23 +40,26 @@ document.addEventListener('DOMContentLoaded', () => {
     foto_url_debug: document.getElementById('foto-url-debug') as HTMLElement,
   };
 
-  // Handle detail buttons
+  // Handle detail buttons - gunakan class selector yang spesifik untuk dosen
   document.addEventListener('click', async (e) => {
     const target = e.target as HTMLElement;
-    const button = target.closest('button[data-log-id]') as HTMLButtonElement;
+    const button = target.closest('button.dosen-detail-btn[data-log-id]') as HTMLButtonElement;
     
     if (!button) return;
     
     const id = button.getAttribute('data-log-id');
-    if (!id) return;
+    const context = button.getAttribute('data-context');
+    
+    if (!id || context !== 'dosen') return;
 
-    console.log('Fetching log activity detail for ID:', id);
+    console.log('Fetching lecturer log activity detail for ID:', id);
 
     try {
+      // Updated URL path to match the route
       const response = await axios.get<LecturerLogDetail>(`/dosen/log-aktivitas/${id}/detail`);
       const data = response.data;
 
-      console.log('Response data:', data);
+      console.log('Lecturer response data:', data);
 
       // Populate basic fields
       fields.minggu.textContent = String(data.minggu);
@@ -92,13 +95,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Handle activity photo
-      console.log('Activity photo URL from API:', data.foto);
+      console.log('Lecturer activity photo URL:', data.foto);
       
       if (data.foto && data.foto !== null && data.foto.trim() !== '') {
-        console.log('Setting activity photo:', data.foto);
+        console.log('Setting lecturer activity photo:', data.foto);
         
-        // Show debug URL
-        fields.foto_url_debug.textContent = data.foto;
+        // Show debug URL if debug element exists
+        if (fields.foto_url_debug) {
+          fields.foto_url_debug.textContent = data.foto;
+        }
         
         // Set images
         fields.foto_preview.src = data.foto;
@@ -106,21 +111,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Handle image load success
         fields.foto_preview.onload = () => {
-          console.log('Activity photo loaded successfully');
+          console.log('Lecturer activity photo loaded successfully');
           fields.foto_container.classList.remove('hidden');
           fields.no_foto.classList.add('hidden');
         };
         
         // Handle image load error
         fields.foto_preview.onerror = () => {
-          console.error('Failed to load activity photo:', data.foto);
+          console.error('Failed to load lecturer activity photo:', data.foto);
           fields.foto_container.classList.add('hidden');
           fields.no_foto.classList.remove('hidden');
           fields.no_foto.textContent = `Gagal memuat foto: ${data.foto}`;
         };
         
       } else {
-        console.log('No activity photo available');
+        console.log('No lecturer activity photo available');
         fields.foto_container.classList.add('hidden');
         fields.no_foto.classList.remove('hidden');
         fields.no_foto.textContent = 'Tidak ada bukti foto';
@@ -130,21 +135,51 @@ document.addEventListener('DOMContentLoaded', () => {
       modal.classList.remove('hidden');
       modal.classList.add('flex');
       
-    } catch (err) {
-      console.error('Error fetching log activity:', err);
+    } catch (error: unknown) {
+      // Proper error handling dengan type checking
+      let errorMessage = 'Unknown error occurred';
+      let errorDetails = '';
+
+      if (error instanceof AxiosError) {
+        errorMessage = `HTTP ${error.response?.status}: ${error.message}`;
+        errorDetails = error.response?.data?.message || error.response?.data?.error || 'No additional details';
+        
+        console.error('Axios Error fetching lecturer log activity:', {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          message: error.message,
+          url: error.config?.url
+        });
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+        console.error('Error fetching lecturer log activity:', error.message);
+      } else {
+        console.error('Unknown error fetching lecturer log activity:', error);
+      }
+
+      console.error('Error details:', errorDetails);
       
-      // Show error state
-      Object.keys(fields).forEach(key => {
-        const field = fields[key as keyof typeof fields];
-        if (field && field.textContent !== undefined) {
-          field.textContent = 'Error loading data';
-        }
-      });
+      // Show error state in modal
+      fields.minggu.textContent = '-';
+      fields.judul.textContent = 'Error Loading Data';
+      fields.nama_mahasiswa.textContent = 'Error';
+      fields.nim.textContent = 'Error';
+      fields.status.textContent = 'Error';
+      fields.deskripsi.textContent = `Failed to load data: ${errorMessage}`;
+      fields.komentar.textContent = errorDetails || 'No error details available';
+      fields.konfirmasi_pada.textContent = '-';
+      fields.foto_profil.src = '/images/default-avatar.png';
+      
+      // Handle status badge for error state
+      const statusBadge = fields.status_badge;
+      statusBadge.className = 'px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-800';
       
       fields.foto_container.classList.add('hidden');
       fields.no_foto.classList.remove('hidden');
-      fields.no_foto.textContent = 'Gagal memuat data aktivitas';
+      fields.no_foto.textContent = 'Error loading activity photo';
       
+      // Show modal even in error state so user can see what went wrong
       modal.classList.remove('hidden');
       modal.classList.add('flex');
     }

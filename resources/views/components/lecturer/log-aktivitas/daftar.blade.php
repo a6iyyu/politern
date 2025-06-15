@@ -1,7 +1,6 @@
-
 <section class="flex items-center justify-between mb-5 pt-2">
     <h2 class="cursor-default text-base font-semibold text-[var(--primary-text)]">
-        Daftar Aktivitas Magang
+        Daftar Aktivitas Magang Mahasiswa Bimbingan
     </h2>
 </section>
 @if (session('success'))
@@ -19,17 +18,18 @@
 @if (!empty($log_aktivitas))
     @foreach ($log_aktivitas as $log)
         <x-log
+            confirmation_date="{{ $log->tanggal_konfirmasi?->format('d/m/Y') }}"
+            profile_photo="{{ asset($log->magang->pengajuan_magang->mahasiswa->foto_profil ?? 'images/default-avatar.png') }}"
             :comment="($log->status === 'DITOLAK' || $log->status === 'DISETUJUI') ? ($log->komentar ?? null) : null"
-            :confirmation_date="$log->tanggal_evaluasi ? $log->tanggal_evaluasi->format('d/m/Y') : null"
-            :description="$log->deskripsi ?? 'N/A'"
-            :id="$log->id_log ?? 'N/A'"
+            :description="$log->deskripsi"
+            :id="$log->id_log"
             :name="$log->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? 'N/A'"
             :nim="$log->magang->pengajuan_magang->mahasiswa->nim ?? 'N/A'"
-            :photo="$log->foto ?? 'Tidak ada foto yang tersedia.'"
-            :profile_photo="$log->magang->pengajuan_magang->mahasiswa->foto_profil ?? null"
-            :status="$log->status ?? 'N/A'"
-            :title="$log->judul ?? 'N/A'"
+            :photo="$log->foto"
+            :status="$log->status"
+            :title="$log->judul"
             :week="$log->minggu ?? 'N/A'"
+            context="dosen"
         />
     @endforeach
 @else

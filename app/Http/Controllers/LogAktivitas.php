@@ -314,7 +314,7 @@ class LogAktivitas extends Controller
      * @param string $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function detailForLecturer(string $id)
+    public function detailForLecturer(string $id): JsonResponse
     {
         try {
             $dosen = Dosen::where('id_pengguna', Auth::id())->firstOrFail();
@@ -331,24 +331,52 @@ class LogAktivitas extends Controller
 
             $mahasiswa = $log->magang->pengajuan_magang->mahasiswa;
 
-            // Build proper foto URLs
             $fotoUrl = null;
             if ($log->foto) {
-                // Jika foto disimpan sebagai "experience/aktivitas.png"
-                $fotoUrl = asset($log->foto);
+                $fotoPath = $log->foto;
+
+                if (str_starts_with($fotoPath, 'storage/app/public/')) {
+                    $relativePath = substr($fotoPath, 19);
+                    $fotoUrl = asset('storage/' . $relativePath);
+                } elseif (str_starts_with($fotoPath, 'app/public/')) {
+                    $relativePath = substr($fotoPath, 11);
+                    $fotoUrl = asset('storage/' . $relativePath);
+                } elseif (str_starts_with($fotoPath, 'public/')) {
+                    $relativePath = substr($fotoPath, 7);
+                    $fotoUrl = asset('storage/' . $relativePath);
+                } elseif (str_starts_with($fotoPath, '/storage/')) {
+                    $fotoUrl = asset($fotoPath);
+                } else {
+                    $fotoUrl = asset( $fotoPath);
+                }
             }
 
-            $fotoProfilUrl = asset('images/default-avatar.png'); // default
+            $fotoProfilUrl = asset('images/default-avatar.png');
             if ($mahasiswa->pengguna->foto_profil) {
-                $fotoProfilUrl = asset($mahasiswa->pengguna->foto_profil);
+                $profilePath = $mahasiswa->pengguna->foto_profil;
+                
+                if (str_starts_with($profilePath, 'storage/app/public/')) {
+                    $relativePath = substr($profilePath, 19);
+                    $fotoProfilUrl = asset('storage/' . $relativePath);
+                } elseif (str_starts_with($profilePath, 'app/public/')) {
+                    $relativePath = substr($profilePath, 11);
+                    $fotoProfilUrl = asset('storage/' . $relativePath);
+                } elseif (str_starts_with($profilePath, 'public/')) {
+                    $relativePath = substr($profilePath, 7);
+                    $fotoProfilUrl = asset('storage/' . $relativePath);
+                } elseif (str_starts_with($profilePath, '/storage/')) {
+                    $fotoProfilUrl = asset($profilePath);
+                } else {
+                    $fotoProfilUrl = asset('storage/' . $profilePath);
+                }
             }
 
             $data = [
                 'minggu' => $log->minggu,
                 'judul' => $log->judul,
                 'deskripsi' => $log->deskripsi,
-                'foto' => $fotoUrl, // URL untuk bukti foto aktivitas
-                'foto_profil' => $fotoProfilUrl, // URL untuk foto profil mahasiswa
+                'foto' => $fotoUrl,
+                'foto_profil' => $fotoProfilUrl,
                 'nama_mahasiswa' => $mahasiswa->nama_lengkap ?? '-',
                 'nim' => $mahasiswa->nim ?? '-',
                 'status' => $log->status,
@@ -356,8 +384,7 @@ class LogAktivitas extends Controller
                 'dikonfirmasi_pada' => $log->dikonfirmasi_pada ? $log->dikonfirmasi_pada->format('d F Y H:i') : '-',
             ];
 
-            // Debug log untuk melihat URL yang dihasilkan
-            Log::info('Photo URLs generated:', [
+            Log::info('Lecturer - Photo URLs generated:', [
                 'foto_aktivitas' => $fotoUrl,
                 'foto_profil' => $fotoProfilUrl,
                 'raw_foto' => $log->foto,
@@ -366,12 +393,92 @@ class LogAktivitas extends Controller
 
             return response()->json($data);
         } catch (ModelNotFoundException $e) {
+            Log::error('Lecturer detail not found: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Log aktivitas tidak ditemukan atau Anda tidak memiliki akses',
                 'error' => $e->getMessage()
             ], 404);
         } catch (Exception $e) {
-            Log::error('Error fetching log activity detail: ' . $e->getMessage());
+            Log::error('Error fetching lecturer log activity detail: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengambil detail log aktivitas',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Show log activity detail for admin
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function detailForAdmin(string $id): JsonResponse
+    {
+        try {
+            $log = LogAktivitasModel::with([
+                'magang.pengajuan_magang.mahasiswa.pengguna',
+                'magang.pengajuan_magang.lowongan.perusahaan',
+                'magang.pengajuan_magang.lowongan.bidang',
+                'magang.dosen_pembimbing'
+            ])->findOrFail($id);
+
+            $mahasiswa = $log->magang->pengajuan_magang->mahasiswa;
+
+            $fotoUrl = null;
+            if ($log->foto) {
+                $fotoPath = $log->foto;
+                
+                if (str_starts_with($fotoPath, '/storage/')) {
+                    $fotoUrl = asset($fotoPath);
+                } elseif (str_starts_with($fotoPath, 'storage/')) {
+                    $fotoUrl = asset($fotoPath);
+                } else {
+                    $fotoUrl = asset('storage/' . $fotoPath);
+                }
+            }
+
+            $fotoProfilUrl = asset('images/default-avatar.png');
+            if ($mahasiswa->pengguna->foto_profil) {
+                $profilePath = $mahasiswa->pengguna->foto_profil;
+                
+                if (str_starts_with($profilePath, '/storage/')) {
+                    $fotoProfilUrl = asset($profilePath);
+                } elseif (str_starts_with($profilePath, 'storage/')) {
+                    $fotoProfilUrl = asset($profilePath);
+                } else {
+                    $fotoProfilUrl = asset('storage/' . $profilePath);
+                }
+            }
+
+            $data = [
+                'minggu' => $log->minggu,
+                'judul' => $log->judul,
+                'deskripsi' => $log->deskripsi,
+                'foto' => $fotoUrl,
+                'foto_profil' => $fotoProfilUrl,
+                'nama_mahasiswa' => $mahasiswa->nama_lengkap ?? '-',
+                'nim' => $mahasiswa->nim ?? '-',
+                'status' => $log->status,
+                'komentar' => $log->komentar ?? '-',
+                'dikonfirmasi_pada' => $log->dikonfirmasi_pada ? $log->dikonfirmasi_pada->format('d F Y H:i') : '-',
+            ];
+
+            Log::info('Admin - Data fetched successfully:', [
+                'id' => $id,
+                'foto_aktivitas' => $fotoUrl,
+                'foto_profil' => $fotoProfilUrl,
+            ]);
+
+            return response()->json($data);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Admin detail not found: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Log aktivitas tidak ditemukan',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            Log::error('Error fetching admin log activity detail: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Terjadi kesalahan saat mengambil detail log aktivitas',
                 'error' => $e->getMessage()

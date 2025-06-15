@@ -2,7 +2,6 @@
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="w-full max-w-4xl max-h-[90vh] flex flex-col bg-white rounded-xl shadow-lg border border-[var(--stroke)] overflow-hidden">
 
-            <!-- Header -->
             <div class="px-7 pt-7 pb-2 flex-shrink-0">
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="cursor-default text-lg font-semibold text-[var(--primary)]">
@@ -13,9 +12,7 @@
                 <hr class="border border-[var(--primary)]" />
             </div>
 
-            <!-- Content -->
             <div class="flex-1 overflow-y-auto">
-                <!-- Header Info Section -->
                 <div class="px-7 py-4 border-b border-[var(--stroke)]">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-5">
@@ -30,7 +27,6 @@
                     </div>
                 </div>
 
-                <!-- Student Info Section with Profile Photo -->
                 <div class="px-7 py-5 bg-gray-50 border-b border-[var(--stroke)]">
                     <h4 class="text-base font-semibold text-[var(--primary)] mb-3">Informasi Mahasiswa</h4>
                     <div class="flex items-start gap-4">
@@ -38,7 +34,7 @@
                         <div class="flex-shrink-0">
                             <img id="foto_profil" src="" alt="Foto Profil" class="w-16 h-16 rounded-full object-cover border-2 border-[var(--stroke)]">
                         </div>
-                        <!-- Student Details -->
+
                         <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="flex flex-col">
                                 <span class="text-sm text-[var(--secondary-text)] font-medium">Nama Lengkap</span>
@@ -52,11 +48,9 @@
                     </div>
                 </div>
 
-                <!-- Activity Details Section -->
                 <div class="px-7 py-5">
                     <h4 class="text-base font-semibold text-[var(--primary)] mb-4">Detail Aktivitas</h4>
-                    
-                    <!-- Description -->
+
                     <div class="mb-6">
                         <span class="text-sm text-[var(--secondary-text)] font-medium">Deskripsi Aktivitas</span>
                         <div class="mt-2 p-4 bg-gray-50 rounded-lg border border-[var(--stroke)]">
@@ -64,7 +58,6 @@
                         </div>
                     </div>
 
-                    <!-- Activity Photo Evidence -->
                     <div class="mb-6">
                         <span class="text-sm text-[var(--secondary-text)] font-medium">Bukti Foto Aktivitas</span>
                         <div class="mt-2">
@@ -79,15 +72,10 @@
                                         Lihat dalam layar penuh
                                     </button>
                                 </div>
-                                <!-- Debug info -->
-                                <div class="mt-2 text-xs text-gray-500">
-                                    <span>URL: </span><span id="foto-url-debug">-</span>
-                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Comments Section -->
                     <div class="mb-6">
                         <span class="text-sm text-[var(--secondary-text)] font-medium">Komentar Dosen</span>
                         <div class="mt-2 p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -95,7 +83,6 @@
                         </div>
                     </div>
 
-                    <!-- Confirmation Info -->
                     <div class="flex justify-between items-center pt-4 border-t border-[var(--stroke)]">
                         <span class="text-sm text-[var(--secondary-text)]">
                             Dikonfirmasi pada: <span id="konfirmasi_pada" class="font-medium text-[var(--primary-text)]">-</span>
@@ -107,7 +94,6 @@
     </div>
 </section>
 
-<!-- Fullscreen Photo Modal -->
 <section id="foto-fullscreen-modal" class="fixed inset-0 z-60 hidden items-center justify-center bg-black/80 backdrop-blur-sm" aria-modal="true" role="dialog">
     <div class="relative max-w-screen-lg max-h-screen p-4">
         <button id="close-fullscreen" class="absolute top-2 right-2 text-white text-2xl hover:text-gray-300 z-10">
