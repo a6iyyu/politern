@@ -31,6 +31,10 @@
                             <span class="font-medium text-[var(--primary-text)]">Lokasi:</span>
                             <span id="lokasi_bimbingan" class="text-[var(--secondary-text)]">-</span>
                         </div>
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="font-medium text-[var(--primary-text)]">Periode Magang:</span>
+                            <span id="periode_bimbingan" class="text-[var(--secondary-text)]">-</span>
+                        </div>
                     </div>
                 </div>
 

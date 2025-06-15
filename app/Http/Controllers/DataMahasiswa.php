@@ -39,7 +39,10 @@ class DataMahasiswa extends Controller
         $mahasiswa_selesai_magang = Magang::where('status', 'SELESAI')->count();
         $program_studi = ProgramStudi::all();
         $periode_magang = PeriodeMagang::select('id_periode', 'nama_periode')->with('lowongan')->get();
-        $status_aktivitas = array_unique(array_merge(Magang::pluck('status')->toArray(), ['BELUM MAGANG']));
+        $status_aktivitas = ['' => 'Semua Status'] + array_combine(
+            $statuses = array_unique(array_merge(Magang::pluck('status')->toArray(), ['BELUM MAGANG'])),
+            $statuses
+        );
 
         if ($pengguna === "ADMIN") {
             $angkatan = PeriodeMagang::select('tanggal_mulai')
@@ -96,12 +99,31 @@ class DataMahasiswa extends Controller
 
             return view('pages.admin.data-mahasiswa', compact('angkatan', 'data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi', 'status_aktivitas'));
         } else if ($pengguna === "DOSEN") {
-            /** @var Builder $mahasiswa_bimbingan */
-            $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
-            $baris = 1;
+            $query = $this->mahasiswa_bimbingan();
+            
+            if ($request->filled('nama_lengkap')) {
+                $query->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
+            }
+            
+            if ($request->filled('periode_magang')) {
+                $query->whereHas('pengajuan_magang.lowongan', function($q) use ($request) {
+                    $q->where('id_periode', $request->periode_magang);
+                });
+            }
+            
+            if ($request->filled('status') && $request->status !== '') {
+                if ($request->status === 'BELUM MAGANG') {
+                    $query->where('status', 'BELUM MAGANG');
+                } else {
+                    $query->whereHas('pengajuan_magang.magang', function($q) use ($request) {
+                        $q->where('status', $request->status);
+                    });
+                }
+            }
 
+            $baris = 1;
             /** @var LengthAwarePaginator $paginasi */
-            $paginasi = $mahasiswa_bimbingan->paginate(request('per_page', default: 10));
+            $paginasi = $query->paginate(request('per_page', 10))->withQueryString();
             $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
                 $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status) {
                     'AKTIF'   => 'bg-green-200 text-green-800',
@@ -128,7 +150,15 @@ class DataMahasiswa extends Controller
                     view('components.lecturer.data-mahasiswa.aksi', compact('mhs'))->render(),
                 ];
             })->toArray();
-            return view('pages.lecturer.data-mahasiswa', compact('data', 'paginasi', 'program_studi', 'periode_magang', 'status_aktivitas'));
+            $periode_options = ['' => 'Semua Periode Magang'] + $periode_magang->pluck('nama_periode', 'id_periode')->toArray();
+            
+            return view('pages.lecturer.data-mahasiswa', [
+                'data' => $data,
+                'paginasi' => $paginasi,
+                'program_studi' => $program_studi,
+                'periode_magang' => $periode_options,
+                'status_aktivitas' => $status_aktivitas
+            ]);
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
@@ -365,6 +395,7 @@ class DataMahasiswa extends Controller
             'pengajuan_magang',
             'pengajuan_magang.lowongan.perusahaan.lokasi',
             'pengajuan_magang.lowongan.bidang',
+            'pengajuan_magang.lowongan.periode_magang',
             'pengajuan_magang.mahasiswa',
             'pengajuan_magang.mahasiswa.program_studi',
             'pengajuan_magang.mahasiswa.keahlian',
@@ -393,6 +424,7 @@ class DataMahasiswa extends Controller
                 'logo' => $perusahaan?->logo,
                 'nama_perusahaan_mitra' => $perusahaan?->nama ?? '-',
                 'lokasi' => $perusahaan?->lokasi?->nama_lokasi ?? '-',
+                'periode_magang' => $lowongan?->periode_magang?->nama_periode ?? '-',
             ],
             'mahasiswa' => [
                 'nim' => $magang->pengajuan_magang->mahasiswa->nim,

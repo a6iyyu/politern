@@ -3,6 +3,7 @@ interface Magang {
   logo: string | null;
   nama_perusahaan_mitra: string;
   lokasi: string;
+  periode_magang: string;
 }
   
 interface StatusMagang {
@@ -40,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nama_perusahaan = document.getElementById('nama_perusahaan_bimbingan');
     const posisi = document.getElementById('posisi_bimbingan');
     const lokasi = document.getElementById('lokasi_bimbingan');
+    const periode_magang = document.getElementById('periode_bimbingan');
     const ipk = document.getElementById('ipk_bimbingan');
     const angkatan = document.getElementById('angkatan_bimbingan');
     const semester = document.getElementById('semester_bimbingan');
@@ -50,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const daftar_keahlian = document.getElementById('keahlian_list_bimbingan');
     const status_magang = document.getElementById('status_magang_bimbingan');
   
-    if (!nama_mahasiswa || !nim || !prodi || !nama_perusahaan || !posisi || !lokasi || !ipk || !status_magang) return;
+    if (!nama_mahasiswa || !nim || !prodi || !nama_perusahaan || !posisi || !lokasi || !ipk || !periode_magang || !status_magang) return;
   
     buttons.forEach(button => {
       button.addEventListener('click', async () => {
@@ -76,7 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
           nama_perusahaan.textContent = data.magang.nama_perusahaan_mitra;
           posisi.textContent = data.magang.bidang_posisi;
           lokasi.textContent = data.magang.lokasi;
-  
+          periode_magang.textContent = data.magang.periode_magang;
+
           if (angkatan) angkatan.textContent = data.mahasiswa.angkatan;
           if (semester) semester.textContent = data.mahasiswa.semester;
           if (nomor_telepon) nomor_telepon.textContent = data.mahasiswa.nomor_telepon;

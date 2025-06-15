@@ -41,9 +41,9 @@ class Log extends Component
         $this->statusStr = $status;
 
         $this->info = [
-            'DISETUJUI'    => 'border border-green-500 text-green-500 hover:bg-green-500 hover:text-white',
-            'DITOLAK'      => 'border border-red-500 text-red-500 hover:bg-red-500 hover:text-white',
-            'MENUNGGU'     => 'border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white',
+            'DISETUJUI'    => 'bg-green-200 text-green-800',
+            'DITOLAK'      => 'bg-red-200 text-red-800',
+            'MENUNGGU'     => 'bg-yellow-200 text-yellow-800',
         ];
     }
 

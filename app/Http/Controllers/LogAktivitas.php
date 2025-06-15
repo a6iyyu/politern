@@ -77,24 +77,40 @@ class LogAktivitas extends Controller
                     ]);
                 }
 
-                $filtered_activities = $log_aktivitas->filter(function($item) use ($dosen) {
-                    return $item->magang && 
-                           $item->magang->pengajuan_magang && 
-                           $item->magang->pengajuan_magang->magang && 
-                           $item->magang->pengajuan_magang->magang->id_dosen_pembimbing == $dosen->id_dosen;
+                $query->whereHas('magang', function($q) use ($dosen) {
+                    $q->where('id_dosen_pembimbing', $dosen->id_dosen);
                 });
+
+                if ($request->filled('nama_lengkap')) {
+                    $query->whereHas('magang.pengajuan_magang.mahasiswa', function($q) use ($request) {
+                        $q->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
+                    });
+                }
                 
-                $perusahaan = $filtered_activities->pluck('magang.pengajuan_magang.lowongan.perusahaan')
+                if ($request->filled('perusahaan') && $request->perusahaan !== '') {
+                    $query->whereHas('magang.pengajuan_magang.lowongan', function($q) use ($request) {
+                        $q->where('id_perusahaan_mitra', $request->perusahaan);
+                    });
+                }
+                
+                if ($request->filled('status') && $request->status !== '') {
+                    $query->where('status', $request->status);
+                }
+
+                $log_aktivitas = $query->get();
+                
+                $perusahaan = ['' => 'Semua Perusahaan'] + $log_aktivitas
+                    ->pluck('magang.pengajuan_magang.lowongan.perusahaan')
                     ->filter()
                     ->unique('id_perusahaan_mitra')
                     ->mapWithKeys(fn($p) => [$p['id_perusahaan_mitra'] => $p['nama']])
                     ->toArray();
                     
                 return view('pages.lecturer.log-aktivitas', [
-                    'log_aktivitas' => $filtered_activities,
+                    'log_aktivitas' => $log_aktivitas,
                     'perusahaan' => $perusahaan,
                     'periode_magang' => $periode_magang,
-                    'status_aktivitas' => $status_aktivitas
+                    'status_aktivitas' => ['' => 'Semua Status'] + $status_aktivitas
                 ]);
             case 'MAHASISWA':
                 $status = LogAktivitasModel::pluck('status')->unique()->toArray();
