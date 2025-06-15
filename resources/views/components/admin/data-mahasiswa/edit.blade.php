@@ -10,41 +10,6 @@
                 <i class="close fa-solid fa-xmark cursor-pointer text-[var(--primary)]"></i>
             </span>
             <hr class="mb-6 border border-[var(--primary)]" />
-            <h5 class="cursor-default my-6 px-5 py-3 rounded-md text-sm bg-[var(--secondary)] text-white">
-                Data Pengguna
-            </h5>
-            <span class="mb-3 mt-6 flex items-center justify-between gap-4">
-                <x-input
-                    icon="fa-solid fa-user-group"
-                    label="Nama Pengguna"
-                    name="nama_pengguna"
-                    type="text"
-                    placeholder="Nama Pengguna"
-                    :required="true"
-                    :value="$mahasiswa->pengguna->nama_pengguna ?? ''"
-                />
-                <x-input
-                    icon="fa-solid fa-key"
-                    label="Kata Sandi"
-                    type="password"
-                    name="kata_sandi"
-                    placeholder="Masukkan Kata Sandi"
-                    :required="true"
-                    :value="$mahasiswa->pengguna->kata_sandi ?? ''"
-                />
-            </span>
-            <x-input
-                icon="fa-solid fa-envelope"
-                label="Email"
-                name="email"
-                type="email"
-                placeholder="Email"
-                :required="true"
-                :value="$mahasiswa->pengguna->email ?? ''"
-            />
-            <h5 class="cursor-default my-6 px-5 py-3 rounded-md text-sm bg-[var(--secondary)] text-white">
-                Data Mahasiswa
-            </h5>
             <x-input
                 icon="fa-solid fa-user"
                 label="Nama Lengkap"

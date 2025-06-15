@@ -10,12 +10,6 @@ interface Student {
   status: string;
 }
 
-interface User {
-  nama_pengguna: string;
-  email: string;
-  kata_sandi: string;
-}
-
 interface Prodi {
   nama: string;
 }
@@ -40,9 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = modal.querySelector('#form-edit-mahasiswa') as HTMLFormElement;
   if (!close || !form) return;
 
-  const nama_pengguna = form.querySelector<HTMLInputElement>("input[name='nama_pengguna']");
-  const kata_sandi = form.querySelector<HTMLInputElement>("input[name='kata_sandi']");
-  const email = form.querySelector<HTMLInputElement>("input[name='email']");
   const nim = form.querySelector<HTMLInputElement>("input[name='nim']");
   const nama_lengkap = form.querySelector<HTMLInputElement>("input[name='nama_lengkap']");
   const angkatan = form.querySelector<HTMLSelectElement>("select[name='angkatan']");
@@ -80,9 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       modal.classList.remove('hidden');
 
-      if (nama_pengguna) nama_pengguna.value = data.pengguna.nama_pengguna;
-      if (email) email.value = data.pengguna.email;
-      if (kata_sandi) kata_sandi.value = data.pengguna.kata_sandi;
       if (nim) nim.value = data.mahasiswa.nim;
       if (nama_lengkap) nama_lengkap.value = data.mahasiswa.nama_lengkap;
       if (angkatan) angkatan.value = data.mahasiswa.angkatan;

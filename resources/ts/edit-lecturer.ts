@@ -4,12 +4,6 @@ interface Lecturer {
   nama: string;
 }
 
-interface User {
-  nama_pengguna: string;
-  email: string;
-  kata_sandi: string;
-}
-
 interface Modal {
   dosen: Lecturer;
   pengguna: User;
@@ -24,9 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = modal.querySelector('form') as HTMLFormElement;
   if (!close || !form) return;
 
-  const nama_pengguna = form.querySelector<HTMLInputElement>("input[name='nama_pengguna']");
-  const kata_sandi = form.querySelector<HTMLInputElement>("input[name='kata_sandi']");
-  const email = form.querySelector<HTMLInputElement>("input[name='email']");
   const nama = form.querySelector<HTMLInputElement>("input[name='nama']");
   const nip = form.querySelector<HTMLInputElement>("input[name='nip']");
   const nomor_telepon = form.querySelector<HTMLInputElement>("input[name='nomor_telepon']");
@@ -58,9 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       modal.classList.remove('hidden');
 
-      if (nama_pengguna) nama_pengguna.value = data.pengguna.nama_pengguna;
-      if (kata_sandi) kata_sandi.value = data.pengguna.kata_sandi;
-      if (email) email.value = data.pengguna.email;
       if (nama) nama.value = data.dosen.nama;
       if (nip) nip.value = data.dosen.nip;
       if (nomor_telepon) nomor_telepon.value = data.dosen.nomor_telepon;

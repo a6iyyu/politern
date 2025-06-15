@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       nip.textContent = response.dosen.nip;
       nama_dosen.textContent = response.dosen.nama;
       nomor_telepon.textContent = response.dosen.nomor_telepon;
-      jumlah_bimbingan.textContent = response.dosen.jumlah_bimbingan;
+      jumlah_bimbingan.textContent = response.dosen.jumlah_bimbingan || '0';
     });
   });
 

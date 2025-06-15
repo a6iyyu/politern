@@ -14,7 +14,7 @@ class DosenPembimbing extends Seeder
         DB::table('dosen_pembimbing')->insert([
             'id_dosen_pembimbing' => 1,
             'id_dosen'            => 1,
-            'jumlah_bimbingan'    => 5,
+            'jumlah_bimbingan'    => 4,
             'created_at'          => now(),
             'updated_at'          => now(),
         ]);

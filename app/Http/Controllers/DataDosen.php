@@ -42,15 +42,17 @@ class DataDosen extends Controller
 
             /** @var LengthAwarePaginator $paginasi */
             $paginasi = $query->paginate(request('per_page', 10))->withQueryString();
-            $data = collect($paginasi->items())->map(fn(Dosen $dosen) => [
-                $baris++,
-                '<div class="flex items-center gap-2">
-                    <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($dosen->nama) . '
-                </div>',
-                $dosen->nip,
-                $dosen->nomor_telepon,
-                view('components.admin.data-dosen.aksi', compact('dosen'))->render(),
-            ])->toArray();
+            $data = collect($paginasi->items())->map(function(Dosen $dosen) use (&$baris) {
+                return [
+                    $baris++,
+                    '<div class="flex items-center gap-2">
+                        <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($dosen->nama) . '
+                    </div>',
+                    $dosen->nip,
+                    $dosen->nomor_telepon,
+                    view('components.admin.data-dosen.aksi', compact('dosen'))->render(),
+                ];
+            })->toArray();
             return view('pages.admin.data-dosen', compact('data', 'paginasi', 'total_dosen', 'total_dosen_pembimbing'));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
@@ -93,14 +95,29 @@ class DataDosen extends Controller
 
     public function show($id): array
     {
-        $dosen = Dosen::findOrFail($id);
+        $dosen = Dosen::with('pembimbing')->findOrFail($id);
         $pengguna = $dosen->pengguna;
-        return compact('dosen', 'pengguna');
+        
+        $dosen->load('pembimbing');
+        
+        return [
+            'dosen' => [
+                'nama' => $dosen->nama,
+                'nip' => $dosen->nip,
+                'nomor_telepon' => $dosen->nomor_telepon,
+                'jumlah_bimbingan' => $dosen->pembimbing ? $dosen->pembimbing->jumlah_bimbingan : 0,
+            ],
+            'pengguna' => [
+                'nama_pengguna' => $pengguna->nama_pengguna,
+                'email' => $pengguna->email,
+            ],
+            'jumlah_bimbingan' => $dosen->pembimbing ? $dosen->pembimbing->jumlah_bimbingan : 0
+        ];
     }
 
     public function edit($id): JsonResponse
     {
-        $dosen = Dosen::with('pengguna')->findOrFail($id);
+        $dosen = Dosen::findOrFail($id);
 
         return response()->json([
             'dosen' => [
@@ -108,24 +125,14 @@ class DataDosen extends Controller
                 'nip'           => $dosen->nip,
                 'nomor_telepon' => $dosen->nomor_telepon,
             ],
-            'pengguna' => [
-                'nama_pengguna' => $dosen->pengguna->nama_pengguna,
-                'email'         => $dosen->pengguna->email,
-                'kata_sandi'    => Crypt::decrypt($dosen->pengguna->kata_sandi),
-            ]
+
         ]);
     }
 
     public function update(Request $request, $id): RedirectResponse
     {
         try {
-            $dosen = Dosen::with('pengguna')->findOrFail($id);
-
-            $pengguna = $dosen->pengguna;
-            $pengguna->nama_pengguna = $request->nama_pengguna;
-            $pengguna->email = $request->email;
-            if ($request->filled('kata_sandi')) $pengguna->kata_sandi = Crypt::encrypt($request->kata_sandi);
-            $pengguna->save();
+            $dosen = Dosen::findOrFail($id);
 
             $dosen->nama = $request->nama;
             $dosen->nip = $request->nip;

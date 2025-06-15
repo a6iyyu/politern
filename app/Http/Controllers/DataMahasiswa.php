@@ -215,7 +215,7 @@ class DataMahasiswa extends Controller
             ->mapWithKeys(fn($tahun) => [$tahun => $tahun])
             ->toArray();
 
-        $mahasiswa = Mahasiswa::with(['pengguna', 'program_studi'])->findOrFail($id);
+        $mahasiswa = Mahasiswa::with(['program_studi'])->findOrFail($id);
 
         return response()->json([
             'mahasiswa' => [
@@ -227,24 +227,13 @@ class DataMahasiswa extends Controller
                 'nama_prodi'    => $mahasiswa->program_studi?->id_prodi ?? '-',
                 'status'        => $mahasiswa->status,
             ],
-            'pengguna' => [
-                'nama_pengguna' => $mahasiswa->pengguna->nama_pengguna,
-                'email'         => $mahasiswa->pengguna->email,
-                'kata_sandi'    => Crypt::decrypt($mahasiswa->pengguna->kata_sandi),
-            ],
         ]);
     }
 
     public function update(Request $request, $id): RedirectResponse
     {
         try {
-            $mahasiswa = Mahasiswa::with('pengguna')->findOrFail($id);
-
-            $pengguna = $mahasiswa->pengguna;
-            $pengguna->nama_pengguna = $request->nama_pengguna;
-            $pengguna->email = $request->email;
-            if ($request->filled('kata_sandi')) $pengguna->kata_sandi = Crypt::encrypt($request->kata_sandi);
-            $pengguna->save();
+            $mahasiswa = Mahasiswa::findOrFail($id);
 
             $mahasiswa->nama_lengkap = $request->nama_lengkap;
             $mahasiswa->nim = $request->nim;
