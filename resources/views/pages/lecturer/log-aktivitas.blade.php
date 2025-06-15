@@ -16,3 +16,7 @@
         @include('components.lecturer.log-aktivitas.detail')
     </main> 
 @endsection
+
+@push('scripts')
+<script src="{{ mix('js/lecturer-log-activity-detail.js') }}"></script>
+@endpush

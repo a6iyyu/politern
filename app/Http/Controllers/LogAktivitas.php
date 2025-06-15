@@ -307,4 +307,75 @@ class LogAktivitas extends Controller
             return response()->json(['error' => 'Terjadi kesalahan pada server.'], 500);
         }
     }
+    
+    /**
+     * Show log activity detail for lecturer
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function detailForLecturer(string $id)
+    {
+        try {
+            $dosen = Dosen::where('id_pengguna', Auth::id())->firstOrFail();
+
+            $log = LogAktivitasModel::with([
+                'magang.pengajuan_magang.mahasiswa.pengguna',
+                'magang.pengajuan_magang.lowongan.perusahaan',
+                'magang.pengajuan_magang.lowongan.bidang'
+            ])
+                ->whereHas('magang', function ($q) use ($dosen) {
+                    $q->where('id_dosen_pembimbing', $dosen->id_dosen);
+                })
+                ->findOrFail($id);
+
+            $mahasiswa = $log->magang->pengajuan_magang->mahasiswa;
+
+            // Build proper foto URLs
+            $fotoUrl = null;
+            if ($log->foto) {
+                // Jika foto disimpan sebagai "experience/aktivitas.png"
+                $fotoUrl = asset($log->foto);
+            }
+
+            $fotoProfilUrl = asset('images/default-avatar.png'); // default
+            if ($mahasiswa->pengguna->foto_profil) {
+                $fotoProfilUrl = asset($mahasiswa->pengguna->foto_profil);
+            }
+
+            $data = [
+                'minggu' => $log->minggu,
+                'judul' => $log->judul,
+                'deskripsi' => $log->deskripsi,
+                'foto' => $fotoUrl, // URL untuk bukti foto aktivitas
+                'foto_profil' => $fotoProfilUrl, // URL untuk foto profil mahasiswa
+                'nama_mahasiswa' => $mahasiswa->nama_lengkap ?? '-',
+                'nim' => $mahasiswa->nim ?? '-',
+                'status' => $log->status,
+                'komentar' => $log->komentar ?? '-',
+                'dikonfirmasi_pada' => $log->dikonfirmasi_pada ? $log->dikonfirmasi_pada->format('d F Y H:i') : '-',
+            ];
+
+            // Debug log untuk melihat URL yang dihasilkan
+            Log::info('Photo URLs generated:', [
+                'foto_aktivitas' => $fotoUrl,
+                'foto_profil' => $fotoProfilUrl,
+                'raw_foto' => $log->foto,
+                'raw_foto_profil' => $mahasiswa->pengguna->foto_profil,
+            ]);
+
+            return response()->json($data);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Log aktivitas tidak ditemukan atau Anda tidak memiliki akses',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            Log::error('Error fetching log activity detail: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengambil detail log aktivitas',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
