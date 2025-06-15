@@ -10,8 +10,8 @@
             </span>
             <hr class="border border-[var(--primary)]" />
             <article class="flex-1 overflow-y-auto py-5 mb-5">
-                <section aria-labelledby="info-pengajuan-heading" class="mb-6">
-                    <h3 id="info-pengajuan-heading" class="mb-6 px-5 py-3 rounded-md text-sm bg-[var(--secondary)] text-white">
+                <section class="mb-6">
+                    <h3 class="mb-6 px-5 py-3 rounded-md text-sm bg-[var(--secondary)] text-white">
                         Informasi Pengajuan Magang
                     </h3>
                     <div class="px-6 flex items-center gap-8">
@@ -73,11 +73,8 @@
                 </section>
             </article>
             <span class="mt-5 flex justify-end gap-3">
-                <button type="submit" class="px-4 py-2 bg-[var(--primary)] text-white rounded-md hover:bg-opacity-80 transition-all">
+                <button type="submit" class="cursor-pointer px-5 py-2.5 bg-[var(--primary)] text-white rounded-md text-xs transition-all duration-300 ease-in-out lg:text-sm lg:hover:bg-[var(--primary)]/80">
                     Kirim Lamaran
-                </button>
-                <button type="button" class="close px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-opacity-80 transition-all">
-                    Batal
                 </button>
             </span>
         </form>

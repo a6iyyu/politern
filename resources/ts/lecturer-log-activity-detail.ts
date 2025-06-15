@@ -15,13 +15,13 @@ interface LecturerLogDetail {
 
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('modal-detail-aktivitas') as HTMLElement;
-  const fullscreenModal = document.getElementById('foto-fullscreen-modal') as HTMLElement;
+  const fullscreen_modal = document.getElementById('foto-fullscreen-modal') as HTMLElement;
   if (!modal) return;
 
-  const closeButton = document.getElementById('close-detail-aktivitas') as HTMLElement;
-  const closeFullscreenButton = document.getElementById('close-fullscreen') as HTMLElement;
-  const fotoFullscreenButton = document.getElementById('foto-fullscreen') as HTMLElement;
-  
+  const close_button = document.getElementById('close-detail-aktivitas') as HTMLElement;
+  const close_fullscreen_button = document.getElementById('close-fullscreen') as HTMLElement;
+  const foto_fullscreen_button = document.getElementById('foto-fullscreen') as HTMLElement;
+
   const fields = {
     minggu: document.getElementById('minggu_log') as HTMLElement,
     judul: document.getElementById('judul_log') as HTMLElement,
@@ -40,172 +40,157 @@ document.addEventListener('DOMContentLoaded', () => {
     foto_url_debug: document.getElementById('foto-url-debug') as HTMLElement,
   };
 
-  // Handle detail buttons - gunakan class selector yang spesifik untuk dosen
+  const load_profile_photo = (url: string | null) => {
+    const fallback = '/shared/profil.png';
+    fields.foto_profil.onerror = null;
+
+    if (!url || url.trim() === '') {
+      fields.foto_profil.src = fallback;
+      return;
+    }
+
+    fields.foto_profil.onerror = () => {
+      console.warn('Failed to load profile photo:', url);
+      fields.foto_profil.onerror = null;
+      fields.foto_profil.src = fallback;
+    };
+
+    fields.foto_profil.src = url;
+  };
+
+  const apply_status_badge = (status: string) => {
+    const badge = fields.status_badge;
+    badge.className = 'hidden w-fit px-4 py-2 rounded-full text-sm font-medium lg:inline';
+    badge.classList.remove('bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-yellow-100', 'text-yellow-800');
+
+    switch (status) {
+      case 'DISETUJUI':
+        badge.classList.add('bg-green-100', 'text-green-800');
+        break;
+      case 'DITOLAK':
+        badge.classList.add('bg-red-100', 'text-red-800');
+        break;
+      default:
+        badge.classList.add('bg-yellow-100', 'text-yellow-800');
+    }
+  };
+
+  const load_foto_preview = (foto_url: string | null) => {
+    if (foto_url && foto_url.trim() !== '') {
+      if (fields.foto_url_debug) fields.foto_url_debug.textContent = foto_url;
+
+      fields.foto_preview.src = foto_url;
+      fields.foto_fullscreen_img.src = foto_url;
+
+      fields.foto_preview.onload = () => {
+        fields.foto_container.classList.remove('hidden');
+        fields.no_foto.classList.add('hidden');
+      };
+
+      fields.foto_preview.onerror = () => {
+        console.error('Failed to load lecturer activity photo:', foto_url);
+        fields.foto_container.classList.add('hidden');
+        fields.no_foto.classList.remove('hidden');
+        fields.no_foto.textContent = `Gagal memuat foto: ${foto_url}`;
+      };
+    } else {
+      fields.foto_container.classList.add('hidden');
+      fields.no_foto.classList.remove('hidden');
+      fields.no_foto.textContent = 'Tidak ada bukti foto';
+    }
+  };
+
+  const tampilkan_modal_detail = (data: LecturerLogDetail) => {
+    fields.minggu.textContent = String(data.minggu);
+    fields.judul.textContent = data.judul;
+    fields.nama_mahasiswa.textContent = data.nama_mahasiswa;
+    fields.nim.textContent = data.nim;
+    fields.status.textContent = data.status;
+    fields.deskripsi.textContent = data.deskripsi;
+    fields.komentar.textContent = data.komentar || 'Belum ada komentar';
+    fields.konfirmasi_pada.textContent = data.dikonfirmasi_pada || '-';
+
+    load_profile_photo(data.foto_profil);
+    apply_status_badge(data.status);
+    load_foto_preview(data.foto);
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  };
+
+  const tampilkan_modal_error = (error: unknown) => {
+    let pesan_error = 'Unknown error occurred';
+    let detail_error = '';
+
+    if (error instanceof AxiosError) {
+      pesan_error = `HTTP ${error.response?.status}: ${error.message}`;
+      detail_error = error.response?.data?.message || error.response?.data?.error || 'No additional details';
+
+      console.error('Axios Error:', { status: error.response?.status, message: error.message, data: error.response?.data });
+    } else if (error instanceof Error) {
+      pesan_error = error.message;
+      console.error('Generic Error:', error.message);
+    } else {
+      console.error('Unknown Error:', error);
+    }
+
+    console.error('Error details:', detail_error);
+
+    fields.minggu.textContent = '-';
+    fields.judul.textContent = 'Error Loading Data';
+    fields.nama_mahasiswa.textContent = 'Error';
+    fields.nim.textContent = 'Error';
+    fields.status.textContent = 'Error';
+    fields.deskripsi.textContent = `Failed to load data: ${pesan_error}`;
+    fields.komentar.textContent = detail_error || 'No error details available';
+    fields.konfirmasi_pada.textContent = '-';
+    fields.foto_profil.src = '/shared/profil.png';
+
+    fields.status_badge.className = 'px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-800';
+    fields.foto_container.classList.add('hidden');
+    fields.no_foto.classList.remove('hidden');
+    fields.no_foto.textContent = 'Error loading activity photo';
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  };
+
+  const handle_detail_click = async (id: string) => {
+    try {
+      const response = await axios.get<LecturerLogDetail>(`/dosen/log-aktivitas/${id}/detail`);
+      tampilkan_modal_detail(response.data);
+    } catch (error) {
+      tampilkan_modal_error(error);
+    }
+  };
+
   document.addEventListener('click', async (e) => {
     const target = e.target as HTMLElement;
     const button = target.closest('button.dosen-detail-btn[data-log-id]') as HTMLButtonElement;
-    
     if (!button) return;
-    
-    const id = button.getAttribute('data-log-id');
+
+    const log_id = button.getAttribute('data-log-id');
     const context = button.getAttribute('data-context');
-    
-    if (!id || context !== 'dosen') return;
+    if (!log_id || context !== 'dosen') return;
 
-    console.log('Fetching lecturer log activity detail for ID:', id);
-
-    try {
-      // Updated URL path to match the route
-      const response = await axios.get<LecturerLogDetail>(`/dosen/log-aktivitas/${id}/detail`);
-      const data = response.data;
-
-      console.log('Lecturer response data:', data);
-
-      // Populate basic fields
-      fields.minggu.textContent = String(data.minggu);
-      fields.judul.textContent = data.judul;
-      fields.nama_mahasiswa.textContent = data.nama_mahasiswa;
-      fields.nim.textContent = data.nim;
-      fields.status.textContent = data.status;
-      fields.deskripsi.textContent = data.deskripsi;
-      fields.komentar.textContent = data.komentar || 'Belum ada komentar';
-      fields.konfirmasi_pada.textContent = data.dikonfirmasi_pada || '-';
-
-      // Handle profile photo
-      if (data.foto_profil) {
-        fields.foto_profil.src = data.foto_profil;
-        fields.foto_profil.onerror = () => {
-          console.warn('Failed to load profile photo:', data.foto_profil);
-          fields.foto_profil.src = '/images/default-avatar.png';
-        };
-      } else {
-        fields.foto_profil.src = '/images/default-avatar.png';
-      }
-
-      // Handle status badge
-      const statusBadge = fields.status_badge;
-      statusBadge.className = 'px-4 py-2 rounded-full text-sm font-medium';
-      
-      if (data.status === 'DISETUJUI') {
-        statusBadge.classList.add('bg-green-100', 'text-green-800');
-      } else if (data.status === 'DITOLAK') {
-        statusBadge.classList.add('bg-red-100', 'text-red-800');
-      } else {
-        statusBadge.classList.add('bg-yellow-100', 'text-yellow-800');
-      }
-
-      // Handle activity photo
-      console.log('Lecturer activity photo URL:', data.foto);
-      
-      if (data.foto && data.foto !== null && data.foto.trim() !== '') {
-        console.log('Setting lecturer activity photo:', data.foto);
-        
-        // Show debug URL if debug element exists
-        if (fields.foto_url_debug) {
-          fields.foto_url_debug.textContent = data.foto;
-        }
-        
-        // Set images
-        fields.foto_preview.src = data.foto;
-        fields.foto_fullscreen_img.src = data.foto;
-        
-        // Handle image load success
-        fields.foto_preview.onload = () => {
-          console.log('Lecturer activity photo loaded successfully');
-          fields.foto_container.classList.remove('hidden');
-          fields.no_foto.classList.add('hidden');
-        };
-        
-        // Handle image load error
-        fields.foto_preview.onerror = () => {
-          console.error('Failed to load lecturer activity photo:', data.foto);
-          fields.foto_container.classList.add('hidden');
-          fields.no_foto.classList.remove('hidden');
-          fields.no_foto.textContent = `Gagal memuat foto: ${data.foto}`;
-        };
-        
-      } else {
-        console.log('No lecturer activity photo available');
-        fields.foto_container.classList.add('hidden');
-        fields.no_foto.classList.remove('hidden');
-        fields.no_foto.textContent = 'Tidak ada bukti foto';
-      }
-
-      // Show modal
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      
-    } catch (error: unknown) {
-      // Proper error handling dengan type checking
-      let errorMessage = 'Unknown error occurred';
-      let errorDetails = '';
-
-      if (error instanceof AxiosError) {
-        errorMessage = `HTTP ${error.response?.status}: ${error.message}`;
-        errorDetails = error.response?.data?.message || error.response?.data?.error || 'No additional details';
-        
-        console.error('Axios Error fetching lecturer log activity:', {
-          status: error.response?.status,
-          statusText: error.response?.statusText,
-          data: error.response?.data,
-          message: error.message,
-          url: error.config?.url
-        });
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-        console.error('Error fetching lecturer log activity:', error.message);
-      } else {
-        console.error('Unknown error fetching lecturer log activity:', error);
-      }
-
-      console.error('Error details:', errorDetails);
-      
-      // Show error state in modal
-      fields.minggu.textContent = '-';
-      fields.judul.textContent = 'Error Loading Data';
-      fields.nama_mahasiswa.textContent = 'Error';
-      fields.nim.textContent = 'Error';
-      fields.status.textContent = 'Error';
-      fields.deskripsi.textContent = `Failed to load data: ${errorMessage}`;
-      fields.komentar.textContent = errorDetails || 'No error details available';
-      fields.konfirmasi_pada.textContent = '-';
-      fields.foto_profil.src = '/images/default-avatar.png';
-      
-      // Handle status badge for error state
-      const statusBadge = fields.status_badge;
-      statusBadge.className = 'px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-800';
-      
-      fields.foto_container.classList.add('hidden');
-      fields.no_foto.classList.remove('hidden');
-      fields.no_foto.textContent = 'Error loading activity photo';
-      
-      // Show modal even in error state so user can see what went wrong
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
+    await handle_detail_click(log_id);
   });
 
-  // Modal close handlers
-  closeButton?.addEventListener('click', () => {
+  close_button?.addEventListener('click', () => {
     modal.classList.add('hidden');
     modal.classList.remove('flex');
   });
 
-  fotoFullscreenButton?.addEventListener('click', () => {
-    if (fullscreenModal) {
-      fullscreenModal.classList.remove('hidden');
-      fullscreenModal.classList.add('flex');
-    }
+  foto_fullscreen_button?.addEventListener('click', () => {
+    fullscreen_modal?.classList.remove('hidden');
+    fullscreen_modal?.classList.add('flex');
   });
 
-  closeFullscreenButton?.addEventListener('click', () => {
-    if (fullscreenModal) {
-      fullscreenModal.classList.add('hidden');
-      fullscreenModal.classList.remove('flex');
-    }
+  close_fullscreen_button?.addEventListener('click', () => {
+    fullscreen_modal?.classList.add('hidden');
+    fullscreen_modal?.classList.remove('flex');
   });
 
-  // Close on outside click
   modal.addEventListener('click', (e) => {
     if (e.target === modal) {
       modal.classList.add('hidden');
@@ -213,10 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  fullscreenModal?.addEventListener('click', (e) => {
-    if (e.target === fullscreenModal) {
-      fullscreenModal.classList.add('hidden');
-      fullscreenModal.classList.remove('flex');
+  fullscreen_modal?.addEventListener('click', (e) => {
+    if (e.target === fullscreen_modal) {
+      fullscreen_modal.classList.add('hidden');
+      fullscreen_modal.classList.remove('flex');
     }
   });
 });

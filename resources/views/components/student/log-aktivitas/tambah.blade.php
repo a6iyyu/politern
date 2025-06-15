@@ -66,7 +66,7 @@
                         type="file"
                         :required="true"
                     />
-                    <button type="submit" class="w-full mt-6 px-5 py-3 bg-[#5955B2] text-white rounded-lg font-semibold text-xs transition-all duration-300 ease-in-out hover:bg-[#4743a0]">
+                    <button type="submit" class="cursor-pointer w-full mt-6 px-5 py-3 bg-[#5955B2] text-white rounded-lg font-semibold text-xs transition-all duration-300 ease-in-out hover:bg-[#4743a0]">
                         Tambah Aktivitas
                     </button>
                 </form>

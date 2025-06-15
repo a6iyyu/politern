@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\PeriodeMagang as PeriodeMagangModel;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Log;
-use Exception;
 
 class Periode extends Controller
 {
@@ -23,13 +23,12 @@ class Periode extends Controller
             $total_periode = PeriodeMagangModel::count();
             $status = ['AKTIF' => 'Aktif', 'SELESAI' => 'Selesai'];
 
-            // Update Status Periode Magang
             $today = now()->toDateString();
             $periods = PeriodeMagangModel::all();
             foreach ($periods as $period) {
-                $newStatus = ($today <= $period->tanggal_selesai) ? 'AKTIF' : 'SELESAI';
-                if ($period->status !== $newStatus) {
-                    $period->status = $newStatus;
+                $new_status = ($today <= $period->tanggal_selesai) ? 'AKTIF' : 'SELESAI';
+                if ($period->status !== $new_status) {
+                    $period->status = $new_status;
                     $period->save();
                 }
             }
@@ -39,15 +38,16 @@ class Periode extends Controller
                 $query->where('nama_periode', 'like', '%' . request('nama_periode') . '%');
             }
 
+            $baris = 1;
             $paginasi = $query->paginate(request('per_page', 10));
-            $data = collect($paginasi->items())->map(function (PeriodeMagangModel $periode) {
+            $data = collect($paginasi->items())->map(function (PeriodeMagangModel $periode) use (&$baris) {
                 $status = match ($periode->status) {
                     'AKTIF' => 'bg-green-200 text-green-800',
                     'SELESAI' => 'bg-red-200 text-yellow-800',
                 };
 
                 return [
-                    $periode->id_periode,
+                    $baris++,
                     $periode->nama_periode,
                     $periode->tanggal_mulai,
                     $periode->tanggal_selesai,
@@ -120,11 +120,11 @@ class Periode extends Controller
             $periode->tanggal_selesai   = $request->tanggal_selesai;
             $periode->save();
 
-            return to_route('admin.periode')->with('success', 'Data periode akademik berhasil diubah');
+            return to_route('admin.periode')->with('success', 'Data periode berhasil diubah.');
         } catch (Exception $exception) {
             report($exception);
             Log::error($exception->getMessage());
-            return back()->withErrors(['errors' => 'Gagal dalam memperbarui data periode akademik karena kesalahan pada server.']);
+            return back()->withErrors(['errors' => 'Gagal dalam memperbarui data periode karena kesalahan pada server.']);
         }
     }
 
@@ -143,32 +143,30 @@ class Periode extends Controller
 
     public function export_excel(): never
     {
-        $periode = PeriodeMagangModel::select('periode_magang.id_periode', 'periode_magang.nama_periode', 'periode_magang.tanggal_mulai', 'periode_magang.tanggal_selesai', 'periode_magang.status')
-            ->get();
-
+        $periode = PeriodeMagangModel::select('periode_magang.id_periode', 'periode_magang.nama_periode', 'periode_magang.tanggal_mulai', 'periode_magang.tanggal_selesai', 'periode_magang.status')->get();
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
         $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'Nama Periode');
-        $sheet->setCellValue('D1', 'Tanggal Mulai');
-        $sheet->setCellValue('E1', 'Tanggal Selesai');
-        $sheet->setCellValue('F1', 'Status');
-        $sheet->getStyle("A1:F1")->getFont()->setBold(true);
+        $sheet->setCellValue('C1', 'Tanggal Mulai');
+        $sheet->setCellValue('D1', 'Tanggal Selesai');
+        $sheet->setCellValue('E1', 'Status');
+        $sheet->getStyle("A1:E1")->getFont()->setBold(true);
 
         $nomor = 1;
         $baris = 2;
         foreach ($periode as $key => $value) {
             $sheet->setCellValue("A$baris", $nomor);
             $sheet->setCellValue("B$baris", $value->nama_periode);
-            $sheet->setCellValue("D$baris", $value->tanggal_mulai);
-            $sheet->setCellValue("E$baris", $value->tanggal_selesai);
-            $sheet->setCellValue("F$baris", $value->status);
+            $sheet->setCellValue("C$baris", $value->tanggal_mulai);
+            $sheet->setCellValue("D$baris", $value->tanggal_selesai);
+            $sheet->setCellValue("E$baris", $value->status);
             $baris++;
             $nomor++;
         }
 
-        foreach (range('A', 'F') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
+        foreach (range('A', 'E') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
 
         $sheet->setTitle("Data Periode Magang");
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');

@@ -14,20 +14,19 @@ use App\Http\Controllers\Pengajuan;
 use App\Http\Controllers\PengalamanMahasiswa;
 use App\Http\Controllers\Profil;
 use App\Http\Controllers\ProyekMahasiswa;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 
 Route::middleware('guest')->group(function () {
-    Route::get('/reset-password/{token}', [Autentikasi::class, 'tampilResetPassword'])->name('password.reset');
-    Route::post('/reset-password', [Autentikasi::class, 'resetPassword'])->name('password.update');
     Route::get('/beranda', fn() => view('pages.unregistered.index'))->name('beranda')->withoutMiddleware('auth');
-    Route::get('/lupa-kata-sandi', [Autentikasi::class, 'lupa_kata_sandi'])->name('lupa-kata-sandi')->withoutMiddleware('auth');
-    Route::post('/lupa-kata-sandi', [Autentikasi::class, 'kirim_link_reset'])->name('kirim-link-reset')->withoutMiddleware('auth');
     Route::get('/masuk', fn() => view('pages.auth.masuk'))->name('masuk')->withoutMiddleware('auth');
-    Route::post('/masuk', [Autentikasi::class, 'masuk'])->name('login')->withoutMiddleware('auth');
+    Route::get('/lupa-kata-sandi', fn() => view('pages.auth.lupa-kata-sandi'))->name('lupa-kata-sandi')->withoutMiddleware('auth');
+    Route::get('/reset-kata-sandi/{token}', [Autentikasi::class, 'show_reset_password'])->name('reset-kata-sandi');
+    Route::post('/reset-kata-sandi', [Autentikasi::class, 'reset_password'])->name('perbarui-kata-sandi');
+    Route::post('/lupa-kata-sandi', [Autentikasi::class, 'send_reset_link'])->name('kirim-tautan-reset')->withoutMiddleware('auth');
+    Route::post('/masuk', [Autentikasi::class, 'login'])->name('login')->withoutMiddleware('auth');
 });
 
 Route::middleware('auth')->group(function () {
@@ -37,7 +36,7 @@ Route::middleware('auth')->group(function () {
         return Redirect::route("{$tipe}.dasbor");
     });
 
-    Route::get('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');
+    Route::get('/keluar', [Autentikasi::class, 'logout'])->name('keluar');
 
     Route::middleware(['authorize:ADMIN'])->prefix('admin')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('admin.dasbor');
@@ -134,7 +133,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail')->where('id', '[0-9]+');
             Route::get('/{id?}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang')->where('id', '[0-9]+');
             Route::get('/edit', [RekomendasiMagang::class, 'edit'])->name('mahasiswa.preferensi.edit');
-            Route::post('/update', [RekomendasiMagang::class, 'update'])->name('mahasiswa.preferensi.update');
+            Route::post('/perbarui', [RekomendasiMagang::class, 'update'])->name('mahasiswa.preferensi.perbarui');
         });
 
         Route::prefix('kelola-lamaran')->group(function () {
@@ -193,10 +192,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [Dasbor::class, 'index'])->name('dosen.dasbor');
         Route::get('/mahasiswa-bimbingan/{id}', [Dasbor::class, 'detail'])->name('dosen.mahasiswa-bimbingan');
         Route::get('/data-mahasiswa', [DataMahasiswa::class, 'index'])->name('dosen.data-mahasiswa');
-        Route::get('/data-mahasiswa/detail/{id}', [DataMahasiswa::class, 'showDetailBimbingan'])->name('dosen.data-mahasiswa.detail');
+        Route::get('/data-mahasiswa/detail/{id}', [DataMahasiswa::class, 'show_guidance_detail'])->name('dosen.data-mahasiswa.detail');
         Route::get('/log-aktivitas', [LogAktivitas::class, 'index'])->name('dosen.log-aktivitas');
         Route::get('/log-aktivitas/{id}', [LogAktivitas::class, 'showLog'])->name('dosen.log-aktivitas.detail');
-        Route::get('/log-aktivitas/{id}/detail', [LogAktivitas::class, 'detailForLecturer'])->name('dosen.log-aktivitas.detail-modal');
+        Route::get('/log-aktivitas/{id}/detail', [LogAktivitas::class, 'detail_for_lecturer'])->name('dosen.log-aktivitas.detail-modal');
 
         Route::prefix('profil')->group(function () {
             Route::get('/', [Profil::class, 'index'])->name('dosen.profil');

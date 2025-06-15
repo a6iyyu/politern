@@ -1,6 +1,6 @@
 <section class="modal modal-konfirmasi fixed inset-0 z-50 hidden items-center justify-center bg-black/20 backdrop-blur-[1px]" aria-modal="true" role="dialog">
     <div class="flex items-center justify-center min-h-screen px-4">
-        <form id="konfirmasiForm" method="POST" class="konfirmasiForm max-h-[90vh] overflow-y-auto w-full max-w-3xl rounded-xl bg-white p-7 shadow-lg border border-[var(--stroke)]">
+        <form id="konfirmasi" method="POST" class="konfirmasi max-h-[90vh] overflow-y-auto w-full max-w-3xl rounded-xl bg-white p-7 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('PUT')
             <input type="hidden" name="status" id="statusInput" value="">
@@ -54,8 +54,8 @@
             </div>
 
             <div class="mt-10 mb-2 flex justify-end space-x-4">
-                <button type="button" id="tolakBtn" class="w-1/2 py-3 text-sm text-[var(--red-tertiary)] border border-[var(--red-tertiary)] rounded-md">Tolak</button>
-                <button type="button" id="terimaBtn" class="w-1/2 py-3 text-sm text-white bg-[var(--primary)] rounded-md">Terima</button>
+                <button type="button" id="tolak" class="w-1/2 py-3 text-sm text-[var(--red-tertiary)] border border-[var(--red-tertiary)] rounded-md">Tolak</button>
+                <button type="button" id="terima" class="w-1/2 py-3 text-sm text-white bg-[var(--primary)] rounded-md">Terima</button>
             </div>
         </form>
     </div>

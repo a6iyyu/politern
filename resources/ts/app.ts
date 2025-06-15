@@ -4,6 +4,7 @@
  * This file imports all custom JavaScript modules required for various functionalities.
  */
 
+import './admin-log-activity-detail';
 import './application-confirmation';
 import './application-detail';
 import './application-management-detail';
@@ -25,6 +26,7 @@ import './hamburger-menu';
 import './internship-application';
 import './intern-detail';
 import './lecturer-detail';
+import './lecturer-log-activity-detail';
 import './log-activity-detail';
 import './major-detail';
 import './modal';

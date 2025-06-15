@@ -26,7 +26,7 @@
     @vite(['resources/js/app.js', 'resources/css/app.css'])
 </head>
 
-<body class="{{ Request::routeIs('lupa-kata-sandi', 'masuk', 'password.reset') ? 'overflow-x-hidden flex items-center justify-center min-h-screen h-full [background-image:_linear-gradient(to_right_top,_#e86bb1,_#d265b4,_#bb60b6,_#a15cb7,_#8559b6,_#8265bc,_#8070c2,_#7f7bc6,_#9b98d5,_#b8b6e3,_#d5d5f1,_#f4f4fe)]' : 'overflow-x-hidden min-h-screen h-full bg-[#fafafa]' }}">
+<body class="{{ Request::routeIs('lupa-kata-sandi', 'masuk', 'reset-kata-sandi') ? 'overflow-x-hidden flex items-center justify-center min-h-screen h-full [background-image:_linear-gradient(to_right_top,_#e86bb1,_#d265b4,_#bb60b6,_#a15cb7,_#8559b6,_#8265bc,_#8070c2,_#7f7bc6,_#9b98d5,_#b8b6e3,_#d5d5f1,_#f4f4fe)]' : 'overflow-x-hidden min-h-screen h-full bg-[#fafafa]' }}">
     @auth
         @include('shared.navigation.sidebar')
     @endauth

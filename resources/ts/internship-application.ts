@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   buttons.forEach((btn) => {
     btn.addEventListener('click', async () => {
-      console.log('Internship application btn clicked');
       const id = btn.dataset.id;
       if (!id) return;
       modal.classList.remove('hidden');
@@ -72,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         logo.setAttribute('src', '/assets/images/default-logo.png');
       }
 
-      logo.classList.remove('hidden');
+      if (window.innerWidth >= 1024) logo.classList.remove('hidden');
       nama_perusahaan.textContent = response.pengajuan.nama_perusahaan_mitra;
       nim.textContent = response.mahasiswa.nim;
       nama_lengkap.textContent = response.mahasiswa.nama_lengkap;

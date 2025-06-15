@@ -11,25 +11,20 @@ class ResetPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $pengguna;
-    public $token;
-    public $resetUrl;
+    public Pengguna|string $pengguna;
+    public string $reset, $token;
 
-    public function __construct($pengguna, $token)
+    public function __construct(Pengguna|string $pengguna, string $token)
     {
         $this->pengguna = $pengguna;
+        $this->reset = url("/reset-kata-sandi/{$token}");
         $this->token = $token;
-        $this->resetUrl = url('/reset-password/'.$token);
     }
 
-    public function build()
+    public function build(): ResetPasswordMail
     {
-        return $this->subject('Reset Password - POLITERN')
-                   ->view('emails.reset-password')
-                   ->with([
-                       'pengguna' => $this->pengguna,
-                       'token' => $this->token,
-                       'resetUrl' => $this->resetUrl
-                   ]);
+        return $this->subject('Reset Kata Sandi - POLITERN')
+            ->view('emails.reset-kata-sandi')
+            ->with(['pengguna' => $this->pengguna, 'token' => $this->token, 'reset' => $this->reset]);
     }
 }

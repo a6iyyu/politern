@@ -39,7 +39,7 @@
                     :value="$dosen->nomor_telepon ??''"
                 />
             </div>
-            <button type="submit" class="mt-4 mb-2 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">
+            <button type="submit" class="cursor-pointer mt-4 mb-2 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">
                 Simpan
             </button>
         </form>

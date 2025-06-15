@@ -18,8 +18,8 @@ class PreferensiJenisLokasiMahasiswa extends Seeder
             ['id_mahasiswa' => 3, 'id_jenis_lokasi' => 1],
             ['id_mahasiswa' => 4, 'id_jenis_lokasi' => 1],
             ['id_mahasiswa' => 4, 'id_jenis_lokasi' => 2],
-            ['id_mahasiswa' => 5, 'id_jenis_lokasi' => 3],
             ['id_mahasiswa' => 5, 'id_jenis_lokasi' => 2],
+            ['id_mahasiswa' => 5, 'id_jenis_lokasi' => 3],
         ]);
     }
 }

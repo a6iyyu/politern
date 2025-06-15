@@ -4,96 +4,59 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Mail\ResetPasswordMail;
 use App\Models\Pengguna;
+use Carbon\Carbon;
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ResetPasswordMail;
 
 class Autentikasi extends Controller
 {
-    public function lupa_kata_sandi(): View
-    {
-        try {
-            return view('pages.auth.lupa-kata-sandi');
-        } catch (ModelNotFoundException $exception) {
-            report($exception);
-            abort(404, "Halaman tidak ditemukan.");
-        } catch (Exception $exception) {
-            report($exception);
-            abort(500, "Terjadi kesalahan pada server.");
-        }
-    }
-
-    public function kirim_link_reset(Request $request): RedirectResponse
+    public function send_reset_link(Request $request): RedirectResponse
     {
         try {
             $request->validate([
-                'email' => 'required|email|exists:pengguna,email',
+                'email'             => 'required|email|exists:pengguna,email',
             ], [
-                'email.required' => 'Email wajib diisi!',
-                'email.email' => 'Format email tidak valid!',
-                'email.exists' => 'Email tidak terdaftar di sistem kami.',
+                'email.required'    => 'Email wajib diisi!',
+                'email.email'       => 'Format email tidak valid!',
+                'email.exists'      => 'Email tidak terdaftar di sistem kami.',
             ]);
 
             $pengguna = Pengguna::where('email', $request->email)->first();
 
             if (!$pengguna) {
-                return back()->withErrors(['email' => 'Email tidak terdaftar di sistem kami.'])->withInput();
+                return back()->withErrors(['errors' => 'Email tidak terdaftar di sistem kami.'])->withInput();
             }
 
-            $token = Str::random(60);
-
-            // Save token to database
-            $pengguna->reset_token = $token;
+            $pengguna->reset_token = Str::random(60);
             $pengguna->reset_token_created_at = now();
-            $saved = $pengguna->save();
 
-            if (!$saved) {
-                Log::error('Gagal menyimpan token reset password untuk pengguna: ' . $pengguna->email);
-                return back()->withErrors([
-                    'error' => 'Gagal menyimpan token reset password. Silakan coba lagi.'
-                ]);
+            if (!$pengguna->save()) {
+                Log::error("Gagal menyimpan token reset kata sandi untuk email {$pengguna->email}.");
+                return back()->withErrors(['errors' => 'Gagal menyimpan token reset password. Silakan coba lagi.']);
             }
 
-            try {
-                // Kirim email
-                Mail::to($pengguna->email)->send(new ResetPasswordMail($pengguna, $token));
-                return back()->with('status', 'Link reset password telah dikirim ke email Anda!');
-            } catch (Exception $mailException) {
-                Log::error('Gagal mengirim email reset password: ' . $mailException->getMessage());
-                Log::error($mailException);
-
-                // Check if it's an authentication error
-                if (str_contains($mailException->getMessage(), 'Authentication')) {
-                    return back()->withErrors([
-                        'error' => 'Gagal mengirim email. Silakan periksa konfigurasi email server.'
-                    ])->withInput();
-                }
-
-                return back()->withErrors([
-                    'error' => 'Terjadi kesalahan saat mengirim email. Silakan coba beberapa saat lagi.'
-                ])->withInput();
-            }
+            Mail::to($pengguna->email)->send(new ResetPasswordMail($pengguna, $pengguna->reset_token));
+            return back()->with('status', 'Tautan reset kata sandi telah dikirim ke email Anda!');
         } catch (ValidationException $validation) {
+            report($validation);
+            Log::error($validation->getMessage());
             return back()->withErrors($validation->errors())->withInput();
-        } catch (Exception $exception) {
-            Log::error('Error dalam kirim_link_reset: ' . $exception->getMessage());
-            Log::error($exception);
-
-            return back()->withErrors([
-                'errors' => 'Terjadi kesalahan sistem. Silakan coba lagi nanti.'
-            ])->withInput();
+        } catch (Exception $e) {
+            report($e);
+            Log::error("Terjadi kesalahan saat reset kata sandi: " . $e->getMessage());
+            $error = str_contains($e->getMessage(), 'Authentication') ? 'Gagal mengirim email. Silakan periksa konfigurasi email server.' : 'Terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi.';
+            return back()->withErrors(['error' => $error])->withInput();
         }
     }
 
@@ -106,7 +69,7 @@ class Autentikasi extends Controller
      * Fungsi ini bertujuan untuk melakukan proses masuk ke dalam sistem
      * berdasarkan data yang telah dimasukkan oleh pengguna.
      */
-    public function masuk(Request $request): RedirectResponse
+    public function login(Request $request): RedirectResponse
     {
         try {
             $request->validate([
@@ -164,99 +127,76 @@ class Autentikasi extends Controller
         }
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     *
-     * Fungsi ini bertujuan untuk melakukan proses keluar dari akun pengguna.
-     */
-    public function tampilResetPassword($token)
+    public function show_reset_password($token): RedirectResponse|View
     {
         try {
             $pengguna = Pengguna::where('reset_token', $token)->first();
 
-            $viewData = [
+            $data = [
                 'token' => $token,
                 'email' => $pengguna->email ?? '',
             ];
 
             if (!$pengguna) {
-                Log::warning('Token tidak ditemukan: ' . $token);
-                $viewData['error'] = 'Link reset password tidak valid.';
-                return view('pages.auth.reset-password', $viewData);
+                Log::warning("Token tidak ditemukan: {$token}");
+                $data['error'] = 'Link reset password tidak valid.';
+                return view('pages.auth.reset-password', $data);
             }
 
-            // Cek apakah token masih berlaku (60 menit)
-            $tokenCreatedAt = \Carbon\Carbon::parse($pengguna->reset_token_created_at);
-            $expiryTime = $tokenCreatedAt->addMinutes(60);
-
-            if (now()->gt($expiryTime)) {
-                Log::warning('Token sudah kadaluarsa untuk email: ' . $pengguna->email);
-                $viewData['error'] = 'Link reset password sudah kadaluarsa. Silakan request link yang baru.';
-                return view('pages.auth.reset-password', $viewData);
+            if (now()->gt(Carbon::parse($pengguna->reset_token_created_at)->addMinutes(60))) {
+                Log::warning("Token sudah kadaluarsa untuk email: {$pengguna->email}.");
+                $data['error'] = 'Tautan reset kata sandi sudah kadaluarsa. Silakan minta tautan yang baru.';
+                return view('pages.auth.reset-password', $data);
             }
 
-            return view('pages.auth.reset-password', $viewData);
+            return view('pages.auth.reset-password', $data);
         } catch (Exception $e) {
-            Log::error('Error in tampilResetPassword: ' . $e->getMessage());
-            Log::error($e);
-
-            return redirect()->route('lupa-kata-sandi')
-                ->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
+            report($e);
+            Log::error($e->getMessage());
+            return redirect()->route('lupa-kata-sandi')->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
         }
     }
 
-    public function resetPassword(Request $request)
+    public function reset_password(Request $request): RedirectResponse
     {
         try {
             $request->validate([
-                'token' => 'required',
-                'email' => 'required|email|exists:pengguna,email',
-                'password' => 'required|min:6|confirmed',
+                'token'     => 'required',
+                'email'     => 'required|email|exists:pengguna,email',
+                'password'  => 'required|min:6|confirmed',
             ]);
 
-            // Cari pengguna berdasarkan email dan token
-            $pengguna = Pengguna::where('email', $request->email)
-                ->where('reset_token', $request->token)
-                ->first();
+            $pengguna = Pengguna::where('email', $request->email)->where('reset_token', $request->token)->first();
 
             if (!$pengguna) {
-                Log::warning('Token tidak valid untuk email: ' . $request->email);
-                return back()->withErrors([
-                    'error' => 'Token tidak valid.'
-                ])->withInput();
+                Log::warning("Token tidak valid untuk email {$request->email}.");
+                return back()->withErrors(['errors' => 'Token tidak valid.'])->withInput();
             }
 
-            // Cek apakah token masih berlaku (60 menit)
-            $tokenCreatedAt = \Carbon\Carbon::parse($pengguna->reset_token_created_at);
-            $expiryTime = $tokenCreatedAt->addMinutes(60);
-
-            if (now()->gt($expiryTime)) {
-                Log::warning('Token sudah kadaluarsa untuk email: ' . $pengguna->email);
-                return back()->withErrors([
-                    'error' => 'Link reset password sudah kadaluarsa. Silakan request link yang baru.'
-                ])->withInput();
+            if (now()->gt(Carbon::parse($pengguna->reset_token_created_at)->addMinutes(60))) {
+                Log::warning("Token sudah kadaluarsa untuk email: {$pengguna->email}.");
+                return back()->withErrors(['errors' => 'Tautan reset kata sandi sudah kadaluarsa. Silakan minta tautan yang baru.'])->withInput();
             }
 
-            // Update password
             $pengguna->update([
-                'kata_sandi' => Crypt::encrypt($request->password),
-                'reset_token' => null,
-                'reset_token_created_at' => null
+                'kata_sandi'                => Crypt::encrypt($request->password),
+                'reset_token'               => null,
+                'reset_token_created_at'    => null
             ]);
 
-            return redirect()->route('masuk')
-                ->with('status', 'Password berhasil direset. Silakan masuk dengan password baru Anda.');
+            return redirect()->route('masuk')->with('success', 'Katavalue:  sandi berhasil direset. Silakan masuk dengan kata sandi baru Anda.');
         } catch (ValidationException $e) {
+            report($e);
+            Log::warning($e->getMessage());
             return back()->withErrors($e->errors())->withInput();
         } catch (Exception $e) {
-            Log::error('Error in resetPassword: ' . $e->getMessage());
-            return back()->withInput()
-                ->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
+            report($e);
+            Log::error($e->getMessage());
+            return back()->withInput()->with('errors', 'Terjadi kesalahan saat mereset kata sandi. Silakan coba lagi.');
         }
     }
 
-    public function keluar(Request $request): RedirectResponse
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
         $request->session()->invalidate();

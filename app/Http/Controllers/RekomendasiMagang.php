@@ -16,6 +16,7 @@ use App\Models\Keahlian;
 use App\Models\Lokasi;
 use App\Models\JenisLokasi;
 use App\Models\DurasiMagang;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -213,88 +214,65 @@ class RekomendasiMagang extends Controller
         ]);
     }
 
-    public function edit()
+    public function edit(): View
     {
         $mahasiswa = auth()->user()->mahasiswa;
-
-        if (!$mahasiswa) {
-            abort(403, 'Mahasiswa tidak ditemukan');
-        }
+        if (!$mahasiswa) abort(403, 'Mahasiswa tidak ditemukan');
 
         $id = $mahasiswa->id_mahasiswa;
 
         $preferensi = [
-            'bidang' => BidangMahasiswa::where('id_mahasiswa', $id)->pluck('id_bidang')->toArray(),
-            'keahlian' => KeahlianMahasiswa::where('id_mahasiswa', $id)->pluck('id_keahlian')->toArray(),
-            'lokasi' => PreferensiLokasiMagang::where('id_mahasiswa', $id)->pluck('id_lokasi')->toArray(),
-            'jenis_lokasi' => PreferensiJenisLokasiMagang::where('id_mahasiswa', $id)->pluck('id_jenis_lokasi')->toArray(),
-            'durasi' => PreferensiDurasiMahasiswa::where('id_mahasiswa', $id)->pluck('id_durasi_magang')->toArray(),
+            'bidang'        => BidangMahasiswa::where('id_mahasiswa', $id)->pluck('id_bidang')->toArray(),
+            'keahlian'      => KeahlianMahasiswa::where('id_mahasiswa', $id)->pluck('id_keahlian')->toArray(),
+            'lokasi'        => PreferensiLokasiMagang::where('id_mahasiswa', $id)->pluck('id_lokasi')->toArray(),
+            'jenis_lokasi'  => PreferensiJenisLokasiMagang::where('id_mahasiswa', $id)->pluck('id_jenis_lokasi')->toArray(),
+            'durasi'        => PreferensiDurasiMahasiswa::where('id_mahasiswa', $id)->pluck('id_durasi_magang')->toArray(),
         ];
 
-        // Ambil data untuk form
         $data = [
-            'bidang_all' => Bidang::all(),
-            'keahlian_all' => Keahlian::all(),
-            'lokasi_all' => Lokasi::all(),
-            'jenis_lokasi_all' => JenisLokasi::all(),
-            'durasi_all' => DurasiMagang::all(),
+            'bidang_all'        => Bidang::all(),
+            'keahlian_all'      => Keahlian::all(),
+            'lokasi_all'        => Lokasi::all(),
+            'jenis_lokasi_all'  => JenisLokasi::all(),
+            'durasi_all'        => DurasiMagang::all(),
         ];
 
         return view('components.student.dasbor.edit-preferensi', compact('preferensi', 'data', 'mahasiswa'));
     }
 
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
-        $mahasiswa = auth()->user()->mahasiswa;
+        $mahasiswa = Auth::user()->mahasiswa;
 
-        if (!$mahasiswa) {
-            abort(403, 'Mahasiswa tidak ditemukan');
-        }
-
+        if (!$mahasiswa) abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         $id = $mahasiswa->id_mahasiswa;
 
-        // Validasi
         $request->validate([
-            'bidang' => 'array',
-            'keahlian' => 'required|array',
-            'keahlian.*' => 'exists:keahlian,id_keahlian',
-            'lokasi' => 'array',
-            'jenis_lokasi' => 'array',
-            'durasi' => 'array',
+            'bidang'        => 'array',
+            'bidang.*'      => 'exists:bidang,id_bidang',
+            'lokasi.*'      => 'exists:lokasi,id_lokasi',
+            'keahlian'      => 'required|array',
+            'keahlian.*'    => 'exists:keahlian,id_keahlian',
+            'lokasi'        => 'array',
+            'jenis_lokasi'  => 'array',
+            'durasi'        => 'array',
         ]);
 
-        // dd((new \App\Models\BidangMahasiswa)->getFillable());
-
-        // Sync data
         BidangMahasiswa::where('id_mahasiswa', $id)->delete();
-        foreach ($request->bidang as $item) {
-            BidangMahasiswa::create(['id_mahasiswa' => $id, 'id_bidang' => $item]);
-        }
+        foreach ($request->input('bidang', []) as $item) BidangMahasiswa::create(['id_mahasiswa' => $id, 'id_bidang' => $item]);
 
         KeahlianMahasiswa::where('id_mahasiswa', $id)->delete();
-        foreach ($request->input('keahlian', []) as $id_keahlian) {
-            KeahlianMahasiswa::create([
-                'id_mahasiswa' => $id,
-                'id_keahlian' => $id_keahlian
-            ]);
-        }
-
+        foreach ($request->input('keahlian', []) as $id_keahlian) KeahlianMahasiswa::create(['id_mahasiswa' => $id, 'id_keahlian' => $id_keahlian]);
 
         PreferensiLokasiMagang::where('id_mahasiswa', $id)->delete();
-        foreach ($request->lokasi as $item) {
-            PreferensiLokasiMagang::create(['id_mahasiswa' => $id, 'id_lokasi' => $item]);
-        }
+        foreach ($request->input('lokasi', []) as $item) PreferensiLokasiMagang::create(['id_mahasiswa' => $id, 'id_lokasi' => $item]);
 
         PreferensiJenisLokasiMagang::where('id_mahasiswa', $id)->delete();
-        foreach ($request->jenis_lokasi as $item) {
-            PreferensiJenisLokasiMagang::create(['id_mahasiswa' => $id, 'id_jenis_lokasi' => $item]);
-        }
+        foreach ($request->input('jenis_lokasi', []) as $item) PreferensiJenisLokasiMagang::create(['id_mahasiswa' => $id, 'id_jenis_lokasi' => $item]);
 
         PreferensiDurasiMahasiswa::where('id_mahasiswa', $id)->delete();
-        foreach ($request->durasi as $item) {
-            PreferensiDurasiMahasiswa::create(['id_mahasiswa' => $id, 'id_durasi_magang' => $item]);
-        }
+        foreach ($request->input('durasi', []) as $item) PreferensiDurasiMahasiswa::create(['id_mahasiswa' => $id, 'id_durasi_magang' => $item]);
 
-        return redirect()->route('mahasiswa.dasbor')->with('success', 'Preferensi berhasil diperbarui');
+        return to_route('mahasiswa.dasbor')->with('success', 'Preferensi berhasil diperbarui');
     }
 }

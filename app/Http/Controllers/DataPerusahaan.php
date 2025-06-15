@@ -39,14 +39,15 @@ class DataPerusahaan extends Controller
                 ->pluck('nama_lokasi', 'id_lokasi')
                 ->toArray();
 
+            $baris = 1;
             $paginasi = $query->paginate(request('per_page', 10))->withQueryString();
-            $data = collect($paginasi->items())->map(function (Perusahaan $perusahaan) {
+            $data = collect($paginasi->items())->map(function (Perusahaan $perusahaan) use (&$baris) {
                 $status = match ($perusahaan->status) {
                     'AKTIF'         => 'bg-green-200 text-green-800',
                     'TIDAK AKTIF'   => 'bg-red-200 text-red-800',
                 };
                 return [
-                    $perusahaan->id_perusahaan_mitra,
+                    $baris++,
                     '<div class="flex items-center gap-2">
                         <img src="' . asset('shared/profil.png') . '" alt="avatar" class="h-8 w-8 rounded-full" /> ' . e($perusahaan->nama) . '
                     </div>',
@@ -209,7 +210,7 @@ class DataPerusahaan extends Controller
             $sheet->setCellValue("A$baris", $nomor);
             $sheet->setCellValue("B$baris", $value->lokasi->nama_lokasi ?? '-');
             $sheet->setCellValue("C$baris", $value->nama);
-            $sheet->setCellValueExplicit("E$baris", $value->nib, DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit("D$baris", $value->nib, DataType::TYPE_STRING);
             $sheet->setCellValue("E$baris", $value->nomor_telepon);
             $sheet->setCellValue("F$baris", $value->email);
             $sheet->setCellValue("G$baris", $value->website);

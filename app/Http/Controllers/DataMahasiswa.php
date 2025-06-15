@@ -10,22 +10,21 @@ use App\Models\Magang;
 use App\Models\Mahasiswa;
 use App\Models\PeriodeMagang;
 use App\Models\Pengguna;
-
 use App\Models\ProgramStudi;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class DataMahasiswa extends Controller
 {
@@ -39,10 +38,8 @@ class DataMahasiswa extends Controller
         $mahasiswa_selesai_magang = Magang::where('status', 'SELESAI')->count();
         $program_studi = ProgramStudi::all();
         $periode_magang = PeriodeMagang::select('id_periode', 'nama_periode')->with('lowongan')->get();
-        $status_aktivitas = ['' => 'Semua Status'] + array_combine(
-            $statuses = array_unique(array_merge(Magang::pluck('status')->toArray(), ['BELUM MAGANG'])),
-            $statuses
-        );
+        $statuses = array_unique(array_merge(Magang::pluck('status')->toArray(), ['BELUM MAGANG']));
+        $status_aktivitas = ['' => 'Semua Status'] + array_combine($statuses, $statuses);
 
         if ($pengguna === "ADMIN") {
             $angkatan = PeriodeMagang::select('tanggal_mulai')
@@ -54,35 +51,25 @@ class DataMahasiswa extends Controller
                 ->toArray();
 
             $baris = 1;
-            
             $query = Mahasiswa::with('program_studi');
-            
-            if ($request->has('nama_lengkap') && !empty($request->nama_lengkap)) {
-                $query->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
+
+            $request->filled('nama_lengkap') && $query->where('nama_lengkap', 'like', "%{$request->nama_lengkap}%");
+            $request->filled('program_studi') && $query->where('id_prodi', $request->program_studi);
+
+            if ($request->filled('status') && $request->status !== '') {
+                $status = $request->status;
+                $status === 'BELUM MAGANG' ? $query->where('status', $status) : $query->whereRelation('pengajuan_magang.magang', 'status', $status);
             }
-            
-            if ($request->has('program_studi') && !empty($request->program_studi)) {
-                $query->where('id_prodi', $request->program_studi);
-            }
-            
-            if ($request->has('status') && !empty($request->status)) {
-                if ($request->status === 'BELUM MAGANG') {
-                    $query->where('status', 'BELUM MAGANG');
-                } else {
-                    $query->whereHas('pengajuan_magang.magang', function($q) use ($request) {
-                        $q->where('status', $request->status);
-                    });
-                }
-            }
-            
-            /** @var LengthAwarePaginator $paginasi */
-            $paginasi = $query->paginate(request('per_page', 10))->withQueryString();
+
+            $paginasi = $query->paginate($request->input('per_page', 10))->withQueryString();
             $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
-                $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') {
-                    'AKTIF'         => 'bg-green-200 text-green-800',
-                    'SELESAI'       => 'bg-yellow-200 text-yellow-800',
-                    'BELUM MAGANG'  => 'bg-red-200 text-red-800',
+                $status_label = $mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG';
+                $status_class = match ($status_label) {
+                    'AKTIF' => 'bg-green-200 text-green-800',
+                    'SELESAI' => 'bg-yellow-200 text-yellow-800',
+                    default => 'bg-red-200 text-red-800',
                 };
+
                 return [
                     $baris++,
                     '<div class="flex items-center gap-2">
@@ -92,43 +79,35 @@ class DataMahasiswa extends Controller
                     $mhs->program_studi->kode,
                     $mhs->angkatan,
                     $mhs->semester,
-                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($mhs->pengajuan_magang->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG') . '</div>',
+                    "<div class='text-xs font-medium px-5 py-2 rounded-2xl {$status_class}'>" . $status_label . '</div>',
                     view('components.admin.data-mahasiswa.aksi', compact('mhs'))->render(),
                 ];
             })->toArray();
 
             return view('pages.admin.data-mahasiswa', compact('angkatan', 'data', 'paginasi', 'total_mahasiswa', 'total_mahasiswa_magang', 'mahasiswa_belum_magang', 'mahasiswa_sedang_magang', 'mahasiswa_selesai_magang', 'program_studi', 'status_aktivitas'));
-        } else if ($pengguna === "DOSEN") {
+        }
+
+        if ($pengguna === "DOSEN") {
             $query = $this->mahasiswa_bimbingan();
-            
-            if ($request->filled('nama_lengkap')) {
-                $query->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
-            }
-            
+            $request->filled('nama_lengkap') && $query->where('nama_lengkap', 'like', "%{$request->nama_lengkap}%");
+
             if ($request->filled('periode_magang')) {
-                $query->whereHas('pengajuan_magang.lowongan', function($q) use ($request) {
-                    $q->where('id_periode', $request->periode_magang);
-                });
+                $query->whereRelation('pengajuan_magang.lowongan', 'id_periode', $request->periode_magang);
             }
-            
+
             if ($request->filled('status') && $request->status !== '') {
-                if ($request->status === 'BELUM MAGANG') {
-                    $query->where('status', 'BELUM MAGANG');
-                } else {
-                    $query->whereHas('pengajuan_magang.magang', function($q) use ($request) {
-                        $q->where('status', $request->status);
-                    });
-                }
+                $status = $request->status;
+                $status === 'BELUM MAGANG' ? $query->where('status', $status) : $query->whereRelation('pengajuan_magang.magang', 'status', $status);
             }
 
             $baris = 1;
-            /** @var LengthAwarePaginator $paginasi */
-            $paginasi = $query->paginate(request('per_page', 10))->withQueryString();
+            $paginasi = $query->paginate($request->input('per_page', 10))->withQueryString();
             $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
-                $status = match ($mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status) {
-                    'AKTIF'   => 'bg-green-200 text-green-800',
+                $status_label = $mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG';
+                $status_class = match ($status_label) {
+                    'AKTIF' => 'bg-green-200 text-green-800',
                     'SELESAI' => 'bg-yellow-200 text-yellow-800',
-                    default   => 'bg-red-200 text-red-800',
+                    default => 'bg-red-200 text-red-800',
                 };
 
                 $pengajuan = $mhs->pengajuan_magang->first();
@@ -146,22 +125,23 @@ class DataMahasiswa extends Controller
                     $lowongan?->periode_magang?->nama_periode ?? '-',
                     $perusahaan?->nama ?? '-',
                     $lowongan?->bidang->nama_bidang ?? '-',
-                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($magang?->status ?? 'BELUM MAGANG') . '</div>',
+                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status_class . '">' . ($magang?->status ?? 'BELUM MAGANG') . '</div>',
                     view('components.lecturer.data-mahasiswa.aksi', compact('mhs'))->render(),
                 ];
             })->toArray();
-            $periode_options = ['' => 'Semua Periode Magang'] + $periode_magang->pluck('nama_periode', 'id_periode')->toArray();
-            
+
+            $opsi_periode = ['' => 'Semua Periode Magang'] + $periode_magang->pluck('nama_periode', 'id_periode')->toArray();
+
             return view('pages.lecturer.data-mahasiswa', [
-                'data' => $data,
-                'paginasi' => $paginasi,
-                'program_studi' => $program_studi,
-                'periode_magang' => $periode_options,
-                'status_aktivitas' => $status_aktivitas
+                'data'              => $data,
+                'paginasi'          => $paginasi,
+                'program_studi'     => $program_studi,
+                'periode_magang'    => $opsi_periode,
+                'status_aktivitas'  => $status_aktivitas,
             ]);
-        } else {
-            abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
+
+        abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
     }
 
     public function create(Request $request): RedirectResponse
@@ -192,29 +172,21 @@ class DataMahasiswa extends Controller
                 'semester'      => $request->semester,
                 'id_prodi'      => $request->program_studi,
                 'angkatan'      => $request->angkatan,
+                'ipk'           => 0,
                 'status'        => 'BELUM MAGANG',
             ]);
 
             return to_route('admin.data-mahasiswa')->with('success', 'Data mahasiswa berhasil ditambahkan.');
-        } catch (\Exception $e) {
-            \Log::error('Error adding student: ' . $e->getMessage());
-            \Log::error('File: ' . $e->getFile() . ' Line: ' . $e->getLine());
-            \Log::error('Trace: ' . $e->getTraceAsString());
-            return back()->withErrors(['errors' => 'Gagal menambahkan data mahasiswa. ' . $e->getMessage()])->withInput();
+        } catch (Exception $e) {
+            report($e);
+            Log::error($e->getMessage());
+            return back()->withErrors(['errors' => 'Gagal menambahkan data mahasiswa karena terjadi kesalahan pada server.'])->withInput();
         }
     }
 
-    public function edit($id): JsonResponse
+    public function edit(string $id): JsonResponse
     {
-        $angkatan = PeriodeMagang::select('tanggal_mulai')
-            ->get()
-            ->map(fn(PeriodeMagang $periode) => Carbon::parse($periode->tanggal_mulai)->format('Y'))
-            ->unique()
-            ->values()
-            ->mapWithKeys(fn($tahun) => [$tahun => $tahun])
-            ->toArray();
-
-        $mahasiswa = Mahasiswa::with(['program_studi'])->findOrFail($id);
+        $mahasiswa = Mahasiswa::with('program_studi')->findOrFail($id);
 
         return response()->json([
             'mahasiswa' => [
@@ -300,7 +272,7 @@ class DataMahasiswa extends Controller
     public function export_excel(): void
     {
         $mahasiswa = Mahasiswa::select('id_pengguna', 'id_mahasiswa', 'nama_lengkap', 'nim', 'id_prodi', 'angkatan', 'semester', 'ipk', 'status')
-            ->with('pengguna:id_pengguna,nama_pengguna,email')
+            ->with('pengguna:id_pengguna,nama_pengguna,email,kata_sandi')
             ->with('program_studi:id_prodi,nama')
             ->get();
 
@@ -309,34 +281,36 @@ class DataMahasiswa extends Controller
 
         $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'Nama Pengguna');
-        $sheet->setCellValue('C1', 'Email');
-        $sheet->setCellValue('D1', 'Nama Lengkap');
-        $sheet->setCellValue('E1', 'NIM');
-        $sheet->setCellValue('F1', 'Program Studi');
-        $sheet->setCellValue('G1', 'Angkatan');
-        $sheet->setCellValue('H1', 'Semester');
-        $sheet->setCellValue('I1', 'IPK');
-        $sheet->setCellValue('J1', 'Status');
-        $sheet->getStyle("A1:J1")->getFont()->setBold(true);
+        $sheet->setCellValue('C1', 'Kata Sandi');
+        $sheet->setCellValue('D1', 'Email');
+        $sheet->setCellValue('E1', 'Nama Lengkap');
+        $sheet->setCellValue('F1', 'NIM');
+        $sheet->setCellValue('G1', 'Program Studi');
+        $sheet->setCellValue('H1', 'Angkatan');
+        $sheet->setCellValue('I1', 'Semester');
+        $sheet->setCellValue('J1', 'IPK');
+        $sheet->setCellValue('K1', 'Status');
+        $sheet->getStyle("A1:K1")->getFont()->setBold(true);
 
         $nomor = 1;
         $baris = 2;
         foreach ($mahasiswa as $value) {
             $sheet->setCellValue("A$baris", $nomor);
             $sheet->setCellValue("B$baris", $value->pengguna ? $value->pengguna->nama_pengguna : '-');
-            $sheet->setCellValue("C$baris", $value->pengguna ? $value->pengguna->email : '-');
-            $sheet->setCellValue("D$baris", $value->nama_lengkap);
-            $sheet->setCellValueExplicit("E$baris", $value->nim, DataType::TYPE_STRING);
-            $sheet->setCellValue("F$baris", $value->program_studi ? $value->program_studi->nama : '-');
-            $sheet->setCellValue("G$baris", $value->angkatan);
-            $sheet->setCellValue("H$baris", $value->semester);
-            $sheet->setCellValue("I$baris", $value->ipk);
-            $sheet->setCellValue("J$baris", $value->status);
+            $sheet->setCellValueExplicit("C$baris", $value->pengguna ? Crypt::decrypt($value->pengguna->kata_sandi) : '-', DataType::TYPE_STRING);
+            $sheet->setCellValue("D$baris", $value->pengguna ? $value->pengguna->email : '-');
+            $sheet->setCellValue("E$baris", $value->nama_lengkap);
+            $sheet->setCellValueExplicit("F$baris", $value->nim, DataType::TYPE_STRING);
+            $sheet->setCellValue("G$baris", $value->program_studi ? $value->program_studi->nama : '-');
+            $sheet->setCellValue("H$baris", $value->angkatan);
+            $sheet->setCellValue("I$baris", $value->semester);
+            $sheet->setCellValue("J$baris", $value->ipk);
+            $sheet->setCellValue("K$baris", $value->status);
             $baris++;
             $nomor++;
         }
 
-        foreach (range('A', 'J') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
+        foreach (range('A', 'K') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
 
         $sheet->setTitle("Data Mahasiswa");
         if (ob_get_length()) ob_end_clean();
@@ -355,28 +329,6 @@ class DataMahasiswa extends Controller
         exit;
     }
 
-    /**
-     * @return Builder
-     * Query mahasiswa yang dibimbing dosen saat ini.
-     */
-    private function mahasiswa_bimbingan(?string $id_mahasiswa = null): Builder
-    {
-        $pengguna = Auth::user();
-        $id_dosen = $pengguna->dosen->id_dosen;
-
-        $query = Mahasiswa::with([
-            'pengajuan_magang.lowongan.perusahaan',
-            'pengajuan_magang.magang',
-            'program_studi',
-        ])->whereHas('pengajuan_magang.magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen));
-
-        if ($id_mahasiswa) {
-            $query->where('id_mahasiswa', $id_mahasiswa);
-        }
-
-        return $query;
-    }
-
     public function showDetailBimbingan($id): JsonResponse
     {
         $magang = Magang::with([
@@ -391,17 +343,8 @@ class DataMahasiswa extends Controller
         $lowongan = $magang->pengajuan_magang->lowongan ?? null;
         $perusahaan = $lowongan->perusahaan ?? null;
 
-        $logo = null;
-        if ($perusahaan?->logo) {
-            $logo = str_starts_with($perusahaan->logo, 'storage/')
-                ? "/{$perusahaan->logo}"
-                : (str_starts_with($perusahaan->logo, '/storage/')
-                    ? $perusahaan->logo
-                    : "/storage/{$perusahaan->logo}");
-        }
-
         $status = $magang->status ?? 'BELUM MAGANG';
-        $status_class = match($status) {
+        $status_class = match ($status) {
             'AKTIF' => 'bg-green-200 text-green-800',
             'SELESAI' => 'bg-yellow-200 text-yellow-800',
         };
@@ -431,5 +374,27 @@ class DataMahasiswa extends Controller
                 ],
             ]
         ]);
+    }
+
+    /**
+     * @return Builder
+     * Query mahasiswa yang dibimbing dosen saat ini.
+     */
+    private function mahasiswa_bimbingan(?string $id_mahasiswa = null): Builder
+    {
+        $pengguna = Auth::user();
+        $id_dosen = $pengguna->dosen->id_dosen;
+
+        $query = Mahasiswa::with([
+            'pengajuan_magang.lowongan.perusahaan',
+            'pengajuan_magang.magang',
+            'program_studi',
+        ])->whereHas('pengajuan_magang.magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen));
+
+        if ($id_mahasiswa) {
+            $query->where('id_mahasiswa', $id_mahasiswa);
+        }
+
+        return $query;
     }
 }

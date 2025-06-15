@@ -314,16 +314,12 @@ class LogAktivitas extends Controller
      * @param string $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function detailForLecturer(string $id): JsonResponse
+    public function detail_for_lecturer(string $id): JsonResponse
     {
         try {
             $dosen = Dosen::where('id_pengguna', Auth::id())->firstOrFail();
 
-            $log = LogAktivitasModel::with([
-                'magang.pengajuan_magang.mahasiswa.pengguna',
-                'magang.pengajuan_magang.lowongan.perusahaan',
-                'magang.pengajuan_magang.lowongan.bidang'
-            ])
+            $log = LogAktivitasModel::with(['magang.pengajuan_magang.mahasiswa.pengguna', 'magang.pengajuan_magang.lowongan.perusahaan', 'magang.pengajuan_magang.lowongan.bidang'])
                 ->whereHas('magang', function ($q) use ($dosen) {
                     $q->where('id_dosen_pembimbing', $dosen->id_dosen);
                 })
@@ -351,7 +347,7 @@ class LogAktivitas extends Controller
                 }
             }
 
-            $fotoProfilUrl = asset('images/default-avatar.png');
+            $fotoProfilUrl = asset('shared/profil.png');
             if ($mahasiswa->pengguna->foto_profil) {
                 $profilePath = $mahasiswa->pengguna->foto_profil;
                 
@@ -383,13 +379,6 @@ class LogAktivitas extends Controller
                 'komentar' => $log->komentar ?? '-',
                 'dikonfirmasi_pada' => $log->dikonfirmasi_pada ? $log->dikonfirmasi_pada->format('d F Y H:i') : '-',
             ];
-
-            Log::info('Lecturer - Photo URLs generated:', [
-                'foto_aktivitas' => $fotoUrl,
-                'foto_profil' => $fotoProfilUrl,
-                'raw_foto' => $log->foto,
-                'raw_foto_profil' => $mahasiswa->pengguna->foto_profil,
-            ]);
 
             return response()->json($data);
         } catch (ModelNotFoundException $e) {
@@ -463,12 +452,6 @@ class LogAktivitas extends Controller
                 'komentar' => $log->komentar ?? '-',
                 'dikonfirmasi_pada' => $log->dikonfirmasi_pada ? $log->dikonfirmasi_pada->format('d F Y H:i') : '-',
             ];
-
-            Log::info('Admin - Data fetched successfully:', [
-                'id' => $id,
-                'foto_aktivitas' => $fotoUrl,
-                'foto_profil' => $fotoProfilUrl,
-            ]);
 
             return response()->json($data);
         } catch (ModelNotFoundException $e) {

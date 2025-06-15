@@ -80,9 +80,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       ipk.textContent = (Math.round(response.mahasiswa.ipk * 100) / 100).toString();
       status.textContent = response.status.status;
 
-      if (status.textContent === 'AKTIF') status.classList.add('bg-green-200', 'text-green-800', 'px-5', 'py-1');
-      else if (status.textContent === 'BELUM MAGANG') status.classList.add('bg-red-200', 'text-red-800', 'px-5', 'py-1');
-      else if (status.textContent === 'SELESAI') status.classList.add('bg-yellow-200', 'text-yellow-800', 'px-5', 'py-1');
+      status.className = 'inline-block px-5 py-1 rounded-full text-xs font-medium w-fit';
+      if (response.status.status === 'AKTIF') {
+        status.classList.add('bg-green-100', 'text-green-600');
+        status.classList.remove('bg-red-100', 'text-red-600', 'bg-yellow-100', 'text-yellow-600');
+      } else if (response.status.status === 'SELESAI') {
+        status.classList.add('bg-yellow-100', 'text-yellow-600');
+        status.classList.remove('bg-green-100', 'text-green-600', 'bg-red-100', 'text-red-600');
+      } else {
+        status.classList.add('bg-red-100', 'text-red-600');
+        status.classList.remove('bg-green-100', 'text-green-600', 'bg-yellow-100', 'text-yellow-600');
+      }
     });
   });
 

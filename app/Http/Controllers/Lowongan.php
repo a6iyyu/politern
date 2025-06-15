@@ -42,22 +42,23 @@ class Lowongan extends Controller
             $jenis_magang = JenisMagang::pluck('nama_jenis', 'id_jenis_magang')->toArray();
             $keahlian     = Keahlian::pluck('nama_keahlian', 'id_keahlian')->toArray();
             $periode      = PeriodeMagang::pluck('nama_periode', 'id_periode')->toArray();
-            $perusahaan   = Perusahaan::pluck('nama', 'id_perusahaan_mitra')->toArray();
+            $perusahaan = Perusahaan::where('status', 'AKTIF')->pluck('nama', 'id_perusahaan_mitra')->toArray();
             $query = LowonganMagang::query();
 
             if ($id_bidang = request('bidang')) $query->where('id_bidang', $id_bidang);
             if ($id_perusahaan = request('perusahaan')) $query->where('id_perusahaan_mitra', $id_perusahaan);
             if ($id_periode = request('periode')) $query->where('id_periode', $id_periode);
-            $paginasi = $query->paginate(request('per_page', 10));
 
-            $data = collect($paginasi->items())->map(function (LowonganMagang $lowongan): array {
+            $paginasi = $query->paginate(request('per_page', 10));
+            $baris = 1;
+            $data = collect($paginasi->items())->map(function (LowonganMagang $lowongan) use (&$baris) {
                 $status = match ($lowongan->status) {
                     'DIBUKA'    => 'bg-green-200 text-green-800',
                     'DITUTUP'   => 'bg-yellow-200 text-yellow-800',
                 };
 
                 return [
-                    $lowongan->id_lowongan,
+                    $baris++,
                     $lowongan->perusahaan->nama ?? '-',
                     $lowongan->bidang->nama_bidang ?? '-',
                     $lowongan->periode_magang->nama_periode ?? '-',

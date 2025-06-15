@@ -15,21 +15,21 @@
     </ul>
 @endif
 @include('components.lecturer.log-aktivitas.filter')
-@if (!empty($log_aktivitas))
+@if (isset($log_aktivitas) && !empty($log_aktivitas))
     @foreach ($log_aktivitas as $log)
         <x-log
             confirmation_date="{{ $log->tanggal_konfirmasi?->format('d/m/Y') }}"
-            profile_photo="{{ asset($log->magang->pengajuan_magang->mahasiswa->foto_profil ?? 'images/default-avatar.png') }}"
+            context="dosen"
+            profile_photo="{{ asset($log->magang->pengajuan_magang->mahasiswa->foto_profil ?? 'shared/profil.png') }}"
             :comment="($log->status === 'DITOLAK' || $log->status === 'DISETUJUI') ? ($log->komentar ?? null) : null"
-            :description="$log->deskripsi"
+            :description="$log->deskripsi ?? 'Tidak ada deskripsi.'"
             :id="$log->id_log"
             :name="$log->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? 'N/A'"
             :nim="$log->magang->pengajuan_magang->mahasiswa->nim ?? 'N/A'"
-            :photo="$log->foto"
-            :status="$log->status"
-            :title="$log->judul"
+            :photo="$log->foto ?? null"
+            :status="$log->status ?? 'N/A'"
+            :title="$log->judul ?? 'N/A'"
             :week="$log->minggu ?? 'N/A'"
-            context="dosen"
         />
     @endforeach
 @else

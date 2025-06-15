@@ -15,6 +15,6 @@
         </section>
         @include('components.admin.data-perusahaan.detail')
         @include('components.admin.data-perusahaan.tambah')
-        @include('components.admin.data-perusahaan.edit');
+        @include('components.admin.data-perusahaan.edit')
     </main>
 @endsection

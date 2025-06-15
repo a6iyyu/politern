@@ -9,14 +9,12 @@ use Illuminate\View\Component;
 class Log extends Component
 {
     public array $info;
-    public ?string $comment, $description, $id, $name, $nim, $photo, $profile_photo, $status, $title, $week;
-    public ?string $statusStr;
-    public $confirmation_date;
+    public ?string $comment, $condition, $confirmation_date, $description, $id, $name, $nim, $photo, $profile_photo, $status, $title, $week;
     public string $context; 
 
     public function __construct(
         ?string $comment = null,
-        $confirmation_date = null,
+        ?string $confirmation_date = null,
         ?string $description = null,
         ?string $id = null,
         ?string $name = null,
@@ -26,11 +24,13 @@ class Log extends Component
         ?string $status = null,
         ?string $title = null,
         ?string $week = null,
-        ?string $statusStr = null,
+        ?string $condition = null,
         string $context = 'mahasiswa' 
     ) {
         $this->comment = $comment;
+        $this->condition = $status;
         $this->confirmation_date = $confirmation_date ;
+        $this->context = $context; 
         $this->description = $description;
         $this->id = $id;
         $this->name = $name;
@@ -40,8 +40,6 @@ class Log extends Component
         $this->status = is_string($status) ? trim(strtoupper($status)) : null;
         $this->title = $title;
         $this->week = $week;
-        $this->statusStr = $status;
-        $this->context = $context; 
 
         $this->info = [
             'DISETUJUI'    => 'bg-green-200 text-green-800',

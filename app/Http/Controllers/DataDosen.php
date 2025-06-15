@@ -11,14 +11,14 @@ use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Log;
 
 class DataDosen extends Controller
 {
@@ -162,35 +162,34 @@ class DataDosen extends Controller
 
     public function export_excel(): void
     {
-        $dosen = Dosen::select('id_dosen', 'nama', 'nip', 'nomor_telepon', 'id_pengguna')
-            ->with('pengguna:id_pengguna,nama_pengguna,email')
-            ->get();
-
+        $dosen = Dosen::select('id_dosen', 'nama', 'nip', 'nomor_telepon', 'id_pengguna')->with('pengguna:id_pengguna,nama_pengguna,email,kata_sandi')->get();
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
         $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'Nama Pengguna');
-        $sheet->setCellValue('C1', 'Email');
-        $sheet->setCellValue('D1', 'Nama Dosen');
-        $sheet->setCellValue('E1', 'NIP');
-        $sheet->setCellValue('F1', 'Nomor Telepon');
-        $sheet->getStyle("A1:F1")->getFont()->setBold(true);
+        $sheet->setCellValue('C1', 'Kata Sandi');
+        $sheet->setCellValue('D1', 'Email');
+        $sheet->setCellValue('E1', 'Nama Dosen');
+        $sheet->setCellValue('F1', 'NIP');
+        $sheet->setCellValue('G1', 'Nomor Telepon');
+        $sheet->getStyle("A1:G1")->getFont()->setBold(true);
 
         $nomor = 1;
         $baris = 2;
         foreach ($dosen as $value) {
             $sheet->setCellValue("A$baris", $nomor);
             $sheet->setCellValue("B$baris", $value->pengguna ? $value->pengguna->nama_pengguna : '-');
-            $sheet->setCellValue("C$baris", $value->pengguna ? $value->pengguna->email : '-');
-            $sheet->setCellValue("D$baris", $value->nama);
-            $sheet->setCellValueExplicit("E$baris", $value->nip, DataType::TYPE_STRING);
-            $sheet->setCellValue("F$baris", $value->nomor_telepon);
+            $sheet->setCellValueExplicit("C$baris", $value->pengguna ? Crypt::decrypt($value->pengguna->kata_sandi) : '-', DataType::TYPE_STRING);
+            $sheet->setCellValue("D$baris", $value->pengguna ? $value->pengguna->email : '-');
+            $sheet->setCellValue("E$baris", $value->nama);
+            $sheet->setCellValueExplicit("F$baris", $value->nip, DataType::TYPE_STRING);
+            $sheet->setCellValue("G$baris", $value->nomor_telepon);
             $baris++;
             $nomor++;
         }
 
-        foreach (range('A', 'F') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
+        foreach (range('A', 'G') as $id) $sheet->getColumnDimension($id)->setAutoSize(true);
 
         $sheet->setTitle("Data Dosen");
         if (ob_get_length()) ob_end_clean();

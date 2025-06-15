@@ -1,4 +1,4 @@
-<form action="" method="GET" class="mb-7 grid grid-cols-1 lg:grid-cols-5 gap-4 w-auto">
+<form action="" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-5">
     @csrf
     @method('GET')
     <x-input
@@ -30,13 +30,13 @@
         :selected="request('periode', '')"
         :required="false"
     />
-    <div class="flex items-end">
+    <div class="flex items-end justify-end">
         <button type="submit" class="cursor-pointer bg-[var(--secondary)] border border-[var(--secondary)] text-white px-12 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:py-2.5 lg:hover:bg-[#ff86cb] w-full sm:w-auto">
             Cari
         </button>
     </div>
 </form>
-@if ($periode_magang)
+@if (isset($periode_magang) && !empty($periode_magang))
     <div class="cursor-default flex items-center mb-6 gap-2">
         <h5 class="text-sm text-[var(--secondary-text)]">Periode Aktif:</h5>
         <h5 class="px-4 py-2 rounded-full text-xs font-medium bg-purple-100 text-purple-800">

@@ -19,6 +19,7 @@
     @foreach ($log_aktivitas as $log)
         <x-log
             confirmation_date="{{ $log->tanggal_konfirmasi?->format('d/m/Y') }}"
+            context="admin"
             profile_photo="{{ asset($log->magang->pengajuan_magang->mahasiswa->foto_profil) }}"
             :comment="($log->status === 'DITOLAK' || $log->status === 'DISETUJUI') ? ($log->komentar ?? null) : null"
             :description="$log->deskripsi"
@@ -29,7 +30,6 @@
             :status="$log->status"
             :title="$log->judul"
             :week="$log->minggu ?? 'N/A'"
-            context="admin"
         />
     @endforeach
 @else

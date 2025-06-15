@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const buttons = document.querySelectorAll<HTMLButtonElement>('.detail[data-id]');
   const modal = document.getElementById('modal-konfirmasi-pengajuan');
   const close = document.getElementById('close-konfirmasi');
-  
   if (!modal || !close) return;
   
   const nama_mahasiswa = document.getElementById('nama_mahasiswa');
@@ -84,30 +83,34 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nomor_telepon) nomor_telepon.textContent = data.mahasiswa.nomor_telepon;
         if (deskripsi) deskripsi.textContent = data.mahasiswa.deskripsi;
 
-        if (logo_perusahaan) {
-          if (data.pengajuan.logo) {
-            const logoUrl = data.pengajuan.logo.startsWith('storage/')
-              ? `/${data.pengajuan.logo}`
-              : data.pengajuan.logo.startsWith('/storage/')
-                ? data.pengajuan.logo
-                : `/storage/${data.pengajuan.logo}`;
-                
-            logo_perusahaan.src = logoUrl;
-            logo_perusahaan.classList.remove('hidden');
-            if (logo_placeholder) logo_placeholder.classList.add('hidden');
-            
-            logo_perusahaan.onerror = () => {
-              console.error('Gagal memuat logo:', logoUrl);
-              logo_perusahaan.classList.add('hidden');
-              if (logo_placeholder) logo_placeholder.classList.remove('hidden');
-            };
-          } else {
-            logo_perusahaan.classList.add('hidden');
-            if (logo_placeholder) logo_placeholder.classList.remove('hidden');
-          }
-        } else if (logo_placeholder) {
-          logo_placeholder.classList.remove('hidden');
+        if (!logo_perusahaan) {
+          if (logo_placeholder) logo_placeholder.classList.remove('hidden');
+          return;
         }
+
+        const logo = data.pengajuan.logo;
+
+        if (!logo) {
+        logo_perusahaan.classList.add('hidden');
+        if (logo_placeholder) logo_placeholder.classList.remove('hidden');
+        return;
+        }
+
+        const logoUrl = logo.startsWith('storage/')
+          ? `/${logo}`
+          : logo.startsWith('/storage/')
+            ? logo
+            : `/storage/${logo}`;
+
+        logo_perusahaan.src = logoUrl;
+        logo_perusahaan.classList.remove('hidden');
+        if (logo_placeholder) logo_placeholder.classList.add('hidden');
+
+        logo_perusahaan.onerror = () => {
+        console.error(`Gagal memuat logo ${logoUrl} karena kesalahan pada server.`);
+        logo_perusahaan.classList.add('hidden');
+        if (logo_placeholder) logo_placeholder.classList.remove('hidden');
+        };
 
         if (nama_file_cv) nama_file_cv.textContent = data.mahasiswa.cv.nama_file;
         if (unduh_cv) {
@@ -120,9 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
-        if (daftar_keahlian) {
-          daftar_keahlian.innerHTML = data.mahasiswa.keahlian.map(skill => `<span class="text-sm bg-pink-400 text-white px-4 py-2 rounded-full mr-2">${skill}</span>`).join('');
-        }
+        if (daftar_keahlian) daftar_keahlian.innerHTML = data.mahasiswa.keahlian.map(skill => `<span class="text-sm bg-pink-400 text-white px-4 py-2 rounded-full mr-2">${skill}</span>`).join('');
       } catch (error) {
         console.error('Gagal memuat data:', error);
       }

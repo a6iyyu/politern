@@ -44,6 +44,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       jenjang.textContent = response.prodi.jenjang_prodi;
       jurusan.textContent = response.prodi.jurusan_prodi;
       status.textContent = response.prodi.status_prodi;
+
+      if (response.prodi.status_prodi === 'NONAKTIF') status.classList.add('bg-red-500', 'text-red-100');
+      else status.classList.remove('bg-red-500', 'text-red-100');
     });
   });
 

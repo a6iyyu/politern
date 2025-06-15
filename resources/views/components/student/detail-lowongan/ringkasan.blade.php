@@ -1,7 +1,6 @@
 <figure class="cursor-default border rounded-xl p-6 border-[var(--primary)] bg-white shadow-sm">
     <div class="flex items-center gap-3 mb-4">
-        <img src="{{ asset($lowongan->perusahaan->logo ?? 'img/default-logo.png') }}" alt="Logo"
-            class="w-12 h-12 rounded-md object-cover">
+        <img src="{{ asset($lowongan->perusahaan->logo ?? 'img/default-logo.png') }}" alt="Logo" class="hidden h-12 w-12 rounded-md object-cover lg:inline">
         <span>
             <h4 class="font-semibold text-primary text-[var(--primary)] leading-tight mb-1">
                 {{ $lowongan->bidang->nama_bidang ?? '-' }}
@@ -9,7 +8,7 @@
             <h5 class="text-sm text-[#2D2D2D]">{{ $lowongan->perusahaan->nama ?? '-' }}</h5>
         </span>
     </div>
-    <h5 class="inline-block px-3 py-2 mb-4 rounded-lg  text-white text-sm" style="background:#10B981;">
+    <h5 class="inline-block px-5 py-2 mb-4 rounded-lg  text-white text-xs" style="background:#10B981;">
         {{ $lowongan->status == 'DIBUKA' ? 'Dibuka' : 'Ditutup' }}
     </h5>
     <ul class="mb-4 text-sm text-gray-700 space-y-2">
@@ -32,7 +31,7 @@
     <h5 class="text-xs text-[#2D2D2D] mb-5">
         Diposting {{ \Carbon\Carbon::parse($lowongan->created_at)->translatedFormat('d F Y') ?? '-' }}
     </h5>
-    <span class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+    <span class="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
         @if ($lowongan->status == 'DIBUKA' && $lowongan->kuota > 0)
             <a href="javascript:void(0)" data-id="{{ $lowongan->id_lowongan }}" class="apply text-center bg-pink-400 text-white py-2 rounded-lg font-semibold transition-all duration-300 ease-in-out lg:hover:bg-pink-500">
                 Ajukan

@@ -4,9 +4,9 @@
             @csrf
             @method('POST')
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-[#5955B2]">Tambah Lowongan Magang</h2>
+                <h2 class="font-semibold text-[#5955B2]">Tambah Lowongan Magang</h2>
                 <button id="close-tambah-lowongan" type="button" class="text-gray-400 hover:text-gray-600">
-                    <i class="fa-solid fa-xmark close"></i>
+                    <i class="fa-solid fa-xmark close cursor-pointer"></i>
                 </button>
             </div>
             <hr class="border border-[var(--primary)] mb-6 " />

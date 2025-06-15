@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const jurusan = form.querySelector<HTMLInputElement>("input[name='jurusan']");
   const jenjang = form.querySelector<HTMLSelectElement>("select[name='jenjang']");
   const status = form.querySelector<HTMLSelectElement>("select[name='status']");
+  if (!nama || !kode || !jurusan || !jenjang || !status) return;
 
   const fetchProdiData = async (id: string): Promise<Prodi | null> => {
     try {
