@@ -13,6 +13,7 @@ use App\Models\Mahasiswa;
 use App\Models\Magang;
 use App\Models\Dosen;
 use App\Models\Perusahaan;
+use App\Models\PengajuanMagang;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -48,19 +49,29 @@ class Dasbor extends Controller
                 $total_dosen = Dosen::count();
                 $total_perusahaan_mitra = Perusahaan::count();
                 $total_lowongan = LowonganMagang::count();
+                
+                // Get active period and log activities count
+                $periodeAktif = PeriodeMagang::where('status', 'AKTIF')->first();
+                $total_aktivitas = 0;
+                
+                if ($periodeAktif) {
+                    $total_aktivitas = LogAktivitas::join('magang', 'log_aktivitas.id_magang', '=', 'magang.id_magang')
+                        ->join('pengajuan_magang', 'magang.id_pengajuan_magang', '=', 'pengajuan_magang.id_pengajuan_magang')
+                        ->join('lowongan_magang', 'pengajuan_magang.id_lowongan', '=', 'lowongan_magang.id_lowongan')
+                        ->where('lowongan_magang.id_periode', $periodeAktif->id_periode)
+                        ->count();
+                }
 
-                $log_aktivitas = LogAktivitas::with('magang.pengajuan_magang.mahasiswa')
-                    ->latest()
-                    ->take(2)
-                    ->get()
-                    ->map(fn($log, $index) => [
-                        $index + 1,
-                        $log->magang->pengajuan_magang->mahasiswa->nama_lengkap ?? '-',
-                        '<a href="' . route('admin.aktivitas-magang.detail', $log->id_log) . '" class="px-5 py-2 bg-[var(--blue-tertiary)] text-white rounded-md transition-all duration-300 ease-in-out lg:hover:bg-[var(--blue-tertiary)]/80">Lihat</a>',
-                    ])
-                    ->toArray();
-
-                return view('pages.admin.dasbor', compact('log_aktivitas', 'nama', 'nip', 'total_mahasiswa', 'total_dosen', 'total_perusahaan_mitra', 'total_lowongan'));
+                return view('pages.admin.dasbor', compact(
+                    'nama', 
+                    'nip', 
+                    'total_mahasiswa', 
+                    'total_dosen', 
+                    'total_perusahaan_mitra', 
+                    'total_lowongan',
+                    'periodeAktif',
+                    'total_aktivitas'
+                ));
             })(),
             'MAHASISWA' => (function () use ($pengguna): View {
                 $lowongan = LowonganMagang::with('perusahaan')->orderBy('created_at', 'desc')->get();
@@ -179,15 +190,15 @@ class Dasbor extends Controller
     public function chart(): JsonResponse|View
     {
         try {
-            $total = BidangMahasiswa::count();
-            $kategori_bidang_magang_terbanyak = BidangMahasiswa::with('bidang')
+            $total = PengajuanMagang::count();
+            $kategori_bidang_magang_terbanyak = PengajuanMagang::with('lowongan.bidang')
                 ->get()
-                ->groupBy('id_bidang')
+                ->groupBy('lowongan.bidang.id_bidang')
                 ->take(5)
                 ->map(fn($bidang) => [
-                    'id_bidang'     => $bidang->first()->id_bidang,
+                    'id_bidang'     => $bidang->first()->lowongan->bidang->id_bidang,
                     'jumlah_bidang' => $bidang->count(),
-                    'nama_bidang'   => $bidang->first()->bidang->nama_bidang ?? 'N/A',
+                    'nama_bidang'   => $bidang->first()->lowongan->bidang->nama_bidang ?? 'N/A',
                     'persentase'    => round($bidang->count() / $total * 100, 2),
                 ])
                 ->values();
