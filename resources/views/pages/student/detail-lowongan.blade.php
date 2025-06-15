@@ -22,6 +22,7 @@
             <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
                 @include('components.student.detail-lowongan.informasi')
                 @include('components.student.detail-lowongan.ringkasan')
+                @include('components.student.detail-lowongan.lamar')
             </div>
         </section>
     </main>

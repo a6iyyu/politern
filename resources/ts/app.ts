@@ -23,6 +23,7 @@ import './edit-student';
 import './form';
 import './hamburger-menu';
 import './intern-detail';
+import './internship-application';
 import './lecturer-detail';
 import './log-activity-detail';
 import './major-detail';

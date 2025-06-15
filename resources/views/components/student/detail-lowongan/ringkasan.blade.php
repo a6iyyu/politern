@@ -32,9 +32,9 @@
         Diposting {{ \Carbon\Carbon::parse($lowongan->created_at)->translatedFormat('d F Y') ?? '-' }}
     </h5>
     <span class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <button class="bg-pink-400 text-white py-2 rounded-lg font-semibold transition-all duration-300 ease-in-out lg:hover:bg-pink-500">
+        <a href="javascript:void(0)" data-target="ajukan-lamaran" class="open text-center bg-pink-400 text-white py-2 rounded-lg font-semibold transition-all duration-300 ease-in-out lg:hover:bg-pink-500">
             Ajukan
-        </button>
+        </a>
         <a href="{{ route('mahasiswa.lowongan') }}" class="border-1 rounded-lg font-semibold py-2 text-center transition border-[var(--primary)] text-[var(--primary)] bg-white lg:hover:bg-[var(--primary)] lg:hover:text-white">
             Keluar
         </a>
