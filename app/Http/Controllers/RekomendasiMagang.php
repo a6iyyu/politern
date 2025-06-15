@@ -163,7 +163,6 @@ class RekomendasiMagang extends Controller
             }
         }
 
-        Log::info('Rekomendasi:', $rekomendasi);
         return [
             'lowongan' => collect($rekomendasi)->pluck('lowongan'),
             'skor'     => collect($rekomendasi)->pluck('skor'),

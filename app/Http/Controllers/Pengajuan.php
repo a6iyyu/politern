@@ -192,22 +192,14 @@ class Pengajuan extends Controller
         }
     }
 
-    public function get_student_data(LowonganMagang $id): JsonResponse
+    public function data(int $id): JsonResponse
     {
         try {
             $user = Auth::user();
             $mahasiswa = $user->mahasiswa;
+            $lowongan = LowonganMagang::findOrFail($id);
 
-            $pengajuan = PengajuanMagang::with([
-                'mahasiswa.program_studi',
-                'lowongan.perusahaan.lokasi',
-                'lowongan.bidang'
-            ])
-                ->where('id_mahasiswa', $mahasiswa->id_mahasiswa)
-                ->where('id_lowongan', $id)
-                ->first();
-
-            if (!$pengajuan) {
+            if ($mahasiswa == null || $lowongan == null) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Pengajuan belum ada untuk lowongan ini.'
@@ -216,20 +208,22 @@ class Pengajuan extends Controller
 
             return response()->json([
                 'pengajuan' => [
-                    'bidang_posisi' => $pengajuan->lowongan->bidang->nama_bidang ?? '-',
-                    'nama_perusahaan_mitra' => $pengajuan->lowongan->perusahaan->nama ?? '-',
-                    'lokasi' => $pengajuan->lowongan->perusahaan->lokasi->nama_lokasi ?? '-',
-                    'logo' => $pengajuan->lowongan->perusahaan->logo ?? null,
+                    'bidang_posisi' => $lowongan->bidang->nama_bidang ?? '-',
+                    'nama_perusahaan_mitra' => $lowongan->perusahaan->nama ?? '-',
+                    'logo' => $lowongan->perusahaan->logo ?? null,
+                ],
+                'lokasi' => [
+                    'nama_lokasi' => $lowongan->perusahaan->lokasi->nama_lokasi ?? '-',
                 ],
                 'mahasiswa' => [
-                    'nim' => $pengajuan->mahasiswa->nim,
-                    'nama_lengkap' => $pengajuan->mahasiswa->nama_lengkap,
-                    'program_studi' => $pengajuan->mahasiswa->program_studi->nama ?? '-',
-                    'ipk' => $pengajuan->mahasiswa->ipk,
-                    'nomor_telepon' => $pengajuan->mahasiswa->nomor_telepon,
-                    'angkatan' => $pengajuan->mahasiswa->angkatan,
-                    'semester' => $pengajuan->mahasiswa->semester,
-                    'status' => $pengajuan->mahasiswa->status,
+                    'nim' => $mahasiswa->nim ?? '-',
+                    'nama_lengkap' => $mahasiswa->nama_lengkap ?? '-',
+                    'program_studi' => $mahasiswa->program_studi->nama ?? '-',
+                    'ipk' => $mahasiswa->ipk ?? '-',
+                    'nomor_telepon' => $mahasiswa->nomor_telepon ?? '-',
+                    'angkatan' => $mahasiswa->angkatan ?? '-',
+                    'semester' => $mahasiswa->semester ?? '-',
+                    'status' => $mahasiswa->status ?? '-',
                 ]
             ]);
         } catch (Exception $e) {
@@ -280,10 +274,9 @@ class Pengajuan extends Controller
             });
         }
 
-        $paginasi = $query->orderBy('created_at', 'desc')
-            ->paginate(request('per_page', 10))
-            ->withQueryString();
-        $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan): array {
+        $baris = 1;
+        $paginasi = $query->orderBy('created_at', 'desc')->paginate(request('per_page', 10))->withQueryString();
+        $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan) use (&$baris) {
             $keterangan = match ($pengajuan->status) {
                 'DISETUJUI' => 'bg-green-200 text-green-800',
                 'MENUNGGU'  => 'bg-yellow-200 text-yellow-800',
@@ -293,7 +286,7 @@ class Pengajuan extends Controller
             $konfirmasi = '';
             if ($pengajuan->status === 'MENUNGGU') $konfirmasi = view('components.admin.pengajuan-magang.konfirmasi', compact('pengajuan'))->render();
             return [
-                $pengajuan->id_pengajuan_magang,
+                $baris++,
                 $pengajuan->created_at->format('d/m/Y'),
                 $pengajuan->mahasiswa->nama_lengkap,
                 $pengajuan->mahasiswa->program_studi->kode,
@@ -346,20 +339,29 @@ class Pengajuan extends Controller
     {
         try {
             $request->validate([
-                'id_lowongan' => 'required|exists:lowongan,id_lowongan',
+                'id_lowongan' => 'required|exists:lowongan_magang,id_lowongan',
             ]);
 
+            $id_mahasiswa = Auth::user()->mahasiswa->id_mahasiswa;
+
+            $lowongan = LowonganMagang::findOrFail($request->id_lowongan);
+            if ($lowongan->status !== 'DIBUKA') return back()->with('error', 'Lowongan ini sudah ditutup.');
+
+            $exist = PengajuanMagang::where('id_mahasiswa', $id_mahasiswa)->where('id_lowongan', $request->id_lowongan)->exists();
+            if ($exist) return back()->with('warning', 'Kamu sudah melamar ke lowongan ini.');
+
             PengajuanMagang::create([
-                'id_mahasiswa' => Auth::user()->mahasiswa->id_mahasiswa,
+                'id_mahasiswa' => $id_mahasiswa,
                 'id_lowongan' => $request->id_lowongan,
-                'tanggal_pengajuan' => now(),
                 'status' => 'MENUNGGU',
                 'keterangan' => null,
             ]);
 
-            return redirect()->back()->with('success', 'Pengajuan magang berhasil dibuat.');
+            return back()->with('success', 'Pengajuan magang berhasil dikirim.');
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Gagal membuat pengajuan magang: ' . $e->getMessage());
+            report($e);
+            Log::error('Gagal membuat pengajuan magang: ' . $e->getMessage());
+            return back()->with('error', 'Gagal membuat pengajuan magang karena kesalahan server.');
         }
     }
 }
