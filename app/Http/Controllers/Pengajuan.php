@@ -343,9 +343,14 @@ class Pengajuan extends Controller
             ]);
 
             $id_mahasiswa = Auth::user()->mahasiswa->id_mahasiswa;
+            
 
             $lowongan = LowonganMagang::findOrFail($request->id_lowongan);
             if ($lowongan->status !== 'DIBUKA') return back()->with('error', 'Lowongan ini sudah ditutup.');
+
+            if($lowongan->kuota <= 0) {
+                return back()->with('error', 'Kuota lowongan ini sudah habis.');
+            }
 
             $exist = PengajuanMagang::where('id_mahasiswa', $id_mahasiswa)->where('id_lowongan', $request->id_lowongan)->exists();
             if ($exist) return back()->with('warning', 'Kamu sudah melamar ke lowongan ini.');
@@ -357,7 +362,7 @@ class Pengajuan extends Controller
                 'keterangan' => null,
             ]);
 
-            return back()->with('success', 'Pengajuan magang berhasil dikirim.');
+            return to_route('mahasiswa.kelola-lamaran')->with('success', 'Pengajuan magang berhasil dikirim.');
         } catch (Exception $e) {
             report($e);
             Log::error('Gagal membuat pengajuan magang: ' . $e->getMessage());
