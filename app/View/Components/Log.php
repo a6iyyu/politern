@@ -12,6 +12,7 @@ class Log extends Component
     public ?string $comment, $description, $id, $name, $nim, $photo, $profile_photo, $status, $title, $week;
     public ?string $statusStr;
     public $confirmation_date;
+    public string $context; 
 
     public function __construct(
         ?string $comment = null,
@@ -26,6 +27,7 @@ class Log extends Component
         ?string $title = null,
         ?string $week = null,
         ?string $statusStr = null,
+        string $context = 'mahasiswa' 
     ) {
         $this->comment = $comment;
         $this->confirmation_date = $confirmation_date ;
@@ -39,6 +41,7 @@ class Log extends Component
         $this->title = $title;
         $this->week = $week;
         $this->statusStr = $status;
+        $this->context = $context; 
 
         $this->info = [
             'DISETUJUI'    => 'bg-green-200 text-green-800',

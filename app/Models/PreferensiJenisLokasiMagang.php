@@ -13,6 +13,7 @@ class PreferensiJenisLokasiMagang extends Model
     protected $table = 'preferensi_jenis_lokasi_magang';
     protected $primaryKey = 'id_preferensi_jenis_lokasi_magang';
     protected $fillable = ['id_mahasiswa', 'id_jenis_lokasi'];
+    public $timestamps = false;
 
     public function mahasiswa(): BelongsTo
     {

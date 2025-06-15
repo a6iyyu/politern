@@ -1,4 +1,15 @@
 @php
+    $buttonClass = match($context) {
+        'admin' => 'admin-detail-btn',
+        'dosen' => 'dosen-detail-btn',
+        default => 'mahasiswa-detail-btn'
+    };
+    
+    $buttonId = match($context) {
+        'admin' => 'admin-log-' . $id,
+        'dosen' => 'dosen-log-' . $id,
+        default => 'mahasiswa-log-' . $id
+    };
 @endphp
 
 <figure class="border border-[var(--stroke)] px-6 py-4 rounded-lg mb-4">
@@ -13,14 +24,15 @@
             <h5 class="cursor-pointer px-4 py-2 rounded-2xl transition-all duration-300 ease-in-out {{ $status() }}">
                 {{ $format() }}
             </h5>
-            <a
-                href="javascript:void(0)"
-                data-target="log-dosen"
-                class="open border border-[var(--blue-tertiary)] text-[var(--blue-tertiary)] px-4 py-2 rounded-lg transition-all duration-300 ease-in-out lg:hover:bg-[var(--blue-tertiary)] lg:hover:text-[var(--background)]"
-                data-id="{{ $id }}"
+            <button
+                type="button"
+                id="{{ $buttonId }}"
+                data-log-id="{{ $id }}"
+                data-context="{{ $context }}"
+                class="{{ $buttonClass }} border border-[var(--blue-tertiary)] text-[var(--blue-tertiary)] px-4 py-2 rounded-lg transition-all duration-300 ease-in-out lg:hover:bg-[var(--blue-tertiary)] lg:hover:text-[var(--background)]"
             >
                 Lihat Detail Aktivitas
-            </a>
+            </button>
         </span>
     </section>
     <section class="cursor-default mt-5">

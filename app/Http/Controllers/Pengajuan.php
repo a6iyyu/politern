@@ -10,6 +10,7 @@ use App\Models\Perusahaan;
 use App\Models\ProgramStudi;
 use App\Models\Magang;
 use App\Models\Dosen;
+use App\Models\LowonganMagang;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -191,6 +192,54 @@ class Pengajuan extends Controller
         }
     }
 
+    public function get_student_data(LowonganMagang $id): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            $mahasiswa = $user->mahasiswa;
+
+            $pengajuan = PengajuanMagang::with([
+                'mahasiswa.program_studi',
+                'lowongan.perusahaan.lokasi',
+                'lowongan.bidang'
+            ])
+                ->where('id_mahasiswa', $mahasiswa->id_mahasiswa)
+                ->where('id_lowongan', $id)
+                ->first();
+
+            if (!$pengajuan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pengajuan belum ada untuk lowongan ini.'
+                ], 404);
+            }
+
+            return response()->json([
+                'pengajuan' => [
+                    'bidang_posisi' => $pengajuan->lowongan->bidang->nama_bidang ?? '-',
+                    'nama_perusahaan_mitra' => $pengajuan->lowongan->perusahaan->nama ?? '-',
+                    'lokasi' => $pengajuan->lowongan->perusahaan->lokasi->nama_lokasi ?? '-',
+                    'logo' => $pengajuan->lowongan->perusahaan->logo ?? null,
+                ],
+                'mahasiswa' => [
+                    'nim' => $pengajuan->mahasiswa->nim,
+                    'nama_lengkap' => $pengajuan->mahasiswa->nama_lengkap,
+                    'program_studi' => $pengajuan->mahasiswa->program_studi->nama ?? '-',
+                    'ipk' => $pengajuan->mahasiswa->ipk,
+                    'nomor_telepon' => $pengajuan->mahasiswa->nomor_telepon,
+                    'angkatan' => $pengajuan->mahasiswa->angkatan,
+                    'semester' => $pengajuan->mahasiswa->semester,
+                    'status' => $pengajuan->mahasiswa->status,
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data pengajuan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     private function admin(Request $request): View
     {
         $program_studi = ProgramStudi::all();
@@ -204,19 +253,19 @@ class Pengajuan extends Controller
         $query = PengajuanMagang::with(['mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi', 'lowongan.periode_magang']);
 
         if ($request->filled('nama_lengkap')) {
-            $query->whereHas('mahasiswa', function($q) use ($request) {
+            $query->whereHas('mahasiswa', function ($q) use ($request) {
                 $q->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
             });
         }
 
         if ($request->filled('program_studi')) {
-            $query->whereHas('mahasiswa', function($q) use ($request) {
+            $query->whereHas('mahasiswa', function ($q) use ($request) {
                 $q->where('id_prodi', $request->program_studi);
             });
         }
 
         if ($request->filled('perusahaan')) {
-            $query->whereHas('lowongan', function($q) use ($request) {
+            $query->whereHas('lowongan', function ($q) use ($request) {
                 $q->where('id_perusahaan_mitra', $request->perusahaan);
             });
         }
@@ -226,14 +275,14 @@ class Pengajuan extends Controller
         }
 
         if ($request->filled('periode')) {
-            $query->whereHas('lowongan', function($q) use ($request) {
+            $query->whereHas('lowongan', function ($q) use ($request) {
                 $q->where('id_periode', $request->periode);
             });
         }
 
         $paginasi = $query->orderBy('created_at', 'desc')
-                         ->paginate(request('per_page', 10))
-                         ->withQueryString();
+            ->paginate(request('per_page', 10))
+            ->withQueryString();
         $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan): array {
             $keterangan = match ($pengajuan->status) {
                 'DISETUJUI' => 'bg-green-200 text-green-800',
@@ -291,5 +340,26 @@ class Pengajuan extends Controller
         $periode_magang = PeriodeMagang::where('status', 'AKTIF')->pluck('nama_periode', 'id_periode')->toArray();
         $total_pengajuan_magang = PengajuanMagang::count();
         return view('pages.student.kelola-lamaran', compact('data', 'paginasi', 'periode_magang', 'total_pengajuan_magang'));
+    }
+
+    public function apply(Request $request): RedirectResponse
+    {
+        try {
+            $request->validate([
+                'id_lowongan' => 'required|exists:lowongan,id_lowongan',
+            ]);
+
+            PengajuanMagang::create([
+                'id_mahasiswa' => Auth::user()->mahasiswa->id_mahasiswa,
+                'id_lowongan' => $request->id_lowongan,
+                'tanggal_pengajuan' => now(),
+                'status' => 'MENUNGGU',
+                'keterangan' => null,
+            ]);
+
+            return redirect()->back()->with('success', 'Pengajuan magang berhasil dibuat.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Gagal membuat pengajuan magang: ' . $e->getMessage());
+        }
     }
 }

@@ -14,7 +14,7 @@ class LogAktivitas extends Seeder
     public function run(): void
     {
         $destination = storage_path('app/public/logs');
-        $source = public_path('img/aktivitas.png');
+        $source = public_path('shared/aktivitas.png');
 
         if (!File::exists($destination)) File::makeDirectory($destination, 0755, true);
         if (File::exists($source)) File::copy($source, "$destination/aktivitas.png");

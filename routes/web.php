@@ -46,7 +46,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('aktivitas-magang')->group(function () {
             Route::get('/', [LogAktivitas::class, 'index'])->name('admin.aktivitas-magang');
-            Route::get('/{id}/detail', [LogAktivitas::class, 'detail'])->name('admin.aktivitas-magang.detail');
+            Route::get('/{id}/detail', [LogAktivitas::class, 'detailForAdmin'])->name('admin.aktivitas-magang.detail');
         });
 
         Route::prefix('data-dosen')->group(function () {
@@ -133,6 +133,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/topsis', [RekomendasiMagang::class, 'topsis'])->name('mahasiswa.rekomendasi-magang.perhitungan-keseluruhan')->where('lowongan', '[0-9]+');
             Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail')->where('id', '[0-9]+');
             Route::get('/{id?}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang')->where('id', '[0-9]+');
+            Route::get('/edit', [RekomendasiMagang::class, 'edit'])->name('mahasiswa.preferensi.edit');
+            Route::post('/update', [RekomendasiMagang::class, 'update'])->name('mahasiswa.preferensi.update');
         });
 
         Route::prefix('kelola-lamaran')->group(function () {
@@ -192,6 +194,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/data-mahasiswa/detail/{id}', [DataMahasiswa::class, 'showDetailBimbingan'])->name('dosen.data-mahasiswa.detail');
         Route::get('/log-aktivitas', [LogAktivitas::class, 'index'])->name('dosen.log-aktivitas');
         Route::get('/log-aktivitas/{id}', [LogAktivitas::class, 'showLog'])->name('dosen.log-aktivitas.detail');
+        Route::get('/log-aktivitas/{id}/detail', [LogAktivitas::class, 'detailForLecturer'])->name('dosen.log-aktivitas.detail-modal');
 
         Route::prefix('profil')->group(function () {
             Route::get('/', [Profil::class, 'index'])->name('dosen.profil');

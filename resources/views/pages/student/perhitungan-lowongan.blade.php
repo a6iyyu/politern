@@ -14,6 +14,15 @@
             <h2 class="font-semibold text-center text-[var(--blue-tertiary)] mb-8 text-lg lg:text-xl">
                 Matriks Perhitungan Rekomendasi Magang Menggunakan TOPSIS
             </h2>
+            <div class="mb-4 text-xs text-gray-700 bg-gray-100 border border-[var(--stroke)] rounded-md p-3">
+                <strong>Keterangan Kriteria:</strong><br>
+                <span class="block">C1: Skill</span>
+                <span class="block">C2: Lokasi</span>
+                <span class="block">C3: Jenis Lokasi</span>
+                <span class="block">C4: Bidang Minat Mahasiswa</span>
+                <span class="block">C5: Periode / Durasi Magang</span>
+                <span class="block">C6: Gaji</span>
+            </div>
             <div class="mb-8">
                 <h3 class="font-semibold text-base text-[var(--blue-tertiary)] mb-2 lg:text-lg">
                     Langkah 1: Matriks Alternatif

@@ -29,6 +29,7 @@
             :status="$log->status"
             :title="$log->judul"
             :week="$log->minggu ?? 'N/A'"
+            context="admin"
         />
     @endforeach
 @else
