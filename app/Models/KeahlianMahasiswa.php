@@ -12,6 +12,7 @@ class KeahlianMahasiswa extends Model
 
     protected $table = 'keahlian_mahasiswa';
     protected $primaryKey = 'id_keahlian';
+    protected $fillable = ['id_mahasiswa', 'id_keahlian'];
 
     public function mahasiswa(): BelongsToMany
     {

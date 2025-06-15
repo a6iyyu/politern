@@ -128,6 +128,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/topsis', [RekomendasiMagang::class, 'topsis'])->name('mahasiswa.rekomendasi-magang.perhitungan-keseluruhan')->where('lowongan', '[0-9]+');
             Route::get('/{id}/detail', [Dasbor::class, 'detail'])->name('mahasiswa.rekomendasi-magang.detail')->where('id', '[0-9]+');
             Route::get('/{id?}', [RekomendasiMagang::class, 'index'])->name('mahasiswa.rekomendasi-magang')->where('id', '[0-9]+');
+            Route::get('/edit', [RekomendasiMagang::class, 'edit'])->name('mahasiswa.preferensi.edit');
+            Route::post('/update', [RekomendasiMagang::class, 'update'])->name('mahasiswa.preferensi.update');
         });
 
         Route::prefix('kelola-lamaran')->group(function () {

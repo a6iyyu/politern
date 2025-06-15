@@ -11,7 +11,15 @@
             <h2 class="font-semibold text-center text-[var(--blue-tertiary)] mb-8 text-lg lg:text-xl">
                 Matriks Perhitungan Rekomendasi Magang Menggunakan TOPSIS
             </h2>
-            
+            <div class="mb-4 text-xs text-gray-700 bg-gray-100 border border-[var(--stroke)] rounded-md p-3">
+                <strong>Keterangan Kriteria:</strong><br>
+                <span class="block">C1: Skill</span>
+                <span class="block">C2: Lokasi</span>
+                <span class="block">C3: Jenis Lokasi</span>
+                <span class="block">C4: Bidang Minat Mahasiswa</span>
+                <span class="block">C5: Periode / Durasi Magang</span>
+                <span class="block">C6: Gaji</span>
+            </div>
             <!-- Matriks Alternatif -->
             <div class="mb-8">
                 <h3 class="font-semibold text-base text-[var(--blue-tertiary)] mb-2 lg:text-lg">
@@ -94,9 +102,12 @@
                 </h3>
                 <p class="mb-4 text-gray-600">Menghitung skor akhir (nilai preferensi) menggunakan rumus <strong>V = D⁻ / (D⁺ + D⁻)</strong>, di mana D⁺ dan D⁻ adalah jarak dari solusi ideal positif dan negatif.</p>
                 <x-table 
-                    :headers="['ID Lowongan', 'Nilai Preferensi']"
+                    :headers="['ID Lowongan', 'Perusahaan', 'Nilai Preferensi']"
                     :sortable="[]"
-                    :rows="collect($debug['nilai_preferensi'])->map(fn($nilai, $id) => [$id, number_format($nilai, 4)])->toArray()"
+                    :rows="collect($debug['nilai_preferensi'])->map(function($nilai, $id) use ($lowongan) {
+                        $nama = optional($lowongan->firstWhere('id_lowongan', $id)?->perusahaan)->nama ?? 'Tidak Diketahui';
+                        return [$id, $nama, number_format($nilai, 4)];
+                    })->toArray()"
                 />
             </div>
             

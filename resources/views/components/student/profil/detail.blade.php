@@ -20,7 +20,7 @@
 </h5>
 <span class="mt-3 flex flex-wrap gap-3">
     @if ($mahasiswa->lokasi)
-        @foreach ($mahasiswa->lokasi as $lokasi)
+        @foreach ($mahasiswa->lokasi->lokasi()->get() as $lokasi)
             <h5 class="cursor-pointer w-fit text-xs font-semibold px-5 py-2 border border-[var(--secondary)] text-[var(--secondary)] rounded-full transition-all duration-300 ease-in-out hover:bg-[var(--secondary)] hover:text-white">
                 {{ $lokasi->nama_lokasi ?? 'N/A' }}
             </h5>

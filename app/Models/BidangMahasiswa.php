@@ -16,6 +16,7 @@ class BidangMahasiswa extends Model
     protected $primaryKey = null;
     public $incrementing = false;
     public $timestamps = false;
+    protected $fillable = ['id_mahasiswa', 'id_bidang'];
 
     public function bidang(): BelongsTo
     {

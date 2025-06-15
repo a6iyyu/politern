@@ -6,9 +6,16 @@
     <h4 class="cursor-default text-lg font-semibold text-[var(--primary)]">
         Rekomendasi Magang
     </h4>
+    <div class="flex justify-end gap-2">
+        <a href="{{ route('mahasiswa.preferensi.edit') }}"
+        class="bg-[#FFB677] text-white text-sm px-4 py-2 rounded-lg font-medium cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[#ffa34d]">
+        Edit Preferensi
+    </a>
     <a href="{{ route('mahasiswa.rekomendasi-magang.perhitungan-keseluruhan') }}" class="bg-[#77b2ff] text-white text-sm px-4 py-2 rounded-lg font-medium cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[#4f9afb]">
         Lihat Semua Perhitungan
     </a>
+    </div>
+    
 </div>
 <section class="grid grid-cols-1 gap-6">
     @foreach ($rekomendasi['lowongan'] as $index => $item)
