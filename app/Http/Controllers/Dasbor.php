@@ -96,7 +96,17 @@ class Dasbor extends Controller
                 $total_bimbingan = Magang::where('id_dosen_pembimbing', $id_dosen)->count();
                 $total_mahasiswa = Mahasiswa::count();
 
-                $log_aktivitas = LogAktivitas::with(['magang.pengajuan_magang.mahasiswa', 'magang.pengajuan_magang.mahasiswa.program_studi', 'magang.pengajuan_magang.lowongan.perusahaan'])->latest()->take(3)->get();
+                $log_aktivitas = LogAktivitas::with([
+                        'magang.pengajuan_magang.mahasiswa', 
+                        'magang.pengajuan_magang.mahasiswa.program_studi', 
+                        'magang.pengajuan_magang.lowongan.perusahaan'
+                    ])
+                    ->whereHas('magang', function($q) use ($id_dosen) {
+                        $q->where('id_dosen_pembimbing', $id_dosen);
+                    })
+                    ->latest()
+                    ->take(3)
+                    ->get();
                 $perusahaan = Perusahaan::pluck('nama', 'id_perusahaan_mitra')->toArray();
                 $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
                 $status_aktivitas = LogAktivitas::pluck('status')->unique()->toArray();

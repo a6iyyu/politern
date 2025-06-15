@@ -66,11 +66,36 @@ class LogAktivitas extends Controller
                     
                 return view('pages.admin.aktivitas-magang', compact('log_aktivitas', 'periode_magang', 'perusahaan', 'status_aktivitas'));
             case 'DOSEN':
-                $perusahaan = $log_aktivitas->pluck('magang.pengajuan_magang.lowongan.perusahaan')
+                $dosen = Dosen::where('id_pengguna', Auth::user()->id_pengguna)->first();
+                
+                if (!$dosen) {
+                    return view('pages.lecturer.log-aktivitas', [
+                        'log_aktivitas' => collect([]),
+                        'perusahaan' => [],
+                        'periode_magang' => $periode_magang,
+                        'status_aktivitas' => $status_aktivitas
+                    ]);
+                }
+
+                $filtered_activities = $log_aktivitas->filter(function($item) use ($dosen) {
+                    return $item->magang && 
+                           $item->magang->pengajuan_magang && 
+                           $item->magang->pengajuan_magang->magang && 
+                           $item->magang->pengajuan_magang->magang->id_dosen_pembimbing == $dosen->id_dosen;
+                });
+                
+                $perusahaan = $filtered_activities->pluck('magang.pengajuan_magang.lowongan.perusahaan')
+                    ->filter()
                     ->unique('id_perusahaan_mitra')
                     ->mapWithKeys(fn($p) => [$p['id_perusahaan_mitra'] => $p['nama']])
                     ->toArray();
-                return view('pages.lecturer.log-aktivitas', compact('log_aktivitas', 'perusahaan', 'periode_magang', 'status_aktivitas'));
+                    
+                return view('pages.lecturer.log-aktivitas', [
+                    'log_aktivitas' => $filtered_activities,
+                    'perusahaan' => $perusahaan,
+                    'periode_magang' => $periode_magang,
+                    'status_aktivitas' => $status_aktivitas
+                ]);
             case 'MAHASISWA':
                 $status = LogAktivitasModel::pluck('status')->unique()->toArray();
 
