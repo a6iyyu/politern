@@ -1,6 +1,7 @@
 <figure class="cursor-default border rounded-xl p-6 border-[var(--primary)] bg-white shadow-sm">
     <div class="flex items-center gap-3 mb-4">
-        <img src="{{ asset($lowongan->perusahaan->logo ?? 'img/default-logo.png') }}" alt="Logo" class="w-12 h-12 rounded-md object-cover">
+        <img src="{{ asset($lowongan->perusahaan->logo ?? 'img/default-logo.png') }}" alt="Logo"
+            class="w-12 h-12 rounded-md object-cover">
         <span>
             <h4 class="font-semibold text-primary text-[var(--primary)] leading-tight mb-1">
                 {{ $lowongan->bidang->nama_bidang ?? '-' }}
@@ -32,7 +33,7 @@
         Diposting {{ \Carbon\Carbon::parse($lowongan->created_at)->translatedFormat('d F Y') ?? '-' }}
     </h5>
     <span class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <a href="javascript:void(0)" data-target="ajukan-lamaran" class="open text-center bg-pink-400 text-white py-2 rounded-lg font-semibold transition-all duration-300 ease-in-out lg:hover:bg-pink-500">
+        <a href="javascript:void(0)" data-id="{{ $lowongan->id_lowongan }}" class="apply text-center bg-pink-400 text-white py-2 rounded-lg font-semibold transition-all duration-300 ease-in-out lg:hover:bg-pink-500">
             Ajukan
         </a>
         <a href="{{ route('mahasiswa.lowongan') }}" class="border-1 rounded-lg font-semibold py-2 text-center transition border-[var(--primary)] text-[var(--primary)] bg-white lg:hover:bg-[var(--primary)] lg:hover:text-white">

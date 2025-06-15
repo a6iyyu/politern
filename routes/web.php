@@ -157,6 +157,8 @@ Route::middleware('auth')->group(function () {
         Route::prefix('lowongan')->group(function () {
             Route::get('/', [Lowongan::class, 'index'])->name('mahasiswa.lowongan');
             Route::get('/{id}/detail', [Lowongan::class, 'show'])->name('mahasiswa.lowongan.detail');
+            Route::get('/{id}/lamar', [Pengajuan::class, 'data'])->name('mahasiswa.lowongan.data');
+            Route::post('/{id}/lamar', [Pengajuan::class, 'apply'])->name('mahasiswa.lowongan.lamar');
             Route::get('/cari', [Dasbor::class, 'index'])->name('mahasiswa.lowongan.cari');
         });
 

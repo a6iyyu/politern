@@ -2,7 +2,6 @@ interface Pengajuan {
   bidang_posisi: string;
   logo: string | null;
   nama_perusahaan_mitra: string;
-  lokasi: string;
 }
 
 interface Mahasiswa {
@@ -16,53 +15,46 @@ interface Mahasiswa {
   status: string;
 }
 
-interface FileDownload {
-  nama_file: string;
-  url: string;
-}
-
-interface lokasi {
+interface Lokasi {
   nama_lokasi: string;
 }
 
 interface Modal {
   pengajuan: Pengajuan;
   mahasiswa: Mahasiswa;
-  lokasi: lokasi;
-  file_downloads: FileDownload[];
+  lokasi: Lokasi;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const buttons = document.querySelectorAll<HTMLAnchorElement>('.detail[data-id]');
+  const buttons = document.querySelectorAll<HTMLAnchorElement>('.apply[data-id]');
   const modal = document.getElementById('modal-detail-lamaran');
-  const close = document.getElementById('close-detail');
-  if (!modal || !close) return;
+  if (!modal || !buttons) return;
 
-  const bidang_posisi = document.getElementById('bidang_posisi');
-  const logo = document.getElementById('logo');
-  const nama_perusahaan = document.getElementById('nama_perusahaan');
-  const lokasi = document.getElementById('lokasi');
+  const close = modal.querySelector('.close') as HTMLElement;
+  if (!close) return;
 
-  const nim = document.getElementById('nim');
-  const nama_lengkap = document.getElementById('nama_lengkap');
-  const angkatan = document.getElementById('angkatan');
-  const semester = document.getElementById('semester');
-  const program_studi = document.getElementById('program_studi');
-  const ipk = document.getElementById('ipk');
-  const nomor_telepon = document.getElementById('nomor_telepon');
-  const status = document.getElementById('status');
-  const nama_lokasi = document.getElementById('nama_lokasi');
-  const file_downloads = document.getElementById('file-downloads');
-  if (bidang_posisi == null || logo == null || nama_perusahaan == null || lokasi == null || nim == null || nama_lengkap == null || angkatan == null || semester == null || program_studi == null || ipk == null || nomor_telepon == null || status == null || file_downloads == null
-      || nama_lokasi == null) return;
+  const bidang_posisi = document.getElementById('bidang_posisi') as HTMLSpanElement;
+  const logo = document.getElementById('logo') as HTMLImageElement;
+  const nama_perusahaan = document.getElementById('nama_perusahaan') as HTMLSpanElement;
+  const nama_lokasi = document.getElementById('lokasi') as HTMLSpanElement;
+  const nim = document.getElementById('nim_mahasiswa') as HTMLSpanElement;
+  const nama_lengkap = document.getElementById('nama_lengkap_mahasiswa') as HTMLSpanElement;
+  const angkatan = document.getElementById('angkatan_mahasiswa') as HTMLSpanElement;
+  const semester = document.getElementById('semester_mahasiswa') as HTMLSpanElement;
+  const program_studi = document.getElementById('program_studi_mahasiswa') as HTMLSpanElement;
+  const ipk = document.getElementById('ipk_mahasiswa') as HTMLSpanElement;
+  const nomor_telepon = document.getElementById('nomor_telepon_mahasiswa') as HTMLSpanElement;
+  const status = document.getElementById('status_mahasiswa') as HTMLSpanElement;
+  if (bidang_posisi == null || logo == null || nama_perusahaan == null || nim == null || nama_lengkap == null || angkatan == null || semester == null || program_studi == null || ipk == null || nomor_telepon == null || status == null || nama_lokasi == null) return;
 
-  buttons.forEach((button) => {
-    button.addEventListener('click', async () => {
-      const id = button.dataset.id;
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      console.log('Internship application btn clicked');
+      const id = btn.dataset.id;
       if (!id) return;
       modal.classList.remove('hidden');
 
-      const data = await fetch(`/mahasiswa/kelola-lamaran/${id}/detail`, {
+      const data = await fetch(`/mahasiswa/lowongan/${id}/lamar`, {
         headers: {
           Accept: 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
@@ -73,9 +65,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       const response = (await data.json()) as Modal;
 
       bidang_posisi.textContent = response.pengajuan.bidang_posisi;
-      logo.setAttribute('src', response.pengajuan.logo as string);
+
+      if (response.pengajuan.logo) {
+        logo.setAttribute('src', `${window.location.origin}/${response.pengajuan.logo}`);
+      } else {
+        logo.setAttribute('src', '/assets/images/default-logo.png');
+      }
+
+      logo.classList.remove('hidden');
       nama_perusahaan.textContent = response.pengajuan.nama_perusahaan_mitra;
-      lokasi.textContent = response.pengajuan.lokasi;
       nim.textContent = response.mahasiswa.nim;
       nama_lengkap.textContent = response.mahasiswa.nama_lengkap;
       angkatan.textContent = response.mahasiswa.angkatan;
@@ -85,27 +83,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       nomor_telepon.textContent = response.mahasiswa.nomor_telepon;
       status.textContent = response.mahasiswa.status;
       nama_lokasi.textContent = response.lokasi.nama_lokasi;
-      file_downloads.innerHTML = '';
-
-      response.file_downloads.forEach((file) => {
-        const link = document.createElement('a');
-        link.href = file.url;
-        link.textContent = file.nama_file;
-        link.classList.add('block', 'text-blue-500', 'hover:underline');
-        file_downloads.appendChild(link);
-      });
     });
+  });
 
-    close.addEventListener('click', () => {
+  close.addEventListener('click', () => {
+    modal.classList.add('hidden');
+    logo.classList.add('hidden');
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
       modal.classList.add('hidden');
-      file_downloads.innerHTML = '';
-    });
-
-    modal.addEventListener('click', (event) => {
-      if (event.target === modal) {
-        modal.classList.add('hidden');
-        file_downloads.innerHTML = '';
-      }
-    });
+      logo.classList.add('hidden');
+    }
   });
 });

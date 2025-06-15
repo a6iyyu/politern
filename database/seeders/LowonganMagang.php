@@ -8,8 +8,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-use function Ramsey\Uuid\v1;
-
 class LowonganMagang extends Seeder
 {
     public function run(): void
