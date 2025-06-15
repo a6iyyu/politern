@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (angkatan) angkatan.value = data.mahasiswa.angkatan;
       if (semester) semester.value = data.mahasiswa.semester;
       if (nama_prodi) nama_prodi.value = data.mahasiswa.nama_prodi;
-      if (ipk) ipk.value = Math.round(data.mahasiswa.ipk * 100) / 100 as unknown as string;
+      if (ipk) ipk.value = (Math.round(data.mahasiswa.ipk * 100) / 100).toString();
       if (status) status.value = data.status.status;
     });
   });

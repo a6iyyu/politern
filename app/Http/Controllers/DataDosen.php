@@ -67,7 +67,7 @@ class DataDosen extends Controller
                 'kata_sandi'        => 'required|string|min:6',
                 'email'             => 'required|email|unique:pengguna,email',
                 'nama'              => 'required|string|max:255',
-                'nip'               => 'required|numeric|digits:18',
+                'nip'               => 'required|numeric|min:12',
                 'nomor_telepon'     => 'required|numeric|digits_between:10,15',
             ]);
 

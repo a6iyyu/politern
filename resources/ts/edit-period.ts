@@ -2,7 +2,6 @@ interface Periode {
   nama_periode: string;
   tanggal_mulai: string;
   tanggal_selesai: string;
-  status: string;
 }
 
 interface Modal {
@@ -22,14 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const modal = document.querySelector<HTMLElement>('.modal-edit-periode');
   if (!buttons || !modal) return;
 
-  const close = modal.querySelector('.close') as HTMLElement;
+  const close = modal.querySelector('.close-periode') as HTMLElement;
   const form = modal.querySelector('form') as HTMLFormElement;
   if (!close || !form) return;
 
   const nama_periode = form.querySelector<HTMLInputElement>("input[name='nama_periode']");
   const tanggal_mulai = form.querySelector<HTMLInputElement>("input[name='tanggal_mulai']");
   const tanggal_selesai = form.querySelector<HTMLInputElement>("input[name='tanggal_selesai']");
-  const status = form.querySelector<HTMLSelectElement>("select[name='status']");
 
   const fetchPeriodeData = async (id: string): Promise<Modal | null> => {
     try {
@@ -60,23 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (nama_periode) nama_periode.value = data.periode.nama_periode;
       if (tanggal_mulai) tanggal_mulai.value = formattedDate(data.periode.tanggal_mulai);
       if (tanggal_selesai) tanggal_selesai.value = formattedDate(data.periode.tanggal_selesai);
-      if (status) {
-        status.innerHTML = '<option value="" disabled>Pilih Status</option>';
-
-        const opsi = {
-          'AKTIF': 'Aktif',
-          'SELESAI': 'Selesai',
-        };
-
-        Object.entries(opsi).forEach(([key, value]) => {
-          const option = document.createElement('option');
-          option.value = key;
-          option.textContent = value;
-          status.appendChild(option);
-        });
-
-        status.value = data.periode.status.toUpperCase();;
-      }
 
       modal.classList.remove('hidden');
     });

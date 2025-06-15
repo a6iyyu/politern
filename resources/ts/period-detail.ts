@@ -53,6 +53,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       tanggal_mulai.textContent = formattedDate(response.periode.tanggal_mulai);
       tanggal_selesai.textContent = formattedDate(response.periode.tanggal_selesai);
       status.textContent = response.periode.status;
+
+      status.className = 'inline-block px-5 py-1 rounded-full text-xs font-medium w-fit';
+      if (response.periode.status === 'AKTIF') {
+        status.classList.add('bg-green-100', 'text-green-600');
+      } else {
+        status.classList.add('bg-red-100', 'text-red-600');
+      }
     });
   });
 

@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       angkatan.textContent = response.mahasiswa.angkatan;
       semester.textContent = response.mahasiswa.semester;
       nama_prodi.textContent = response.prodi.nama.slice(0, 20) + '...';
-      ipk.textContent = Math.round(response.mahasiswa.ipk * 100) / 100 as unknown as string;
+      ipk.textContent = (Math.round(response.mahasiswa.ipk * 100) / 100).toString();
       status.textContent = response.status.status;
 
       if (status.textContent === 'AKTIF') status.classList.add('bg-green-200', 'text-green-800', 'px-5', 'py-1');

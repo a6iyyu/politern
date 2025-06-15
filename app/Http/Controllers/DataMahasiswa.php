@@ -176,7 +176,6 @@ class DataMahasiswa extends Controller
                 'semester'          => 'required|numeric',
                 'program_studi'     => 'required|exists:program_studi,id_prodi',
                 'angkatan'          => 'required|numeric',
-                'ipk'               => 'required|numeric',
             ]);
 
             $pengguna = Pengguna::create([
@@ -193,15 +192,15 @@ class DataMahasiswa extends Controller
                 'semester'      => $request->semester,
                 'id_prodi'      => $request->program_studi,
                 'angkatan'      => $request->angkatan,
-                'ipk'           => $request->ipk,
                 'status'        => 'BELUM MAGANG',
             ]);
 
             return to_route('admin.data-mahasiswa')->with('success', 'Data mahasiswa berhasil ditambahkan.');
-        } catch (Exception $e) {
-            report($e);
-            Log::error($e->getMessage());
-            return back()->withErrors(['errors' => 'Gagal menambahkan data mahasiswa karena kesalahan pada server.']);
+        } catch (\Exception $e) {
+            \Log::error('Error adding student: ' . $e->getMessage());
+            \Log::error('File: ' . $e->getFile() . ' Line: ' . $e->getLine());
+            \Log::error('Trace: ' . $e->getTraceAsString());
+            return back()->withErrors(['errors' => 'Gagal menambahkan data mahasiswa. ' . $e->getMessage()])->withInput();
         }
     }
 

@@ -70,14 +70,12 @@ class Periode extends Controller
                 'nama_periode'      => 'required|string|max:200|unique:periode_magang,nama_periode',
                 'tanggal_mulai'     => 'required|date',
                 'tanggal_selesai'   => 'required|date|after_or_equal:tanggal_mulai',
-                'status'            => 'required|in:AKTIF,SELESAI',
             ]);
 
             PeriodeMagangModel::create([
                 'nama_periode'      => $request->nama_periode,
                 'tanggal_mulai'     => $request->tanggal_mulai,
                 'tanggal_selesai'   => $request->tanggal_selesai,
-                'status'            => $request->status
             ]);
 
             return to_route('admin.periode')->with('success', 'Periode Magang berhasil ditambahkan');
@@ -115,13 +113,11 @@ class Periode extends Controller
                 'nama_periode'    => "required|string|max:200|unique:periode_magang,nama_periode,{$id},id_periode",
                 'tanggal_mulai'   => 'required|date',
                 'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-                'status'          => 'required|in:AKTIF,SELESAI',
             ]);
 
             $periode->nama_periode      = $request->nama_periode;
             $periode->tanggal_mulai     = $request->tanggal_mulai;
             $periode->tanggal_selesai   = $request->tanggal_selesai;
-            $periode->status            = $request->status;
             $periode->save();
 
             return to_route('admin.periode')->with('success', 'Data periode akademik berhasil diubah');

@@ -1,6 +1,6 @@
-<section class="modal modal-tambah-periode fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
-    <div class="min-h-screen flex items-center justify-center w-full px-4">
-        <form action="{{ route('admin.periode.tambah') }}" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-lg border border-[var(--stroke)]">
+<section class="modal modal-tambah-periode fixed inset-0 z-50 hidden items-center justify-center bg-black/20 backdrop-blur-[1px]" aria-modal="true" role="dialog">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <form action="{{ route('admin.periode.tambah') }}" method="POST" class="max-h-[90vh] overflow-y-auto w-full max-w-xl rounded-xl bg-white py-7 px-10 shadow-lg border border-[var(--stroke)]">
             @csrf
             @method('POST')
             <span class="mb-3 flex items-center justify-between">
@@ -36,20 +36,9 @@
                     :required="true"
                 />
             </div>
-            <div class="mb-3 mt-6 flex items-center justify-between gap-4">
-                <x-select 
-                    label="Status" 
-                    name="status" 
-                    :options="['AKTIF' => 'Aktif', 'SELESAI' => 'Selesai']" 
-                    placeholder="Pilih Status" 
-                    required 
-                />
-            </div>
-            <span class="mt-6 flex justify-end text-sm">
-                <button type="submit" class="cursor-pointer bg-[var(--blue-tertiary)] text-white px-5 py-2 rounded hover:bg-[#3d65a5] transition-all duration-300">
-                    Kirim
-                </button>
-            </span>
+            <button type="submit" class="cursor-pointer mt-4 mb-2 w-full bg-[var(--primary)] text-white text-sm px-5 py-3 rounded-md transition-all hover:bg-[#5955b2]/90 duration-300 ">
+                Simpan
+            </button>
         </form>
     </div>
 </section>

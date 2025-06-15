@@ -18,11 +18,11 @@ return new class extends Migration
             $table->year('angkatan');
             $table->integer('semester');
             $table->text('deskripsi')->nullable();
-            $table->float('ipk');
+            $table->float('ipk')->default(0.0);
             $table->string('alamat')->nullable();
             $table->string('nomor_telepon')->nullable();
             $table->text('cv')->nullable();
-            $table->enum('gaji', ['PAID', 'UNPAID']);
+            $table->enum('gaji', ['PAID', 'UNPAID'])->default('UNPAID');
             $table->enum('status', ['BELUM MAGANG', 'DALAM PROSES', 'SEDANG MAGANG', 'SELESAI'])->default('BELUM MAGANG');
             $table->timestamps();
 
