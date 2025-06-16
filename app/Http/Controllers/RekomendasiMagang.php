@@ -248,16 +248,23 @@ class RekomendasiMagang extends Controller
         $id = $mahasiswa->id_mahasiswa;
 
         $request->validate([
-            'bidang'        => 'array',
-            'bidang.*'      => 'exists:bidang,id_bidang',
-            'lokasi.*'      => 'exists:lokasi,id_lokasi',
-            'keahlian'      => 'required|array',
-            'keahlian.*'    => 'exists:keahlian,id_keahlian',
-            'lokasi'        => 'array',
-            'jenis_lokasi'  => 'array',
-            'durasi'        => 'array',
+            'bidang' => 'array',
+            'keahlian' => 'required|array',
+            'keahlian.*' => 'exists:keahlian,id_keahlian',
+            'lokasi' => 'array',
+            'jenis_lokasi' => 'array',
+            'durasi' => 'array',
+            'gaji' => 'required|in:PAID,UNPAID',
         ]);
 
+        // dd((new \App\Models\BidangMahasiswa)->getFillable());
+
+        // Update gaji di tabel mahasiswa
+        $mahasiswa->update([
+            'gaji' => $request->gaji
+        ]);
+        
+        // Sync data
         BidangMahasiswa::where('id_mahasiswa', $id)->delete();
         foreach ($request->input('bidang', []) as $item) BidangMahasiswa::create(['id_mahasiswa' => $id, 'id_bidang' => $item]);
 
