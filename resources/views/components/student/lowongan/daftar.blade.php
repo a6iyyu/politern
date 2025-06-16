@@ -42,7 +42,7 @@
                     Diposting {{ $item->created_at ? $item->created_at->translatedFormat('d F Y') : 'N/A' }}
                 </h5>
                 <a href="{{ route('mahasiswa.lowongan.detail', ['id' => $item->perusahaan->id_perusahaan_mitra]) }}"
-                   class="bg-[var(--secondary)] text-white text-sm px-6 py-2 rounded-sm font-medium cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[var(--green-tertiary)/90]">
+                   class="bg-[var(--secondary)] text-white text-sm px-6 py-2 rounded-sm font-medium cursor-pointer transition-all duration-300 ease-in-out">
                     Lihat Detail
                 </a>
             </span>

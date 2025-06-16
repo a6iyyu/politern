@@ -50,7 +50,6 @@ class DataDosen extends Controller
                     </div>',
                     $dosen->nip,
                     $dosen->nomor_telepon,
-                    $dosen->pembimbing ? $dosen->pembimbing->jumlah_bimbingan : 0,
                     view('components.admin.data-dosen.aksi', compact('dosen'))->render(),
                 ];
             })->toArray();

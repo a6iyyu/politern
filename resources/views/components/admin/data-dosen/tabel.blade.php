@@ -23,7 +23,7 @@
     </ul>
 @endif
 @include('components.admin.data-dosen.filter')
-<x-table :headers="['No', 'Dosen', 'NIP', 'Nomor Telepon', 'Jumlah Bimbingan', 'Aksi']" :sortable="['Dosen']" :rows="$data" />
+<x-table :headers="['No', 'Dosen', 'NIP', 'Nomor Telepon', 'Aksi']" :sortable="['Dosen']" :rows="$data" />
 @if ($paginasi->hasPages())
     <div class="mt-4">
         {{ $paginasi->links() }}
