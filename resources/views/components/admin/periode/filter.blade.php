@@ -1,6 +1,4 @@
 <form action="" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-3">
-    @csrf
-    @method('GET')
     <div class="lg:col-span-2">
         <x-input
             id="nama_periode"

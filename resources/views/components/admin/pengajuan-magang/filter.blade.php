@@ -1,6 +1,4 @@
-<form action="" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-5">
-    @csrf
-    @method('GET')
+<form action="{{ route('admin.pengajuan-magang') }}" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-5">
     <x-input
         icon="fa-solid fa-magnifying-glass"
         label="Cari Mahasiswa"

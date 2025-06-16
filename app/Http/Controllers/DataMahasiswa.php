@@ -329,7 +329,7 @@ class DataMahasiswa extends Controller
         exit;
     }
 
-    public function showDetailBimbingan($id): JsonResponse
+    public function show_guidance_detail($id): JsonResponse
     {
         $magang = Magang::with([
             'pengajuan_magang',

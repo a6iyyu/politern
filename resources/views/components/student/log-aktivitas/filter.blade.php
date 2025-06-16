@@ -1,6 +1,4 @@
-<form action="" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-3">
-    @csrf
-    @method('GET')
+<form action="{{ route('mahasiswa.log-aktivitas') }}" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-3">
     <x-input
         id="judul"
         icon="fa-solid fa-magnifying-glass"

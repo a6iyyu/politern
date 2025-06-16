@@ -1,4 +1,4 @@
-<section class="grid grid-cols-1 gap-4 lg:grid-cols-4">
+<form action="{{ route('mahasiswa.kelola-lamaran') }}" method="GET" class="grid grid-cols-1 gap-4 lg:grid-cols-4">
     <x-select
         label="Status Lamaran"
         name="waktu"
@@ -32,4 +32,4 @@
             Cari
         </button>
     </fieldset>
-</section>
+</form>
