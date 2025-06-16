@@ -11,6 +11,7 @@ use App\Models\ProgramStudi;
 use App\Models\Magang;
 use App\Models\Dosen;
 use App\Models\LowonganMagang;
+use App\Models\DosenPembimbing;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -152,18 +153,27 @@ class Pengajuan extends Controller
     public function confirmation(Request $request, string $id): RedirectResponse
     {
         $request->validate([
-            'dosen_pembimbing' => 'exists:dosen,id_dosen',
-            'status'           => 'in:DISETUJUI,DITOLAK',
+            'dosen_pembimbing' => 'required_if:status,DISETUJUI|exists:dosen,id_dosen',
+            'status'           => 'required|in:DISETUJUI,DITOLAK',
         ]);
 
         $pengajuan = PengajuanMagang::findOrFail($id);
-        if ($pengajuan->status !== 'MENUNGGU') return redirect()->back()->with('error', 'Pengajuan ini sudah tidak dalam status "MENUNGGU".');
+        if ($pengajuan->status !== 'MENUNGGU') {
+            return redirect()->back()->with('error', 'Pengajuan ini sudah tidak dalam status "MENUNGGU".');
+        }
 
         try {
             if ($request->status === 'DISETUJUI') {
+                $dosenPembimbing = DosenPembimbing::firstOrCreate(
+                    ['id_dosen' => $request->dosen_pembimbing],
+                    ['jumlah_bimbingan' => 0]
+                );
+
+                $dosenPembimbing->increment('jumlah_bimbingan');
+
                 $magang = new Magang([
                     'id_pengajuan_magang' => $pengajuan->id_pengajuan_magang,
-                    'id_dosen_pembimbing' => $request->dosen_pembimbing,
+                    'id_dosen_pembimbing' => $dosenPembimbing->id_dosen_pembimbing,
                     'status'              => 'AKTIF',
                 ]);
 
@@ -177,7 +187,7 @@ class Pengajuan extends Controller
                     $lowongan->save();
                 }
 
-                return redirect()->back()->with('success', 'Data pengajuan berhasil diperbarui.');
+                return redirect()->back()->with('success', 'Data pengajuan berhasil disetujui dan dosen pembimbing telah ditetapkan.');
             }
 
             if ($request->status === 'DITOLAK') {
