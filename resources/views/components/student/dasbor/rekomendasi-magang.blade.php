@@ -7,10 +7,10 @@
         Rekomendasi Magang
     </h4>
     <div class="flex justify-end gap-2">
-        <a href="{{ route('mahasiswa.preferensi.edit') }}" class="bg-[var(--blue-tertiary)] text-white text-sm px-4 py-2 rounded-sm cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[var(--primary)/90]">
+        <a href="{{ route('mahasiswa.preferensi.edit') }}" class="bg-[var(--blue-tertiary)] text-white text-sm px-4 py-2 rounded-sm cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[var(--blue-tertiary)]/90">
             Edit Preferensi
         </a>
-        <a href="{{ route('mahasiswa.rekomendasi-magang.perhitungan-keseluruhan') }}" class="bg-[var(--secondary)] text-white text-sm px-4 py-2 rounded-sm cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[var(--primary)/90]">
+        <a href="{{ route('mahasiswa.rekomendasi-magang.perhitungan-keseluruhan') }}" class="bg-[var(--secondary)] text-white text-sm px-4 py-2 rounded-sm cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[var(--secondary)]/90">
             Lihat Semua Perhitungan
         </a>
     </div>
@@ -61,7 +61,7 @@
                         Lihat Perhitungan
                     </a>
                     <a href="{{ route('mahasiswa.rekomendasi-magang.detail', ['id' => $item->perusahaan->id_perusahaan_mitra]) }}"
-                        class="bg-[var(--secondary)] text-white text-sm px-6 py-2 rounded-sm font-medium cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[var(--green-tertiary)/90]">
+                        class="bg-[var(--secondary)] text-white text-sm px-6 py-2 rounded-sm font-medium cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[var(--secondary)]/80">
                         Lihat Detail
                     </a>
                 </span>
