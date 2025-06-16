@@ -1,5 +1,5 @@
 <figure
-    class="max-w-1/2 w-full cursor-pointer border border-[var(--stroke)] bg-white pb-6 pt-4 px-6 rounded-xl transition-all duration-300 ease-in-out lg:max-w-1/3 lg:hover:bg-[#f9f9f9] relative overflow-hidden"
+    class="max-w-1/2 w-full cursor-pointer border border-[var(--stroke)] bg-white pb-6 pt-4 px-6 rounded-xl transition-all duration-300 ease-in-out lg:max-w-1/3 lg:hover:bg-[#f5f8fc] relative overflow-hidden"
     style="border-top: 6px solid {{ $color }}"
 >
     <section class="flex items-center justify-between gap-6 text-sm">

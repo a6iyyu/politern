@@ -1,64 +1,45 @@
-<section class="overflow-x-auto">
-    <div class="min-w-[900px] grid grid-cols-3 gap-4 px-7 pt-7 pb-4 bg-white border border-slate-200 border-b-0 rounded-t-xl">
-        <x-input
-            icon="fa-solid fa-magnifying-glass"
-            name="nama"
-            placeholder="Cari Nama Pekerjaan"
-            type="search"
-            :required="false"
-        />
-        <x-input
-            icon="fa-solid fa-location-dot"
-            name="lokasi"
-            placeholder="Lokasi"
-            type="search"
-            :required="false"
-        />
-        <x-input
-            icon="fa-solid fa-building"
-            name="perusahaan"
-            placeholder="Perusahaan"
-            type="search"
-            :required="false"
-        />
+<form action="{{ route('mahasiswa.lowongan') }}" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-6">
+    <x-select
+        label="Bidang"
+        name="bidang"
+        :options="['' => 'Semua Bidang'] + ($bidang->pluck('nama_bidang', 'id_bidang')->toArray() ?? [])"
+        :selected="request('bidang')"
+        :required="false"
+    />
+    <x-select
+        label="Perusahaan"
+        name="perusahaan"
+        :options="['' => 'Semua Perusahaan'] + ($perusahaan->pluck('nama', 'id_perusahaan_mitra')->toArray() ?? 'Tidak ada data.')"
+        :selected="request('perusahaan', '')"
+        :required="false"
+    />
+    <x-select
+        label="Tipe Gaji"
+        name="tipe_gaji"
+        :options="[
+            '' => 'Semua Gaji',
+            'paid' => 'PAID',
+            'unpaid' => 'UNPAID'
+        ]"
+        :selected="request('tipe_gaji', '')"
+        :required="false"
+    />
+    <div class="flex items-end">
+        <button type="submit" class="cursor-pointer bg-[var(--secondary)] border border-[var(--secondary)] text-white px-12 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:py-2.5 lg:hover:bg-[#ff86cb] w-full sm:w-auto">
+            Cari
+        </button>
     </div>
-</section>
-<section class="overflow-x-auto">
-    <div class="min-w-[900px] grid grid-cols-5 gap-4 px-7 pb-7 bg-white border border-slate-200 border-t-0 rounded-b-xl">
-        <x-input
-            icon="fa-solid fa-money-bill-wave"
-            name="gaji_min"
-            placeholder="Gaji Minimal"
-            type="number"
-            :required="false"
-        />
-        <x-input
-            icon="fa-solid fa-money-check-dollar"
-            name="gaji_max"
-            placeholder="Gaji Maksimal"
-            type="number"
-            :required="false"
-        />
-        <x-select
-            label="Status"
-            name="status"
-            placeholder="-- Semua Status --"
-            :options="['REMOTE' => 'Remote', 'ONSITE' => 'Onsite', 'HYBRID' => 'Hybrid']"
-            :selected="request('status', '')"
-            :required="false"
-        />
-        <x-select
-            label="Waktu Posting"
-            name="waktu"
-            placeholder="-- Semua Waktu Posting --"
-            :options="['1' => '1 hari terakhir', '3' => '3 hari terakhir', '7' => '7 hari terakhir', '30' => '30 hari terakhir']"
-            :selected="request('waktu', '')"
-            :required="false"
-        />
-        <span class="flex items-end justify-end">
-            <button type="submit" class="w-3/4 bg-[#e86bb1] text-white rounded-lg py-2.5 text-sm hover:bg-opacity-90 transition">
-                Cari
-            </button>
-        </span>
+</form>
+@if (isset($periode_magang) && !empty($periode_magang))
+    <div class="flex justify-between items-center mb-6">
+        <div class="cursor-default flex items-center gap-2">
+            <h5 class="text-sm text-[var(--secondary-text)]">Periode Aktif:</h5>
+            <h5 class="px-4 py-2 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                {{ $periode_magang->nama_periode }}
+            </h5>
+        </div>
+        <h5 class="text-sm text-[var(--secondary-text)]">
+            Menampilkan {{ $jumlah_lowongan ?? "N/A" }} lowongan
+        </h5>
     </div>
-</section>
+@endif

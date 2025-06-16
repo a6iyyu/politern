@@ -85,8 +85,57 @@ class Lowongan extends Controller
                 'durasi'
             ));
         } else if ($pengguna === 'MAHASISWA') {
-            $lowongan = LowonganMagang::with(['bidang', 'perusahaan', 'jenis_lokasi', 'periode_magang', 'keahlian', 'jenis_magang', 'durasi'])->where('status', 'DIBUKA')->get();
-            return view('pages.student.lowongan', compact('lowongan'));
+            // Get filter values
+            $bidang = Bidang::all();
+            $perusahaan = Perusahaan::where('status', 'AKTIF')->get();
+            $periodes = PeriodeMagang::all();
+            
+            // Base query
+            $query = LowonganMagang::with([
+                'bidang', 
+                'perusahaan', 
+                'jenis_lokasi', 
+                'periode_magang', 
+                'keahlian', 
+                'jenis_magang', 
+                'durasi'
+            ])->where('status', 'DIBUKA');
+            
+            // Apply filters if they exist
+            if ($bidangId = request('bidang')) {
+                $query->where('id_bidang', $bidangId);
+            }
+            
+            if ($perusahaanId = request('perusahaan')) {
+                $query->where('id_perusahaan_mitra', $perusahaanId);
+            }
+            
+            if ($periodeId = request('periode')) {
+                $query->where('id_periode', $periodeId);
+            }
+            
+            if ($tipeGaji = request('tipe_gaji')) {
+                if ($tipeGaji === 'paid') {
+                    $query->where('gaji', 'PAID');
+                } elseif ($tipeGaji === 'unpaid') {
+                    $query->where('gaji', 'UNPAID');
+                }
+            }
+            
+            $lowongan = $query->get();
+            $jumlah_lowongan = $lowongan->count();
+            
+            // Get active period
+            $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
+            
+            return view('pages.student.lowongan', compact(
+                'lowongan',
+                'bidang',
+                'perusahaan',
+                'periodes',
+                'jumlah_lowongan',
+                'periode_magang'
+            ));
         } else {
             abort(403, "Anda tidak memiliki hak akses untuk masuk ke halaman ini.");
         }
