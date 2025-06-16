@@ -2,7 +2,7 @@
     use Carbon\Carbon;
 @endphp
 
-<div class="flex justify-between items-center mt-10 mb-5">
+<div class="flex justify-between items-center mb-8">
     <h4 class="cursor-default text-lg font-semibold text-[var(--primary)]">
         Rekomendasi Magang
     </h4>
@@ -17,7 +17,7 @@
 </div>
 <section class="grid grid-cols-1 gap-4">
     @foreach ($rekomendasi['lowongan'] as $index => $item)
-        <figure class="mb-2 w-full px-7 py-5 rounded-2xl border border-[var(--stroke)] custom-border-left bg-white" style="border-left: 6px solid 
+        <figure class="mb-2 w-full px-7 py-5 rounded-2xl border border-[#edcce7] shadow-sm bg-white custom-border-left" style="border-left: 6px solid 
             @if ($index == 0) #FFD700;
             @elseif ($index == 1) #C0C0C0; 
             @elseif ($index == 2) #CD7F32; 
@@ -51,9 +51,9 @@
             </div>
             <div class="mt-4 flex justify-between w-full">
                 <div class="flex flex-col">
-                    <h5 class="cursor-default text-xs text-[#585858]">
-                        Diposting {{ Carbon::parse($item->created_at)->translatedFormat('d F Y') ?? 'N/A' }}
-                    </h5>
+                <h5 class="cursor-default text-xs text-[#585858]">
+                    Diposting {{ Carbon::parse($item->created_at)->translatedFormat('d F Y') ?? 'N/A' }}
+                </h5>
                 </div>
                 <span class="space-x-4">
                     <a href="{{ route('mahasiswa.rekomendasi-magang.perhitungan-lowongan', ['id' => $item->id_lowongan]) }}"

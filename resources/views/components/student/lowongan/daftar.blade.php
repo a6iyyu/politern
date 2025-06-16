@@ -7,7 +7,7 @@
 @include('components.student.lowongan.filter')
 <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
     @foreach ($lowongan as $item)
-        <figure class="rounded-xl px-7 py-5 border border-[#edcce7]">
+        <figure class="rounded-xl px-7 py-5 border border-[#edcce7] shadow-sm bg-white">
             <div class="cursor-default flex justify-between">
                 <figcaption class="flex gap-3 space-y-1">
                     <img src="{{ asset($item->perusahaan->logo) ?? 'N/A' }}" alt="{{ $item->perusahaan->nama ?? 'N/A' }}" class="w-7 object-cover md:w-10" />

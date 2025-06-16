@@ -20,23 +20,23 @@
             icon="fa-solid fa-user-group"
             info="Disetujui sejak 2 minggu yang lalu"
             title="Status Magang"
-            :total="$status ?? 'N/A'"
+            :total="$status ?? 'BELUM MAGANG'"
         />
         <x-info
             background="#e7f8f2"
             color="#10b981"
             icon="fa-solid fa-user-graduate"
-            info="Jumlah log minggu ini"
+            :info="'Jumlah log minggu ini'"
             title="Log Aktivitas"
-            total="12"
+            :total="$total_aktivitas ?? '0'"
         />
         <x-info
             background="#fdecec"
             color="#ef4545"
             icon="fa-solid fa-briefcase"
-            info="1 diterima"
+            :info="($total_diterima ?? 0) . ' diterima'"
             title="Pengajuan"
-            total="3"
+            :total="$total_pengajuan ?? '0'"
         />
     </div>
 </section>

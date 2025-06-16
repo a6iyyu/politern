@@ -68,15 +68,17 @@ class Dasbor extends Controller
                 $prodi = $mahasiswa->program_studi;
                 $ipk = $mahasiswa->ipk;
                 $jenjang = $prodi->jenjang;
-                $log_aktivitas = $this->log_aktivitas();
                 $nama_pengguna = $pengguna->nama_pengguna;
                 $nama_prodi = $prodi->nama;
                 $semester = $mahasiswa->semester;
                 $status = 'Belum Magang';
+                $total_aktivitas = $this->log_aktivitas();
+                $total_pengajuan = $mahasiswa->pengajuan_magang->count();
+                $total_diterima = $mahasiswa->pengajuan_magang->where('status', 'DISETUJUI')->count();
                 $pengajuan_terakhir = $mahasiswa->pengajuan_magang->sortByDesc('created_at')->first();
                 if ($pengajuan_terakhir && $pengajuan_terakhir->magang) $status = $pengajuan_terakhir->magang->status;
                 $rekomendasi = (new RekomendasiMagang())->index($mahasiswa->id_mahasiswa);
-                return view('pages.student.dasbor', compact('ipk', 'jenjang', 'log_aktivitas', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status', 'rekomendasi', 'id_mahasiswa'));
+                return view('pages.student.dasbor', compact('ipk', 'jenjang', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status', 'rekomendasi', 'id_mahasiswa', 'total_aktivitas', 'total_pengajuan', 'total_diterima'));
             })(),
             'DOSEN' => (function () use ($pengguna): View {
                 $nama = $pengguna->dosen->nama;

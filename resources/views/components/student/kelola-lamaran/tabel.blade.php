@@ -1,6 +1,7 @@
-<h4 class="cursor-default my-5 text-base font-semibold text-[var(--primary)]">
+<h4 class="cursor-default my-2 text-base font-semibold text-[var(--primary)]">
     Riwayat Lamaran
 </h4>
+@include('components.student.kelola-lamaran.filter')
 <x-table
     :headers="['No', 'Nama Perusahaan', 'Posisi Magang', 'Periode Magang', 'Tanggal Pengajuan',  'Status', 'Aksi']"
     :sortable="['Tanggal Pengajuan']"

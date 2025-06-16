@@ -9,6 +9,7 @@ use App\Models\PeriodeMagang;
 use App\Models\Perusahaan;
 use App\Models\ProgramStudi;
 use App\Models\Magang;
+use App\Models\Bidang;
 use App\Models\Dosen;
 use App\Models\LowonganMagang;
 use App\Models\DosenPembimbing;
@@ -315,13 +316,51 @@ class Pengajuan extends Controller
         $baris = 1;
         $id_mahasiswa = Auth::user()->mahasiswa->id_mahasiswa;
 
+        $status = request('waktu');
+        $periode = request('periode');
+        $bidangId = request('bidang');
+        $perusahaanId = request('perusahaan');
+
+        $query = PengajuanMagang::with([
+            'mahasiswa', 
+            'lowongan.perusahaan', 
+            'lowongan.bidang',
+            'lowongan.periode_magang',
+            'mahasiswa.program_studi'
+        ])->where('id_mahasiswa', $id_mahasiswa);
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+        if ($periode) {
+            $query->whereHas('lowongan', function($q) use ($periode) {
+                $q->where('id_periode', $periode);
+            });
+        }
+
+        if ($bidangId) {
+            $query->whereHas('lowongan', function($q) use ($bidangId) {
+                $q->where('id_bidang', $bidangId);
+            });
+        }
+
+        if ($perusahaanId) {
+            $query->whereHas('lowongan', function($q) use ($perusahaanId) {
+                $q->where('id_perusahaan_mitra', $perusahaanId);
+            });
+        }
+
         /** @var LengthAwarePaginator $paginasi */
-        $paginasi = PengajuanMagang::with('mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi')->where('id_mahasiswa', $id_mahasiswa)->paginate(request('per_page', default: 10));
+        $paginasi = $query->orderBy('created_at', 'desc')
+                         ->paginate(request('per_page', 10))
+                         ->withQueryString();
+
         $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan) use (&$baris): array {
             $keterangan = match ($pengajuan->status) {
                 'DISETUJUI' => 'bg-[var(--green-tertiary)]',
                 'MENUNGGU'  => 'bg-[var(--yellow-tertiary)]',
                 'DITOLAK'   => 'bg-[var(--red-tertiary)]',
+                default     => 'bg-gray-200',
             };
 
             return [
@@ -337,9 +376,24 @@ class Pengajuan extends Controller
             ];
         })->toArray();
 
-        $periode_magang = PeriodeMagang::where('status', 'AKTIF')->pluck('nama_periode', 'id_periode')->toArray();
-        $total_pengajuan_magang = PengajuanMagang::count();
-        return view('pages.student.kelola-lamaran', compact('data', 'paginasi', 'periode_magang', 'total_pengajuan_magang'));
+        $periode_magang = PeriodeMagang::where('status', 'AKTIF')
+            ->orderBy('created_at', 'desc')
+            ->pluck('nama_periode', 'id_periode')
+            ->toArray();
+            
+        $bidang = Bidang::pluck('nama_bidang', 'id_bidang');
+        $perusahaan = Perusahaan::pluck('nama', 'id_perusahaan_mitra');
+        
+        $total_pengajuan_magang = $paginasi->total();
+        
+        return view('pages.student.kelola-lamaran', [
+            'data' => $data,
+            'paginasi' => $paginasi,
+            'periode_magang' => $periode_magang,
+            'bidang' => $bidang,
+            'perusahaan' => $perusahaan,
+            'total_pengajuan_magang' => $total_pengajuan_magang
+        ]);
     }
 
     public function apply(Request $request): RedirectResponse

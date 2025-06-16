@@ -113,8 +113,6 @@ class LogAktivitas extends Controller
                     'status_aktivitas' => ['' => 'Semua Status'] + $status_aktivitas
                 ]);
             case 'MAHASISWA':
-                $status = LogAktivitasModel::pluck('status')->unique()->toArray();
-
                 $mahasiswa = Mahasiswa::where('id_pengguna', Auth::user()->id_pengguna)->first();
                 if (!$mahasiswa) return view('pages.student.log-aktivitas', ['log_aktivitas' => null]);
 
@@ -157,9 +155,30 @@ class LogAktivitas extends Controller
                 }
 
                 $status = $magang->status ?? "N/A";
-                $total_log = LogAktivitasModel::where('id_magang', $magang->id_magang)->count();
-                $log_aktivitas = LogAktivitasModel::where('id_magang', $magang->id_magang)->get();
-                $minggu = LogAktivitasModel::where('id_magang', $magang->id_magang)->orderBy('minggu')->value('minggu');
+                
+                // Base query for log activities
+                $logQuery = LogAktivitasModel::where('id_magang', $magang->id_magang);
+                
+                // Apply judul filter
+                if ($request->filled('judul')) {
+                    $logQuery->where('judul', 'like', '%' . $request->judul . '%');
+                }
+                
+                // Apply status filter
+                if ($request->filled('status') && $request->status !== '') {
+                    $logQuery->where('status', $request->status);
+                }
+                
+                // Get the results
+                $log_aktivitas = $logQuery->orderBy('created_at', 'desc')->get();
+                $total_log = $log_aktivitas->count();
+                $minggu = $log_aktivitas->sortBy('minggu')->pluck('minggu')->first();
+                
+                // Get unique statuses for filter
+                $status_aktivitas = ['' => 'Semua Status'] + LogAktivitasModel::where('id_magang', $magang->id_magang)
+                    ->pluck('status', 'status')
+                    ->unique()
+                    ->toArray();
 
                 return view('pages.student.log-aktivitas', compact('dospem', 'log_aktivitas', 'periode', 'perusahaan', 'posisi', 'status', 'total_log', 'lokasi', 'minggu', 'status_aktivitas'));
             default:

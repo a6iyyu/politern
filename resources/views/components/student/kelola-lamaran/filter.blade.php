@@ -1,11 +1,11 @@
-<form action="{{ route('mahasiswa.kelola-lamaran') }}" method="GET" class="grid grid-cols-1 gap-4 lg:grid-cols-4">
+<form action="{{ route('mahasiswa.kelola-lamaran') }}" method="GET" class="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-5">
     <x-select
         label="Status Lamaran"
         name="waktu"
         placeholder="-- Semua Status --"
         :options="['MENUNGGU' => 'Menunggu', 'DISETUJUI' => 'Disetujui', 'DITOLAK' => 'Ditolak']"
         :selected="request('waktu', '')"
-        :required="true"
+        :required="false"
     />
     <x-select
         label="Periode Magang"
@@ -13,23 +13,25 @@
         placeholder="-- Semua Periode --"
         :options="$periode_magang"
         :selected="request('periode', '')"
-        :required="true"
+        :required="false"
     />
-    <livewire:search
-        icon="fa-solid fa-building"
-        label="Cari nama perusahaan"
+    <x-select
+        label="Bidang"
+        name="bidang"
+        :options="['' => 'Semua Bidang'] + $bidang->toArray()"
+        :selected="request('bidang')"
+        :required="false"
+    />
+    <x-select
+        label="Perusahaan"
         name="perusahaan"
-        placeholder="Cari nama perusahaan"
-        :model="\App\Models\Perusahaan::class"
-        :required="true"
+        :options="['' => 'Semua Perusahaan'] + $perusahaan->toArray()"
+        :selected="request('perusahaan', '')"
+        :required="false"
     />
-    <fieldset class="flex items-end justify-end">
-        <button
-            wire:click="search"
-            class="cursor-pointer font-semibold bg-[#e86bb1] text-white rounded-lg text-sm px-10 py-3 transition-all duration-300 ease-in-out hover:bg-[#da78b0]"
-            type="button"
-        >
+    <div class="flex items-end">
+        <button type="submit" class="cursor-pointer bg-[var(--secondary)] border border-[var(--secondary)] text-white px-12 py-2 rounded-md transition-all duration-300 ease-in-out text-sm lg:py-2.5 lg:hover:bg-[#ff86cb] w-full sm:w-auto">
             Cari
         </button>
-    </fieldset>
+    </div>
 </form>
