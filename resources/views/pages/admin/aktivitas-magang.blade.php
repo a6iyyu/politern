@@ -13,6 +13,7 @@
         <section class="py-6 px-12 mt-2 rounded-lg overflow-hidden bg-white border border-[var(--stroke)]">
             @include('components.admin.aktivitas-magang.daftar')
             @include('components.admin.aktivitas-magang.detail')
+            @include('components.admin.aktivitas-magang.konfirmasi')
         </section>
     </main>
 @endsection

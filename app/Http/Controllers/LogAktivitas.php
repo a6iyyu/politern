@@ -287,6 +287,103 @@ class LogAktivitas extends Controller
         }
     }
 
+    /**
+     * Confirm a log activity
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function confirm(string $id, Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'comment' => 'nullable|string|max:1000'
+            ]);
+            
+            $log = LogAktivitasModel::findOrFail($id);
+            
+            if ($log->status !== 'MENUNGGU') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Log aktivitas ini sudah diproses sebelumnya.'
+                ], 400);
+            }
+            
+            $log->update([
+                'status' => 'DISETUJUI',
+                'komentar' => $request->input('comment'),
+                'tanggal_konfirmasi' => now(),
+                'updated_at' => now()
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Log aktivitas berhasil disetujui.'
+            ]);
+            
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Log aktivitas tidak ditemukan.'
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Error confirming log activity: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyetujui log aktivitas.'
+            ], 500);
+        }
+    }
+    
+    /**
+     * Reject a log activity
+     *
+     * @param string $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function reject(string $id, Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'comment' => 'nullable|string|max:1000'
+            ]);
+            
+            $log = LogAktivitasModel::findOrFail($id);
+            
+            if ($log->status !== 'MENUNGGU') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Log aktivitas ini sudah diproses sebelumnya.'
+                ], 400);
+            }
+            
+            $log->update([
+                'status' => 'DITOLAK',
+                'komentar' => $request->input('comment'),
+                'tanggal_konfirmasi' => now(),
+                'updated_at' => now()
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Log aktivitas berhasil ditolak.'
+            ]);
+            
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Log aktivitas tidak ditemukan.'
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Error rejecting log activity: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menolak log aktivitas.'
+            ], 500);
+        }
+    }
+
     public function show(string $id): JsonResponse
     {
         try {

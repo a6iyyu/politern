@@ -293,8 +293,6 @@ class Pengajuan extends Controller
                 'DITOLAK'   => 'bg-red-200 text-red-800',
             };
 
-            $konfirmasi = '';
-            if ($pengajuan->status === 'MENUNGGU') $konfirmasi = view('components.admin.pengajuan-magang.konfirmasi', compact('pengajuan'))->render();
             return [
                 $baris++,
                 $pengajuan->created_at->format('d/m/Y'),
@@ -306,7 +304,6 @@ class Pengajuan extends Controller
                     . ($pengajuan->status ?? "N/A") .
                     '</div>',
                 view('components.admin.pengajuan-magang.aksi', compact('pengajuan'))->render(),
-                $konfirmasi,
             ];
         })->toArray();
 

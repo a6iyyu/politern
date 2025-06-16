@@ -46,6 +46,8 @@ Route::middleware('auth')->group(function () {
         Route::prefix('aktivitas-magang')->group(function () {
             Route::get('/', [LogAktivitas::class, 'index'])->name('admin.aktivitas-magang');
             Route::get('/{id}/detail', [LogAktivitas::class, 'detailForAdmin'])->name('admin.aktivitas-magang.detail');
+            Route::put('/{id}/confirm', [LogAktivitas::class, 'confirm'])->name('admin.aktivitas-magang.confirm');
+            Route::put('/{id}/reject', [LogAktivitas::class, 'reject'])->name('admin.aktivitas-magang.reject');
         });
 
         Route::prefix('data-dosen')->group(function () {
@@ -151,6 +153,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/tambah', [LogAktivitas::class, 'create'])->name('mahasiswa.log-aktivitas.tambah');
             Route::put('/{id}/perbarui', [LogAktivitas::class, 'update'])->name('mahasiswa.log-aktivitas.perbarui');
             Route::delete('/{id}/hapus', [LogAktivitas::class, 'destroy'])->name('mahasiswa.log-aktivitas.hapus');
+            Route::put('/{id}/confirm', [LogAktivitas::class, 'confirm'])->name('mahasiswa.log-aktivitas.confirm');
+            Route::put('/{id}/reject', [LogAktivitas::class, 'reject'])->name('mahasiswa.log-aktivitas.reject');
         });
 
         Route::prefix('lowongan')->group(function () {
@@ -196,6 +200,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/log-aktivitas', [LogAktivitas::class, 'index'])->name('dosen.log-aktivitas');
         Route::get('/log-aktivitas/{id}', [LogAktivitas::class, 'showLog'])->name('dosen.log-aktivitas.detail');
         Route::get('/log-aktivitas/{id}/detail', [LogAktivitas::class, 'detail_for_lecturer'])->name('dosen.log-aktivitas.detail-modal');
+        Route::put('/log-aktivitas/{id}/confirm', [LogAktivitas::class, 'confirm'])->name('dosen.log-aktivitas.confirm');
+        Route::put('/log-aktivitas/{id}/reject', [LogAktivitas::class, 'reject'])->name('dosen.log-aktivitas.reject');
 
         Route::prefix('profil')->group(function () {
             Route::get('/', [Profil::class, 'index'])->name('dosen.profil');

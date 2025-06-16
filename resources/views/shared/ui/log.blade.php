@@ -49,16 +49,28 @@
                 {{ $description ?? 'N/A' }}. 
             </h5>
         </div>
-        <div class="flex gap-2 mt-5">
-            <h5 class="text-sm text-[var(--secondary-text)]">Bukti Foto:</h5>
-            @if ($photo)
-                <a href="{{ asset($photo) }}" target="_blank" class="text-sm text-[var(--secondary)] font-medium underline hover:text-[var(--primary)] transition-colors">
-                    {{ basename($photo) }}
+        <div class="flex justify-between items-center mt-5">
+            <div class="flex gap-2">
+                <h5 class="text-sm text-[var(--secondary-text)]">Bukti Foto:</h5>
+                @if ($photo)
+                    <a href="{{ asset($photo) }}" target="_blank" class="text-sm text-[var(--secondary)] font-medium underline hover:text-[var(--primary)] transition-colors">
+                        {{ basename($photo) }}
+                    </a>
+                @else
+                    <h6 class="text-xs text-[var(--secondary-text)] px-4 py-1 rounded-full bg-[var(--stroke)]">
+                        Tidak ada foto.
+                    </h6>
+                @endif
+            </div>
+            @if (strtoupper($condition) === 'MENUNGGU')
+            <div class="flex gap-2">
+                <a href="javascript:void(0)" data-id="{{ $id }}" data-context="{{ $context }}" class="btn-konfirmasi cursor-pointer rounded-full px-5 py-2 bg-[var(--green-tertiary)] text-white text-xs font-medium transition-all duration-300 ease-in-out">
+                    Konfirmasi
                 </a>
-            @else
-                <h6 class="text-xs text-[var(--secondary-text)] px-4 py-1 rounded-full bg-[var(--stroke)]">
-                    Tidak ada foto.
-                </h6>
+                <a href="javascript:void(0)" data-id="{{ $id }}" data-context="{{ $context }}" class="btn-tolak cursor-pointer rounded-full px-5 py-2 bg-[var(--red-tertiary)] text-white text-xs font-medium transition-all duration-300 ease-in-out">
+                    Tolak
+                </a>
+            </div>
             @endif
         </div>
     </section>

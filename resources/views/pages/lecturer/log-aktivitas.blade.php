@@ -14,5 +14,6 @@
             @include('components.lecturer.log-aktivitas.daftar')
         </section>
         @include('components.lecturer.log-aktivitas.detail')
+        @include('components.lecturer.log-aktivitas.konfirmasi')
     </main> 
 @endsection

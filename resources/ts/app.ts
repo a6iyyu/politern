@@ -38,3 +38,4 @@ import './student-guidance-data-modal';
 import './submission-detail';
 import './guidance-students-detail';
 import './toggle-profile-photo-menu';
+import './log-confirmation';
