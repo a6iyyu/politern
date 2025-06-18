@@ -16,6 +16,7 @@ use App\Models\Keahlian;
 use App\Models\Lokasi;
 use App\Models\JenisLokasi;
 use App\Models\DurasiMagang;
+use App\Models\BobotKriteria;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,8 @@ class RekomendasiMagang extends Controller
      * @param int $id
      * @return array{lowongan: Collection<int, mixed>, skor: Collection<int, float>}
      */
+    
+
     public function index(int $id): array
     {
         $mahasiswa = Mahasiswa::findOrFail($id);
@@ -99,20 +102,40 @@ class RekomendasiMagang extends Controller
         }
 
         // Langkah 3: Bobot kriteria
-        $bobot = [
-            'C1' => 0.2196, // Keahlian
-            'C2' => 0.1463, // Lokasi
-            'C3' => 0.1219,  // Jenis Lokasi
-            'C4' => 0.2439,  // Bidang
-            'C5' => 0.0976,  // Durasi
-            'C6' => 0.1707,  // Gaji
-        ];
+        $bobot = $this->getBobotKriteria($id);
+
+        // Debug bobot - tampilkan bobot yang digunakan
+        dd([
+            'id_mahasiswa' => $mahasiswa->id_mahasiswa,
+            'data_ditemukan' => $bobot !== null,
+            'bobot_array' => $bobot,
+            'bobot_detail' => [
+                'C1_Keahlian' => $bobot['C1'],
+                'C2_Lokasi' => $bobot['C2'],
+                'C3_Jenis_Lokasi' => $bobot['C3'],
+                'C4_Bidang' => $bobot['C4'],
+                'C5_Durasi' => $bobot['C5'],
+                'C6_Gaji' => $bobot['C6']
+            ],
+            'total_bobot' => array_sum($bobot),
+            'kolom_yang_ada' => $kolom
+        ]);
 
         // Langkah 4: Matriks terbobot
         $matriks_terbobot = [];
-        foreach ($matriks_normalisasi as $id => $baris) {
-            foreach ($baris as $kol => $nilai) $matriks_terbobot[$id][$kol] = $nilai * $bobot[$kol];
+        foreach ($matriks_normalisasi as $id_lowongan => $baris) {
+            foreach ($baris as $kol => $nilai) {
+                // Pastikan key bobot sesuai dengan kolom
+                if (isset($bobot[$kol])) {
+                    $matriks_terbobot[$id_lowongan][$kol] = $nilai * $bobot[$kol];
+                } else {
+                    // Fallback jika key tidak ditemukan
+                    Log::warning("Key bobot tidak ditemukan: {$kol}");
+                    $matriks_terbobot[$id_lowongan][$kol] = $nilai * (1 / 6); // default equal weight
+                }
+            }
         }
+
 
         // Langkah 5: Tentukan solusi ideal positif & negatif (semua benefit)
         $solusi_ideal_positif = [];
@@ -180,6 +203,65 @@ class RekomendasiMagang extends Controller
         ];
     }
 
+    private function getBobotKriteria(int $id_mahasiswa): array
+    {
+        // Mapping prioritas ke bobot (Total = 1.0000)
+        $priorityWeights = [
+            1 => 0.2742,
+            2 => 0.2174,
+            3 => 0.1736,
+            4 => 0.1382,
+            5 => 0.1103,
+            6 => 0.0879
+        ];
+
+        dd([
+            'ID dari auth/login' => auth()->user()->id ?? null,
+            'ID yang diterima fungsi' => $id_mahasiswa,
+            'Data bobot_kriteria' => \App\Models\BobotKriteria::where('id_mahasiswa', $id_mahasiswa)->first(),
+        ]);
+        // GANTI INI:
+        $bobotMahasiswa = BobotKriteria::where('id_mahasiswa', $id_mahasiswa)->first();
+
+        dd([
+            'raw' => $bobotMahasiswa,
+            'is_all_empty' => $this->isAllWeightsEmpty($bobotMahasiswa),
+        ]);
+        if (!$bobotMahasiswa || $this->isAllWeightsEmpty($bobotMahasiswa)) {
+            return [
+                'C1' => 1 / 6,
+                'C2' => 1 / 6,
+                'C3' => 1 / 6,
+                'C4' => 1 / 6,
+                'C5' => 1 / 6,
+                'C6' => 1 / 6,
+            ];
+        }
+
+        return [
+            'C1' => $bobotMahasiswa->prioritas_keahlian ? $priorityWeights[$bobotMahasiswa->prioritas_keahlian] : 0,
+            'C2' => $bobotMahasiswa->prioritas_lokasi ? $priorityWeights[$bobotMahasiswa->prioritas_lokasi] : 0,
+            'C3' => $bobotMahasiswa->prioritas_jenis_lokasi ? $priorityWeights[$bobotMahasiswa->prioritas_jenis_lokasi] : 0,
+            'C4' => $bobotMahasiswa->prioritas_bidang ? $priorityWeights[$bobotMahasiswa->prioritas_bidang] : 0,
+            'C5' => $bobotMahasiswa->prioritas_durasi ? $priorityWeights[$bobotMahasiswa->prioritas_durasi] : 0,
+            'C6' => $bobotMahasiswa->prioritas_gaji ? $priorityWeights[$bobotMahasiswa->prioritas_gaji] : 0,
+        ];
+    }
+
+
+    /**
+     * Cek apakah semua bobot kosong
+     */
+    private function isAllWeightsEmpty($bobot): bool
+    {
+        return empty($bobot->prioritas_keahlian) &&
+            empty($bobot->prioritas_lokasi) &&
+            empty($bobot->prioritas_jenis_lokasi) &&
+            empty($bobot->prioritas_bidang) &&
+            empty($bobot->prioritas_durasi) &&
+            empty($bobot->prioritas_gaji);
+    }
+    
     public function calculation(LowonganMagang $id): View
     {
         $hasil = $this->index(Auth::user()->mahasiswa->id_mahasiswa);
@@ -255,6 +337,12 @@ class RekomendasiMagang extends Controller
             'jenis_lokasi' => 'array',
             'durasi' => 'array',
             'gaji' => 'required|in:PAID,UNPAID',
+            'prioritas_keahlian' => 'nullable|integer|between:1,6',
+            'prioritas_lokasi' => 'nullable|integer|between:1,6',
+            'prioritas_jenis_lokasi' => 'nullable|integer|between:1,6',
+            'prioritas_bidang' => 'nullable|integer|between:1,6',
+            'prioritas_durasi' => 'nullable|integer|between:1,6',
+            'prioritas_gaji' => 'nullable|integer|between:1,6',
         ]);
 
         // dd((new \App\Models\BidangMahasiswa)->getFillable());
@@ -263,7 +351,19 @@ class RekomendasiMagang extends Controller
         $mahasiswa->update([
             'gaji' => $request->gaji
         ]);
-        
+
+        BobotKriteria::updateOrCreate(
+            ['id_mahasiswa' => $id],
+            [
+                'prioritas_keahlian' => $request->input('prioritas_keahlian'),
+                'prioritas_lokasi' => $request->input('prioritas_lokasi'),
+                'prioritas_jenis_lokasi' => $request->input('prioritas_jenis_lokasi'),
+                'prioritas_bidang' => $request->input('prioritas_bidang'),
+                'prioritas_durasi' => $request->input('prioritas_durasi'),
+                'prioritas_gaji' => $request->input('prioritas_gaji'),
+            ]
+        );
+
         // Sync data
         BidangMahasiswa::where('id_mahasiswa', $id)->delete();
         foreach ($request->input('bidang', []) as $item) BidangMahasiswa::create(['id_mahasiswa' => $id, 'id_bidang' => $item]);
