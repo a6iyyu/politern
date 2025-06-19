@@ -257,56 +257,56 @@ class Pengajuan extends Controller
 
         $query = PengajuanMagang::with(['mahasiswa', 'lowongan.perusahaan', 'mahasiswa.program_studi', 'lowongan.periode_magang']);
 
-        if ($request->filled('nama_lengkap')) {
-            $query->whereHas('mahasiswa', function ($q) use ($request) {
-                $q->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
-            });
-        }
+            if ($request->filled('nama_lengkap')) {
+                $query->whereHas('mahasiswa', function ($q) use ($request) {
+                    $q->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
+                });
+            }
 
-        if ($request->filled('program_studi')) {
-            $query->whereHas('mahasiswa', function ($q) use ($request) {
-                $q->where('id_prodi', $request->program_studi);
-            });
-        }
+            if ($request->filled('program_studi')) {
+                $query->whereHas('mahasiswa', function ($q) use ($request) {
+                    $q->where('id_prodi', $request->program_studi);
+                });
+            }
 
-        if ($request->filled('perusahaan')) {
-            $query->whereHas('lowongan', function ($q) use ($request) {
-                $q->where('id_perusahaan_mitra', $request->perusahaan);
-            });
-        }
+            if ($request->filled('perusahaan')) {
+                $query->whereHas('lowongan', function ($q) use ($request) {
+                    $q->where('id_perusahaan_mitra', $request->perusahaan);
+                });
+            }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
 
-        if ($request->filled('periode')) {
-            $query->whereHas('lowongan', function ($q) use ($request) {
-                $q->where('id_periode', $request->periode);
-            });
-        }
+            if ($request->filled('periode')) {
+                $query->whereHas('lowongan', function ($q) use ($request) {
+                    $q->where('id_periode', $request->periode);
+                });
+            }
 
-        $baris = 1;
-        $paginasi = $query->orderBy('created_at', 'desc')->paginate(request('per_page', 10))->withQueryString();
-        $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan) use (&$baris) {
-            $keterangan = match ($pengajuan->status) {
-                'DISETUJUI' => 'bg-green-200 text-green-800',
-                'MENUNGGU'  => 'bg-yellow-200 text-yellow-800',
-                'DITOLAK'   => 'bg-red-200 text-red-800',
-            };
+            $baris = 1;
+            $paginasi = $query->orderBy('created_at', 'desc')->paginate(request('per_page', 10))->withQueryString();
+            $data = $paginasi->getCollection()->map(function (PengajuanMagang $pengajuan) use (&$baris) {
+                $keterangan = match ($pengajuan->status) {
+                    'DISETUJUI' => 'bg-green-200 text-green-800',
+                    'MENUNGGU'  => 'bg-yellow-200 text-yellow-800',
+                    'DITOLAK'   => 'bg-red-200 text-red-800',
+                };
 
-            return [
-                $baris++,
-                $pengajuan->created_at->format('d/m/Y'),
-                $pengajuan->mahasiswa->nama_lengkap,
-                $pengajuan->mahasiswa->program_studi->kode,
-                $pengajuan->lowongan->perusahaan->nama,
-                $pengajuan->lowongan->bidang->nama_bidang ?? '-',
-                '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
-                    . ($pengajuan->status ?? "N/A") .
-                    '</div>',
-                view('components.admin.pengajuan-magang.aksi', compact('pengajuan'))->render(),
-            ];
-        })->toArray();
+                return [
+                    $baris++,
+                    $pengajuan->created_at->format('d/m/Y'),
+                    $pengajuan->mahasiswa->nama_lengkap,
+                    $pengajuan->mahasiswa->program_studi->kode,
+                    $pengajuan->lowongan->perusahaan->nama,
+                    $pengajuan->lowongan->bidang->nama_bidang ?? '-',
+                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $keterangan . '">'
+                        . ($pengajuan->status ?? "N/A") .
+                        '</div>',
+                    view('components.admin.pengajuan-magang.aksi', compact('pengajuan'))->render(),
+                ];
+            })->toArray();
 
         return view('pages.admin.pengajuan-magang', compact('data', 'paginasi', 'program_studi', 'perusahaan', 'periode_magang', 'periodes', 'program_studi_yang_dipilih', 'total_pengajuan_magang', 'dosen_pembimbing'));
     }

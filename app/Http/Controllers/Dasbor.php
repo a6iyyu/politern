@@ -107,17 +107,33 @@ class Dasbor extends Controller
                 $status_aktivitas = LogAktivitas::pluck('status')->unique()->toArray();
 
                 /** @var SupportCollection<int, Mahasiswa> $mahasiswa_bimbingan */
-                $data = $mahasiswa_bimbingan->map(function (Mahasiswa $mhs): array {
-                    $status = match ($mhs->pengajuan_magang()->with('magang')->get()->sortByDesc('created_at')->first()?->magang?->status) {
+                $id_dosen = $pengguna->dosen->id_dosen;
+                
+                $mahasiswa_bimbingan = Magang::with([
+                    'pengajuan_magang.mahasiswa',
+                    'pengajuan_magang.lowongan.perusahaan',
+                    'pengajuan_magang.lowongan.bidang',
+                    'dosen_pembimbing.dosen'
+                ])
+                ->whereHas('dosen_pembimbing', function($q) use ($id_dosen) {
+                    $q->where('id_dosen', $id_dosen);
+                })
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get();
+
+                $data = $mahasiswa_bimbingan->map(function (Magang $magang) {
+                    $pengajuan = $magang->pengajuan_magang;
+                    $mhs = $pengajuan->mahasiswa;
+                    $lowongan = $pengajuan->lowongan;
+                    $perusahaan = $lowongan?->perusahaan;
+                    $status = $magang->status ?? 'BELUM MAGANG';
+                    
+                    $status_class = match ($status) {
                         'AKTIF'   => 'bg-green-200 text-green-800',
                         'SELESAI' => 'bg-yellow-200 text-yellow-800',
                         default   => 'bg-gray-200 text-gray-800',
                     };
-
-                    $pengajuan = $mhs->pengajuan_magang->first();
-                    $magang = $pengajuan?->magang;
-                    $lowongan = $pengajuan?->lowongan;
-                    $perusahaan = $lowongan?->perusahaan;
 
                     return [
                         '<div class="flex items-center gap-2">
@@ -125,7 +141,7 @@ class Dasbor extends Controller
                         </div>',
                         $perusahaan?->nama ?? '-',
                         $lowongan?->bidang->nama_bidang ?? '-',
-                        '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status . '">' . ($magang?->status ?? 'BELUM MAGANG') . '</div>',
+                        '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status_class . '">' . ($magang?->status ?? 'BELUM MAGANG') . '</div>',
                     ];
                 })->toArray();
 

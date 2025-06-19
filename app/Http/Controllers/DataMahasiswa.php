@@ -101,32 +101,48 @@ class DataMahasiswa extends Controller
             }
 
             $baris = 1;
-            $paginasi = $query->paginate($request->input('per_page', 10))->withQueryString();
-            $data = $paginasi->getCollection()->map(function (Mahasiswa $mhs) use (&$baris) {
-                $status_label = $mhs->pengajuan_magang()->get()->sortByDesc('created_at')->first()?->magang?->status ?? 'BELUM MAGANG';
-                $status_class = match ($status_label) {
+            $id_dosen = Auth::user()->dosen->id_dosen;
+
+            $paginasi = Magang::with([
+                'pengajuan_magang.mahasiswa.program_studi',
+                'pengajuan_magang.lowongan.perusahaan',
+                'pengajuan_magang.lowongan.periode_magang',
+                'pengajuan_magang.lowongan.bidang',
+                'dosen_pembimbing.dosen'
+            ])
+            ->whereHas('dosen_pembimbing', function($q) use ($id_dosen) {
+                $q->where('id_dosen', $id_dosen);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->input('per_page', 10))
+            ->withQueryString();
+
+            $data = $paginasi->getCollection()->map(function (Magang $magang) use (&$baris) {
+                $pengajuan = $magang->pengajuan_magang;
+                $mhs = $pengajuan->mahasiswa;
+                $lowongan = $pengajuan->lowongan;
+                $perusahaan = $lowongan->perusahaan ?? null;
+                $status = $magang->status ?? 'BELUM MAGANG';
+                
+                $status_class = match ($status) {
                     'AKTIF' => 'bg-green-200 text-green-800',
                     'SELESAI' => 'bg-yellow-200 text-yellow-800',
                     default => 'bg-red-200 text-red-800',
                 };
 
-                $pengajuan = $mhs->pengajuan_magang->first();
-                $magang = $pengajuan?->magang;
-                $lowongan = $pengajuan?->lowongan;
-                $perusahaan = $lowongan?->perusahaan;
-
                 return [
                     $baris++,
                     '<div class="flex items-center gap-2">
-                        <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . $mhs->nama_lengkap . '
+                        <img src="' . asset('shared/profil.png') . '" alt="avatar" class="w-8 h-8 rounded-full" /> ' . 
+                        ($mhs->nama_lengkap ?? '-') . '
                     </div>',
-                    $mhs->nim,
-                    $mhs->program_studi->kode,
-                    $lowongan?->periode_magang?->nama_periode ?? '-',
-                    $perusahaan?->nama ?? '-',
-                    $lowongan?->bidang->nama_bidang ?? '-',
-                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status_class . '">' . ($magang?->status ?? 'BELUM MAGANG') . '</div>',
-                    view('components.lecturer.data-mahasiswa.aksi', compact('mhs'))->render(),
+                    $mhs->nim ?? '-',
+                    $mhs->program_studi->kode ?? '-',
+                    $lowongan->periode_magang->nama_periode ?? '-',
+                    $perusahaan->nama ?? '-',
+                    $lowongan->bidang->nama_bidang ?? '-',
+                    '<div class="text-xs font-medium px-5 py-2 rounded-2xl ' . $status_class . '">' . $status . '</div>',
+                    view('components.lecturer.data-mahasiswa.aksi', ['mhs' => $mhs])->render(),
                 ];
             })->toArray();
 
