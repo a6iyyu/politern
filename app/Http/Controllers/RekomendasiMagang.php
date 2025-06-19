@@ -17,6 +17,7 @@ use App\Models\Lokasi;
 use App\Models\JenisLokasi;
 use App\Models\DurasiMagang;
 use App\Models\BobotKriteria;
+use App\Models\Perusahaan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -84,7 +85,7 @@ class RekomendasiMagang extends Controller
             $baris['C5'] = in_array($durasi_lowongan, $preferensi_durasi) ? 1 : 0;
 
             // C6: Gaji (1 jika sama, 0 jika beda)
-            $baris['C6'] = ($mahasiswa->gaji === $lowongan->gaji) ? 1 : 0;
+            $baris['C6'] = ($mahasiswa->gaji === 'BEBAS') ? 1 : (($mahasiswa->gaji === $lowongan->gaji) ? 1 : 0);
             $matriks_alternatif[$lowongan->id_lowongan] = $baris;
         }
 
@@ -104,22 +105,22 @@ class RekomendasiMagang extends Controller
         // Langkah 3: Bobot kriteria
         $bobot = $this->getBobotKriteria($id);
 
-        // Debug bobot - tampilkan bobot yang digunakan
-        dd([
-            'id_mahasiswa' => $mahasiswa->id_mahasiswa,
-            'data_ditemukan' => $bobot !== null,
-            'bobot_array' => $bobot,
-            'bobot_detail' => [
-                'C1_Keahlian' => $bobot['C1'],
-                'C2_Lokasi' => $bobot['C2'],
-                'C3_Jenis_Lokasi' => $bobot['C3'],
-                'C4_Bidang' => $bobot['C4'],
-                'C5_Durasi' => $bobot['C5'],
-                'C6_Gaji' => $bobot['C6']
-            ],
-            'total_bobot' => array_sum($bobot),
-            'kolom_yang_ada' => $kolom
-        ]);
+        //Debug bobot - tampilkan bobot yang digunakan
+        // dd([
+        //     'id_mahasiswa' => $mahasiswa->id_mahasiswa,
+        //     'data_ditemukan' => $bobot !== null,
+        //     'bobot_array' => $bobot,
+        //     'bobot_detail' => [
+        //         'C1_Keahlian' => $bobot['C1'],
+        //         'C2_Lokasi' => $bobot['C2'],
+        //         'C3_Jenis_Lokasi' => $bobot['C3'],
+        //         'C4_Bidang' => $bobot['C4'],
+        //         'C5_Durasi' => $bobot['C5'],
+        //         'C6_Gaji' => $bobot['C6']
+        //     ],
+        //     'total_bobot' => array_sum($bobot),
+        //     'kolom_yang_ada' => $kolom
+        // ]);
 
         // Langkah 4: Matriks terbobot
         $matriks_terbobot = [];
@@ -199,6 +200,7 @@ class RekomendasiMagang extends Controller
                 'solusi_ideal_negatif' => $solusi_ideal_negatif,
                 'jarak_data' => $jarak_data,
                 'nilai_preferensi' => $nilai_preferensi,
+                'bobot' => $bobot,
             ]
         ];
     }
@@ -215,18 +217,42 @@ class RekomendasiMagang extends Controller
             6 => 0.0879
         ];
 
-        dd([
-            'ID dari auth/login' => auth()->user()->id ?? null,
-            'ID yang diterima fungsi' => $id_mahasiswa,
-            'Data bobot_kriteria' => \App\Models\BobotKriteria::where('id_mahasiswa', $id_mahasiswa)->first(),
-        ]);
-        // GANTI INI:
-        $bobotMahasiswa = BobotKriteria::where('id_mahasiswa', $id_mahasiswa)->first();
+        $currentUserId = auth()->id(); // ID dari tabel pengguna
 
-        dd([
-            'raw' => $bobotMahasiswa,
-            'is_all_empty' => $this->isAllWeightsEmpty($bobotMahasiswa),
-        ]);
+        // Ambil ID mahasiswa berdasarkan ID pengguna yang login
+        $mahasiswa = \App\Models\Mahasiswa::where('id_pengguna', $currentUserId)->first();
+
+        if (!$mahasiswa) {
+            Log::error("Data mahasiswa tidak ditemukan untuk ID pengguna: {$currentUserId}");
+            // Return bobot default jika mahasiswa tidak ditemukan
+            return [
+                'C1' => 1 / 6,
+                'C2' => 1 / 6,
+                'C3' => 1 / 6,
+                'C4' => 1 / 6,
+                'C5' => 1 / 6,
+                'C6' => 1 / 6,
+            ];
+        }
+
+        $id_mahasiswa_benar = $mahasiswa->id_mahasiswa; // atau $mahasiswa->id
+
+        // Debug untuk memastikan mapping yang benar
+        // dd([
+        //     'ID pengguna dari auth' => $currentUserId,
+        //     'ID mahasiswa dari parameter' => $id_mahasiswa,
+        //     'ID mahasiswa yang benar' => $id_mahasiswa_benar,
+        //     'Data mahasiswa' => $mahasiswa,
+        //     'Data bobot_kriteria dengan ID yang benar' => \App\Models\BobotKriteria::where('id_mahasiswa', $id_mahasiswa_benar)->first(),
+        // ]);
+
+        // GANTI INI:
+        $bobotMahasiswa = BobotKriteria::where('id_mahasiswa', $id_mahasiswa_benar)->first();
+
+        // dd([
+        //     'raw' => $bobotMahasiswa,
+        //     'is_all_empty' => $this->isAllWeightsEmpty($bobotMahasiswa),
+        // ]);
         if (!$bobotMahasiswa || $this->isAllWeightsEmpty($bobotMahasiswa)) {
             return [
                 'C1' => 1 / 6,
@@ -311,10 +337,12 @@ class RekomendasiMagang extends Controller
             'durasi'        => PreferensiDurasiMahasiswa::where('id_mahasiswa', $id)->pluck('id_durasi_magang')->toArray(),
         ];
 
+        $lokasiIds = Perusahaan::distinct()->pluck('id_lokasi')->toArray();
+
         $data = [
             'bidang_all'        => Bidang::all(),
-            'keahlian_all'      => Keahlian::all(),
-            'lokasi_all'        => Lokasi::all(),
+            'keahlian_all'      => Keahlian::all(),         
+            'lokasi_all' => Lokasi::whereIn('id_lokasi', $lokasiIds)->get(),
             'jenis_lokasi_all'  => JenisLokasi::all(),
             'durasi_all'        => DurasiMagang::all(),
         ];
@@ -336,7 +364,7 @@ class RekomendasiMagang extends Controller
             'lokasi' => 'array',
             'jenis_lokasi' => 'array',
             'durasi' => 'array',
-            'gaji' => 'required|in:PAID,UNPAID',
+            'gaji' => 'required|in:PAID,UNPAID,BEBAS',
             'prioritas_keahlian' => 'nullable|integer|between:1,6',
             'prioritas_lokasi' => 'nullable|integer|between:1,6',
             'prioritas_jenis_lokasi' => 'nullable|integer|between:1,6',

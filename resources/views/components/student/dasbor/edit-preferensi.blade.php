@@ -81,7 +81,7 @@
                 <label class="block text-sm font-medium text-[var(--primary)] mb-2">
                     Preferensi Gaji
                 </label>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 border border-[var(--stroke)] rounded-lg bg-gray-50">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 border border-[var(--stroke)] rounded-lg bg-gray-50">
                     <label class="flex items-center space-x-2 cursor-pointer hover:bg-white p-2 rounded transition-colors">
                         <input type="radio" name="gaji" value="PAID"
                             class="w-4 h-4 text-[var(--primary)] border-gray-300 focus:ring-[var(--primary)] focus:ring-2"
@@ -94,6 +94,13 @@
                             @if (isset($mahasiswa) && $mahasiswa->gaji === 'UNPAID') checked @endif>
                         <span class="text-sm text-gray-700">UNPAID</span>
                     </label>
+                    <!-- BEBAS -->
+        <label class="flex items-center space-x-2 cursor-pointer hover:bg-white p-2 rounded transition-colors">
+            <input type="radio" name="gaji" value="BEBAS"
+                class="w-4 h-4 text-[var(--primary)] border-gray-300 focus:ring-[var(--primary)] focus:ring-2"
+                @if (isset($mahasiswa) && $mahasiswa->gaji === 'BEBAS') checked @endif>
+            <span class="text-sm text-gray-700">BEBAS</span>
+        </label>
                 </div>
                 <p class="text-xs text-gray-500 mt-1">Pilih preferensi gaji yang diinginkan</p>
             </div>
