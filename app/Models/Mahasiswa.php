@@ -24,7 +24,8 @@ class Mahasiswa extends Model
         'id_prodi',
         'angkatan',
         'ipk',
-        'status'
+        'status',
+        'gaji'
     ];
 
     public function bidang(): BelongsToMany
