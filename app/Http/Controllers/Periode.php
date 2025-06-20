@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\PeriodeMagang as PeriodeMagangModel;
+use App\Models\Magang;
+use App\Models\LowonganMagang;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -119,6 +121,44 @@ class Periode extends Controller
             $periode->tanggal_mulai     = $request->tanggal_mulai;
             $periode->tanggal_selesai   = $request->tanggal_selesai;
             $periode->save();
+
+            $today = now()->toDateString();
+            if ($periode->tanggal_selesai <= $today) {
+                Magang::whereIn('id_pengajuan_magang', function($query) use ($id) {
+                        $query->select('pengajuan_magang.id_pengajuan_magang')
+                            ->from('pengajuan_magang')
+                            ->join('lowongan_magang', 'pengajuan_magang.id_lowongan', '=', 'lowongan_magang.id_lowongan')
+                            ->where('lowongan_magang.id_periode', $id);
+                    })
+                    ->where('status', '!=', 'SELESAI')
+                    ->update([
+                        'status' => 'SELESAI',
+                        'updated_at' => now()
+                    ]);
+
+                LowonganMagang::where('id_periode', $id)
+                    ->update([
+                        'status' => 'DITUTUP',
+                        'updated_at' => now()
+                    ]);
+            } else {
+                Magang::whereIn('id_pengajuan_magang', function($query) use ($id) {
+                        $query->select('pengajuan_magang.id_pengajuan_magang')
+                            ->from('pengajuan_magang')
+                            ->join('lowongan_magang', 'pengajuan_magang.id_lowongan', '=', 'lowongan_magang.id_lowongan')
+                            ->where('lowongan_magang.id_periode', $id);
+                    })
+                    ->update([
+                        'status' => 'AKTIF',
+                        'updated_at' => now()
+                    ]);
+                    
+                LowonganMagang::where('id_periode', $id)
+                    ->update([
+                        'status' => 'DIBUKA',
+                        'updated_at' => now()
+                    ]);
+            }
 
             return to_route('admin.periode')->with('success', 'Data periode berhasil diubah.');
         } catch (Exception $exception) {

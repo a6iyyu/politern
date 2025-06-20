@@ -51,11 +51,13 @@ class Dasbor extends Controller
                 $periode_aktif = PeriodeMagang::where('status', 'AKTIF')->first();
                 $total_aktivitas = 0;
 
-                $total_aktivitas = LogAktivitas::join('magang', 'log_aktivitas.id_magang', '=', 'magang.id_magang')
-                    ->join('pengajuan_magang', 'magang.id_pengajuan_magang', '=', 'pengajuan_magang.id_pengajuan_magang')
-                    ->join('lowongan_magang', 'pengajuan_magang.id_lowongan', '=', 'lowongan_magang.id_lowongan')
-                    ->where('lowongan_magang.id_periode', $periode_aktif->id_periode)
-                    ->count();
+                if ($periode_aktif) {
+                    $total_aktivitas = LogAktivitas::join('magang', 'log_aktivitas.id_magang', '=', 'magang.id_magang')
+                        ->join('pengajuan_magang', 'magang.id_pengajuan_magang', '=', 'pengajuan_magang.id_pengajuan_magang')
+                        ->join('lowongan_magang', 'pengajuan_magang.id_lowongan', '=', 'lowongan_magang.id_lowongan')
+                        ->where('lowongan_magang.id_periode', $periode_aktif->id_periode)
+                        ->count();
+                }
 
                 return view('pages.admin.dasbor', compact('nama', 'nip', 'total_mahasiswa', 'total_dosen', 'total_perusahaan_mitra', 'total_lowongan', 'periode_aktif', 'total_aktivitas'));
             })(),
@@ -81,9 +83,10 @@ class Dasbor extends Controller
                 return view('pages.student.dasbor', compact('ipk', 'jenjang', 'lowongan', 'nama_pengguna', 'nama_prodi', 'semester', 'status', 'rekomendasi', 'id_mahasiswa', 'total_aktivitas', 'total_pengajuan', 'total_diterima'));
             })(),
             'DOSEN' => (function () use ($pengguna): View {
-                $nama = $pengguna->dosen->nama;
-                $nip = $pengguna->dosen->nip;
-                $id_dosen = $pengguna->dosen->id_dosen;
+                $dosen = $pengguna->dosen;
+                $nama = $dosen->nama;
+                $nip = $dosen->nip;
+                $id_dosen = $dosen->id_dosen; // Get the lecturer's ID directly from the dosen model
 
                 $aktivitas_terbaru = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->latest()->take(4)->get();
                 $evaluasi_magang = LogAktivitas::where('status', 'menunggu')->with('magang.pengajuan_magang.mahasiswa')->get()->pluck('magang.pengajuan_magang.mahasiswa')->unique()->count();
@@ -92,7 +95,6 @@ class Dasbor extends Controller
                 $mahasiswa_selesai = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'SELESAI')->count();
                 $menunggu_evaluasi = LogAktivitas::where('status', 'menunggu')->whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
                 $total_aktivitas = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
-                $total_bimbingan = Magang::where('id_dosen_pembimbing', $id_dosen)->count();
                 $total_mahasiswa = Mahasiswa::count();
 
                 $log_aktivitas = LogAktivitas::with(['magang.pengajuan_magang.mahasiswa', 'magang.pengajuan_magang.mahasiswa.program_studi', 'magang.pengajuan_magang.lowongan.perusahaan'])
@@ -121,6 +123,8 @@ class Dasbor extends Controller
                 ->orderBy('created_at', 'desc')
                 ->take(5)
                 ->get();
+                
+                $total_bimbingan = $mahasiswa_bimbingan->count();
 
                 $data = $mahasiswa_bimbingan->map(function (Magang $magang) {
                     $pengajuan = $magang->pengajuan_magang;
