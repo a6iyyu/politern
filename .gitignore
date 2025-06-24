@@ -48,6 +48,9 @@ web_modules/
 *.tgz
 .yarn-integrity
 .env.development.local
+
+# Pengecualian untuk file app.js
+!resources/js/app.js
 .env.test.local
 .env.production.local
 .env.local
