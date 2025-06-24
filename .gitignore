@@ -51,6 +51,19 @@ web_modules/
 
 # Pengecualian untuk file app.js
 !resources/js/app.js
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Build files
+public/build
+public/hot
+
+# Environment files
+.env
+.env.*.local
 .env.test.local
 .env.production.local
 .env.local
