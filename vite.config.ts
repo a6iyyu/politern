@@ -6,16 +6,19 @@ import { resolve } from 'path';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/js/app.js'],
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js'
+            ],
             refresh: true,
         }),
         tailwindcss(),
     ],
     build: {
+        manifest: true,
+        outDir: 'public/build',
         rollupOptions: {
-            input: {
-                main: resolve(__dirname, 'resources/js/app.js')
-            }
+            input: resolve(__dirname, 'resources/js/app.js')
         }
     },
     resolve: {
