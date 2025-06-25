@@ -182,6 +182,18 @@ class Pengajuan extends Controller
                 $pengajuan->status = 'DISETUJUI';
                 $pengajuan->save();
 
+                $otherApplications = PengajuanMagang::where('id_mahasiswa', $pengajuan->id_mahasiswa)
+                    ->where('id_pengajuan_magang', '!=', $pengajuan->id_pengajuan_magang)
+                    ->where('status', 'MENUNGGU')
+                    ->get();
+
+                foreach ($otherApplications as $app) {
+                    $app->update([
+                        'status' => 'DITOLAK',
+                        'keterangan' => 'Ditolak otomatis karena sudah diterima magang di tempat lain'
+                    ]);
+                }
+
                 $lowongan = $pengajuan->lowongan;
                 if ($lowongan) {
                     $lowongan->kuota = max(0, $lowongan->kuota - 1);
