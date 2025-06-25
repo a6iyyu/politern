@@ -90,15 +90,12 @@ class Dasbor extends Controller
 
                 $aktivitas_terbaru = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->latest()->take(4)->get();
                 $evaluasi_magang = LogAktivitas::where('status', 'menunggu')->with('magang.pengajuan_magang.mahasiswa')->get()->pluck('magang.pengajuan_magang.mahasiswa')->unique()->count();
-                $mahasiswa_aktif = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'AKTIF')->count();
                 $mahasiswa_bimbingan = $this->mahasiswa_bimbingan();
-                $mahasiswa_selesai = Magang::where('id_dosen_pembimbing', $id_dosen)->where('status', 'SELESAI')->count();
-                $menunggu_evaluasi = LogAktivitas::where('status', 'menunggu')->whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
                 $total_aktivitas = LogAktivitas::whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
                 $total_mahasiswa = Mahasiswa::count();
 
                 $log_aktivitas = LogAktivitas::with(['magang.pengajuan_magang.mahasiswa', 'magang.pengajuan_magang.mahasiswa.program_studi', 'magang.pengajuan_magang.lowongan.perusahaan'])
-                    ->whereHas('magang', function ($q) use ($id_dosen) {
+                ->whereHas('magang', function ($q) use ($id_dosen) {
                         $q->where('id_dosen_pembimbing', $id_dosen);
                     })
                     ->latest()
@@ -107,7 +104,7 @@ class Dasbor extends Controller
                 $perusahaan = Perusahaan::pluck('nama', 'id_perusahaan_mitra')->toArray();
                 $periode_magang = PeriodeMagang::where('status', 'AKTIF')->first();
                 $status_aktivitas = LogAktivitas::pluck('status')->unique()->toArray();
-
+                
                 /** @var SupportCollection<int, Mahasiswa> $mahasiswa_bimbingan */
                 $id_dosen = $pengguna->dosen->id_dosen;
                 
@@ -116,15 +113,19 @@ class Dasbor extends Controller
                     'pengajuan_magang.lowongan.perusahaan',
                     'pengajuan_magang.lowongan.bidang',
                     'dosen_pembimbing.dosen'
-                ])
-                ->whereHas('dosen_pembimbing', function($q) use ($id_dosen) {
-                    $q->where('id_dosen', $id_dosen);
-                })
-                ->orderBy('created_at', 'desc')
-                ->take(5)
-                ->get();
-                
+                    ])
+                    ->whereHas('dosen_pembimbing', function($q) use ($id_dosen) {
+                        $q->where('id_dosen', $id_dosen);
+                    })
+                    ->orderBy('created_at', 'desc')
+                    ->take(5)
+                    ->get();
+                    
                 $total_bimbingan = $mahasiswa_bimbingan->count();
+                $mahasiswa_aktif = $mahasiswa_bimbingan->where('status', 'AKTIF')->count();
+                $evaluasi_magang = LogAktivitas::where('status', 'menunggu')->with('magang.pengajuan_magang.mahasiswa')->get()->pluck('magang.pengajuan_magang.mahasiswa')->unique()->count();
+                $menunggu_evaluasi = LogAktivitas::where('status', 'menunggu')->whereHas('magang.pengajuan_magang', fn($q) => $q->where('id_dosen_pembimbing', $id_dosen))->count();
+                $mahasiswa_selesai = $mahasiswa_bimbingan->where('status', 'SELESAI')->count();
 
                 $data = $mahasiswa_bimbingan->map(function (Magang $magang) {
                     $pengajuan = $magang->pengajuan_magang;

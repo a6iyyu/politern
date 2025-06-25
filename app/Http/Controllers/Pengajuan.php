@@ -412,18 +412,40 @@ class Pengajuan extends Controller
             if($lowongan->kuota <= 0) {
                 return back()->with('error', 'Kuota lowongan ini sudah habis.');
             }
+            $exist = PengajuanMagang::where('id_mahasiswa', $id_mahasiswa)
+                ->where('id_lowongan', $request->id_lowongan)
+                ->exists();
+            if ($exist) {
+                return back()->withErrors(['warning' => 'Kamu sudah melamar ke lowongan ini.']);
+            }
 
-            $exist = PengajuanMagang::where('id_mahasiswa', $id_mahasiswa)->where('id_lowongan', $request->id_lowongan)->exists();
-            if ($exist) return back()->with('warning', 'Kamu sudah melamar ke lowongan ini.');
+            $acceptedInSamePeriod = PengajuanMagang::where('id_mahasiswa', $id_mahasiswa)
+                ->whereHas('lowongan', function($query) use ($lowongan) {
+                    $query->where('id_periode', $lowongan->id_periode);
+                })
+                ->where('status', 'DISETUJUI')
+                ->exists();
+                
+            if ($acceptedInSamePeriod) {
+                PengajuanMagang::create([
+                    'id_mahasiswa' => $id_mahasiswa,
+                    'id_lowongan' => $request->id_lowongan,
+                    'status' => 'DITOLAK',
+                    'keterangan' => 'Ditolak otomatis karena sudah diterima magang pada periode ini',
+                ]);
+                
+                return back()->withErrors(['error' => 'Kamu sudah diterima magang pada periode ini. Pengajuan ini secara otomatis ditolak.']);
+            } else {
+                PengajuanMagang::create([
+                    'id_mahasiswa' => $id_mahasiswa,
+                    'id_lowongan' => $request->id_lowongan,
+                    'status' => 'MENUNGGU',
+                    'keterangan' => null,
+                ]);
+    
+                return to_route('mahasiswa.kelola-lamaran')->with('success', 'Pengajuan magang berhasil dikirim.');
+            }
 
-            PengajuanMagang::create([
-                'id_mahasiswa' => $id_mahasiswa,
-                'id_lowongan' => $request->id_lowongan,
-                'status' => 'MENUNGGU',
-                'keterangan' => null,
-            ]);
-
-            return to_route('mahasiswa.kelola-lamaran')->with('success', 'Pengajuan magang berhasil dikirim.');
         } catch (Exception $e) {
             report($e);
             Log::error('Gagal membuat pengajuan magang: ' . $e->getMessage());

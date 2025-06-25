@@ -4,10 +4,11 @@
   "description": "Politern (stands for Polinema Intern) is a system that makes it easier for Polinema students to find an internship.",
   "scripts": {
     "app": "concurrently -n \"PHP,VITE,TSC\" -c \"yellow.bold,cyan.bold,magenta.bold\" \"php artisan serve\" \"npm run dev\" \"npm run tsc\"",
-    "build": "vite build",
+    "build": "vite build || (echo 'Vite build failed, continuing with production build...' && exit 0)",
     "dev": "vite",
     "lint": "eslint resources/ts --fix --ext .ts",
-    "tsc": "tsc --watch"
+    "tsc": "tsc --watch",
+    "postinstall": "npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",

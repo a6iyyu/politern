@@ -4,6 +4,17 @@
         Daftar Lowongan Magang
     </h2>
 </section>
+@if (session('success'))
+    <h5 class="mb-4 p-4 cursor-default rounded-lg bg-emerald-50 border border-emerald-500 list-disc list-inside text-sm text-emerald-500">
+        {{ session('success') }}
+    </h5>
+@elseif ($errors->any())
+    <ul class="mb-7 p-4 cursor-default rounded-lg bg-red-50 border border-red-500 list-disc list-inside text-sm text-red-500">
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+@endif
 @include('components.student.lowongan.filter')
 <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
     @foreach ($lowongan as $item)
@@ -41,7 +52,7 @@
                 <h5 class="cursor-default mt-3 text-xs text-[#585858]">
                     Diposting {{ $item->created_at ? $item->created_at->translatedFormat('d F Y') : 'N/A' }}
                 </h5>
-                <a href="{{ route('mahasiswa.lowongan.detail', ['id' => $item->perusahaan->id_perusahaan_mitra]) }}"
+                <a href="{{ route('mahasiswa.lowongan.detail', ['id' => $item->id_lowongan]) }}"
                    class="bg-[var(--secondary)] text-white text-sm px-6 py-2 rounded-sm font-medium cursor-pointer transition-all duration-300 ease-in-out lg:hover:bg-[var(--secondary)]/80">
                     Lihat Detail
                 </a>
